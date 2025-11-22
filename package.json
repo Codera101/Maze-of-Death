@@ -1,0 +1,12 @@
+{
+  "name": "maze-of-death",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "socket.io": "^4.7.2"
+  }
+}
