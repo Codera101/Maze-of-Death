@@ -3,46 +3,180 @@
 ## 1. Room
 
 ### Handle Join Player
-
-- name : `{player_join}`
+- name : `{join_player}`
 - param : `{username : string}`
-- return `{room_id : string, maze : arr[][]}` on `{joined_player}`
-- note : `arr[i][j]` is an object : `{player,obstacle,empty}`
+- returns :
+```js
+{
+    current_player: {
+        id: int,
+        username: string,
+        score:int,
+        health:int,
+        kill_count:int,
+    }
+}
+```
+ on `{player_joined}`
 
-### Handle Join Viewer
-
-- name : `{viewer_join}`
+<!-- ### Handle Join Viewer
+- name : `{join_viewer}`
 - param : `{}`
-- return `{room_id:string, maze : arr[][]}` on `{joined_viewer}`
+- return : `{}` on `{viewer_joined}` -->
 
-## 2. Maze
+### Draw
 
-### Maze Creation
+- returns: `{}`
+    ```js
+    {
+        maze: {
+                row:int,
+                col:int,
+                layout: boolean[][]
+                }
+    } 
+    ```
+    on `{draw_maze}`
 
-- name : `{create_maze}`
-- param : `{}`
-- return : `{obstacles: array[][]}` on `{maze_done}`
+### Refresh Visible Players
+- returns: `{}`
+    ```js
+    {
+        visible_player_list:[
+            username:string,
+            id: int,
+            x: int,
+            y: int,
+            dir:string,
+            color: string,
+        ]             
+    } 
+    ```
+    on `{refresh_players}`
 
-## 3. Player
+
+## 2. Player
+
 
 ### Move
 
 - name : `{player_move}`
 - param : `{dir : string}`
-- return : `{new_x : int, new_y : int}` on `{player_moved}`
+- returns :
+    ```js
+    {
+        status:boolean
+    }
+    ```
+    on `{player_moved}`
+
 
 ### Shoot
 
 - name : `{shoot}`
 - param : `{}`
-- return : `{kill_count : int,score : int}` on `{player_hit}`
-- return : `{score: int,hp : int}` on `{got_hit}`
-- return : `{}` on `{got_kill}`
+- returns :
+```js
+{
+    status:boolean
+}
+``` 
+on `{target_hit}`
 
-## 4. Panel
+### Hit Recieved
 
-### Refresh List
-
-- name : `{shoot}`
+- name : `{}`
 - param : `{}`
-- return : `{kill_count : int,score : int}` on `{player_hit}`
+- returns :
+```js
+{
+    dir: string,
+    shooter_name: string
+}
+``` 
+on `{got_hit}`
+
+### Death
+
+- name : `{}`
+- param : `{}`
+- returns : 
+```js
+{
+    killer_name: string,
+    respawn_time: int
+}
+``` 
+on `{died}`
+
+### Respawn
+
+- name : `{}`
+- param : `{}`
+- returns : 
+```js
+{
+    id: int,
+    username:string,
+    x: int,
+    y: int,    
+    bullets:int,
+    health:int,
+    score:int,
+    kill_count:int,
+    dir:string,
+    color: string,
+}
+``` 
+on `{respawn_done}`
+
+
+## 3. Panel
+
+### Refresh Player Stats
+
+- name : `{}`
+- param : `{}`
+- returns : 
+```js
+{
+    id:int,
+    username: string,
+    health: int,
+    score:int,
+    bullets: int
+    kill_count:int,
+}
+``` 
+on `{refresh_player}`
+
+
+### Broadcast Kill Message
+
+- name : `{}`
+- param : `{}`
+- returns : 
+```js
+{
+    victim_name: string,
+    killer_name: string,
+}
+``` 
+on `{kill_message}`
+
+### Refresh Ranking
+
+- name : `{}`
+- param : `{}`
+- returns : 
+```js
+{   
+    all_players: [
+        username:string,
+        score:int,
+        kill_count: int
+        color:string,
+    ]
+}
+``` 
+on `{refresh_rank}`
