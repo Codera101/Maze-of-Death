@@ -29,4 +29,11 @@ class Maze {
 	 * @returns {boolean} True if the cell is an obstacle, false otherwise
 	 */
 	isObstacleCell(x, y) {}
+
+	/**	 * @brief Check if the position (x, y) is valid within the maze boundaries
+	 * @param {number} x
+	 * @param {number} y
+	 * @returns {boolean} True if the position is valid, false otherwise
+	 */
+	isValidPosition(x, y) {}
 }
