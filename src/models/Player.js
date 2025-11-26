@@ -1,8 +1,15 @@
 class Player {
-  constructor(id, name) {
-    this.id = id;
-    this.name = name;
-    this.position = { x: 0, y: 0 };
-    this.score = 0;
-  }
+	constructor() {}
+
+	/*
+	 * @brief Apply damage to the player (reducing health)
+	 * @param {number} amount - The amount of damage to apply
+	 */
+	got_damage(amount) {}
+
+	/*
+	 * @brief Get the current position of the player
+	 * @returns {{x: number, y: number}} The current (x, y) position of the player
+	 */
+	get_position() {}
 }
