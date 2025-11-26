@@ -19,9 +19,14 @@ app.get("/", (req, res) => {
 const server = http.createServer(app);
 const io = new Server(server);
 
+const Player = require("./models/Player");
+const Room = require("./models/Room");
+
 io.on("connection", (socket) => {
+	
+	let player = new Player();
+
 	console.log("Socket connected:", socket.id);
-	// Emit a hello message immediately on connect
 	socket.emit("message", "Hello from server — welcome!");
 
 	socket.on("pong", (data) => {
