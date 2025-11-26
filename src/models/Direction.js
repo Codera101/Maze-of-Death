@@ -33,4 +33,4 @@ function getNextPosition(currentPosition, direction) {
 // Freeze the object to prevent modifications
 Object.freeze(Directions);
 
-module.exports = Directions;
+module.exports = { Directions, getNextPosition };

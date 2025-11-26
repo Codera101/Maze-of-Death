@@ -22,7 +22,7 @@ class Room {
 
 	// TODO : islam should implement these methods
 
-  handlePlayerShoot(player) {
+	handlePlayerShoot(player) {
 		if (!player.canShoot()) {
 			return false;
 		}
@@ -43,7 +43,7 @@ class Room {
 			}
 			pos = nextPos;
 		}
-    return true;
+		return true;
 	}
 
 	/**
@@ -61,7 +61,7 @@ class Room {
 		) {
 			return false;
 		}
-		player.move(direction);
+		player.setPosition(nextPos);
 		return true;
 	}
 }
