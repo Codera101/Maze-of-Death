@@ -1,0 +1,15 @@
+/node_modules
+Dockerfile
+API_Contract.md 
+README.md
+/dist
+/.env
+.DS_Store
+/logs
+*.log
+/tmp
+/.vscode
+/.idea
+/tests
+/.git
+.gitignore
