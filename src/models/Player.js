@@ -4,7 +4,8 @@ import Directions, { getNextPosition } from "./Direction.js";
 
 
 class Player {
-	constructor(x, y, room, userName) {
+	constructor(x, y, room, userName, id) {
+		this._id = id;
 		this._x = x;
 		this._y = y;
 		this._room = room;
@@ -19,6 +20,13 @@ class Player {
 	}
 
 	// ------------------ Getters / Setters ------------------
+	get id(){
+		return this._id;
+	}
+
+	set id(newId){
+		this._id = newId;
+	}
 
 	get x() {
 		return this._x;
@@ -194,3 +202,6 @@ class Player {
 	}
 	
 }
+
+
+module.exports = Player;
