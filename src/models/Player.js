@@ -107,7 +107,10 @@ class Player {
 	set timeOfLastShoot(t) {
 		this._timeOfLastShoot = t;
 	}
-
+	/**
+		@brief reset player data to be respawn again
+		@param {number, number} x, y 
+	*/
 	resetPlayerDataForRespawn(x, y){
 		this._bullets = this.room.getInitBulltes();
 		this._health = this.room.getInitHealth();
@@ -117,14 +120,32 @@ class Player {
 		this.timeOfLastShoot(0);
 	}
 
+	/** 
+		@brief update the last time of Move (helps in Move speed).
+	*/
 	updateTimeOfLastMove(){
 		this._timeOfLastMove = Date.now();
 	}
 
-	canShoot(){
-		return (Date.now() - this.timeOfLastShoot()) >= this.room().getShootSpeed();
+	/** 
+		@brief update the last time of Shoot (helps in Shoot speed).
+	*/
+	updateTimeOfLastShoot(){
+		this._timeOfLastShoot = Date.now();
 	}
 
+	/**
+		@brief check if player can shoot according to the last time they moved (move speed) and their number of bullets
+		@returns {bool} 1 - if can, 0 if not.
+	*/
+	canShoot(){
+		return ((Date.now() - this.timeOfLastShoot()) >= this.room().getShootSpeed() && this.bullets() > 0);
+	}
+	
+	/**
+		@brief check if player can move according to the last time they moved (move speed)
+		@returns {bool} 1 - if can, 0 if not.
+	*/
 	canMove(){
 		return Date.now() - this.timeOfLastMove() >= this.room().getMoveSpeed();
 	}
@@ -168,7 +189,7 @@ class Player {
 	shoot() {
 		if(this.bullets() > 0){
 			this._bullets -= 1;
-			this._timeOfLastShoot = Date.now();
+			this.updateTimeOfLastShoot();
 		}
 	}
 	
