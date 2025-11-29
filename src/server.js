@@ -27,7 +27,8 @@ const Room = require("./models/Room");
  * @return {void}
  */
 function refreshRankings() {
-  const rankings = Room.players
+	const rankings = Room.players ?? [];
+    rankings = rankings
     .sort((a, b) => {
       if (a.score === b.score) return b.killCount - a.killCount;
       return b.score - a.score;
@@ -57,6 +58,11 @@ io.on("connection", (socket) => {
 		console.log("Socket disconnected:", socket.id, reason);
 	});
 });
+
+// update rankings every 1 second
+setInterval(() => {
+	refreshRankings();
+}, 1000);
 
 // Start server when run directly
 const PORT = process.env.PORT || 3000;
