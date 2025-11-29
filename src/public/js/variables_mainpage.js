@@ -22,3 +22,5 @@ const reload = document.querySelector('#reload');
 const howToPlay = document.querySelector('#how-to-play');
 const reloadCost = document.querySelector('#reload-cost');
 
+// Socket Connection
+const socket = io("http://localhost:3000");
