@@ -39,4 +39,45 @@ username.addEventListener("input", updatePlayButtonState);
 
 //?     POPUP_CONTROLLER      /
 
+const popup = document.querySelector(".popup_container");
+const backdrop = document.getElementById("popup_backdrop");
 
+const open_btn = how_to_play_btn_container;
+const close_btn = document.getElementById("close_btn");
+const got_it_btn = document.getElementById("got_it_btn_container");
+
+function openPopup() {
+  popup.classList.add("active");
+  backdrop.classList.add("active");
+}
+
+function closePopup() {
+  popup.classList.remove("active");
+  backdrop.classList.remove("active");
+}
+
+if (open_btn) {
+  open_btn.addEventListener("click", openPopup);
+}
+
+close_btn.addEventListener("click", closePopup);
+
+got_it_btn.addEventListener("click", closePopup);
+
+backdrop.addEventListener("click", closePopup);
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closePopup();
+});
+
+//?     TEST      /
+
+play_btn_container.addEventListener("click", () => {
+  if (!play_btn.disabled) {
+    alert("Starting game for: " + username.value);
+  }
+});
+
+spectator_btn_container.addEventListener("click", () => {
+  alert("Entering Spectator Mode");
+});
