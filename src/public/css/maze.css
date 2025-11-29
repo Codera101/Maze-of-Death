@@ -5,7 +5,9 @@
     justify-content: center;
     align-items: center;
     background-color: #000000;
-    overflow: hidden;
+    /* overflow: hidden; */
+    /* gap: 30px; */
+    padding: 30px;;
 }
 
 
