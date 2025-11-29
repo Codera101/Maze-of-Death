@@ -210,6 +210,12 @@ class Player {
 		if (this.bullets > 0) {
 			this._bullets -= 1;
 			this.updateTimeOfLastShoot();
+			const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+			async function reloadBullets(){
+				await sleep(this.room.reloadTime);
+				this._bullets += 1;
+			} 
+			reloadBullets();
 		}
 	}
 }
