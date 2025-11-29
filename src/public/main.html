@@ -1,72 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="/socket.io/socket.io.js"></script>
-    <title>Document</title>
-</head>
-<body>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/top_panel.css" />
+    <link rel="stylesheet" href="css/right_panel.css" />
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+    <title>Maze Of Death - Play</title>
+  </head>
+  <body>
     <div id="container">
+      <div id="header">
+        <div id="health">
+          <ion-icon name="heart" id="heart-icon"></ion-icon>
+          <div id="health-progress">&nbsp;</div>
+          <p id="health-value">999</p>
+        </div>
+        <div id="stats">
+          <div id="score" class="stats-box">
+            <span>
+              <ion-icon
+                name="trophy-outline"
+                class="stats-icon"
+                id="score-icon"
+              ></ion-icon>
+              <span id="score-value" class="stats-value">0</span>
+              <span class="stats-label">PTS</span>
+            </span>
+          </div>
 
-        <div id="header">
-
-            <div id="health">
-
-            </div>
-
-            <div id="stats">
-                <div id="points">
-
-                </div>
-                <div id="kills">
-
-                </div>
-            </div>
-
-            <button id="pause-menu">
-                
-            </button>
-
+          <div id="kills" class="stats-box">
+            <span>
+              <ion-icon
+                name="skull-outline"
+                class="stats-icon"
+                id="kills-icon"
+              ></ion-icon>
+              <span id="kills-value" class="stats-value">0</span>
+              <span class="stats-label">KILLS</span>
+            </span>
+          </div>
         </div>
 
-        <div id="maze-container">
-
-            <div id="maze-content">
-
-                <canvas id="maze">
-
-                </canvas>
-
-            </div>
-
-            <div id="leaderboard-panel">
-
-            </div>
-
+        <button id="exit-menu">
+          <ion-icon name="home-outline" id="exit-icon"></ion-icon>
+          <span id="exit-label">Exit</span>
+        </button>
+      </div>
+    </div>
+    <div id="main-container">
+      <div id="maze-container">
+        &nbsp;
+        <div id="maze-content">
+          <canvas id="maze"> </canvas>
         </div>
-
-        <div id="footer">
-
-            <div id="reload">
-
-            </div>
-
-            <div id="how-to-play">
-
-            </div>
-
-            </div>
-
-            <div id="reload-cost">
-
-            </div>
-
+      </div>
+      <div id="right-panel">
+        &nbsp;
+        <div id="right-panel-title">
+          <ion-icon name="ribbon"></ion-icon>
+          <span>Leaderboard</span>
         </div>
+        <ul id="right-panel-list">
+          <!-- <li id="player-row">
+            <span id="player-rank">10</span>
+            <span id="player-name">Abo_WahbaZ</span>
+            <span id="player-score-kills">1999/30</span>
+          </li> -->
+        </ul>
+      </div>
+    </div>
+    <div id="footer">
+      <div id="reload"></div>
 
+      <div id="how-to-play"></div>
+      <div id="reload-cost"></div>
     </div>
 
-
     <script src="js/variables_mainpage.js"></script>
-</body>
+    <script src="js/top_panel.js"></script>
+    <script src="js/right_panel.js"></script>
+  </body>
 </html>

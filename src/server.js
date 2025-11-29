@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Simple route serving the HTML client
 app.get("/", (req, res) => {
-	res.sendFile(path.join(__dirname, "public", "html", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "html", "index.html"));
 });
 
 // Create HTTP server and attach Socket.IO
@@ -23,25 +23,24 @@ const Player = require("./models/Player");
 const Room = require("./models/Room");
 
 io.on("connection", (socket) => {
-	
-	let player = new Player();
+  let player = new Player();
 
-	console.log("Socket connected:", socket.id);
-	socket.emit("message", "Hello from server — welcome!");
+  console.log("Socket connected:", socket.id);
+  socket.emit("message", "Hello from server — welcome!");
 
-	socket.on("pong", (data) => {
-		console.log("Received pong from", socket.id, data);
-	});
+  socket.on("pong", (data) => {
+    console.log("Received pong from", socket.id, data);
+  });
 
-	socket.on("disconnect", (reason) => {
-		console.log("Socket disconnected:", socket.id, reason);
-	});
+  socket.on("disconnect", (reason) => {
+    console.log("Socket disconnected:", socket.id, reason);
+  });
 });
 
 // Start server when run directly
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-	console.log(`Server listening on http://localhost:${PORT}`);
+  console.log(`Server listening on http://localhost:${PORT}`);
 });
 
 module.exports = { app, server, io };
