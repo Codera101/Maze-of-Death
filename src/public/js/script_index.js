@@ -11,4 +11,10 @@ const play_btn_container = document.getElementById("play_btn_container");
 
 //***********TEST**************/
 
+// play_btn.addEventListener("click", () => {
+//   alert("Starting game for: " + username.value);
+// });
 
+// document.getElementById("spectator_mode_btn").addEventListener("click", () => {
+//   alert("Entering Spectator Mode");
+// });
