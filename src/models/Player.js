@@ -20,11 +20,11 @@ class Player {
 	}
 
 	// ------------------ Getters / Setters ------------------
-	get id(){
+	get id() {
 		return this._id;
 	}
 
-	set id(newId){
+	set id(newId) {
 		this._id = newId;
 	}
 
@@ -119,26 +119,26 @@ class Player {
 		@brief reset player data to be respawn again
 		@param {number, number} x, y 
 	*/
-	resetPlayerDataForRespawn(x, y){
+	resetPlayerDataForRespawn(x, y) {
 		this._bullets = this.room.getInitBulltes();
 		this._health = this.room.getInitHealth();
-		this._x = x, this._y = y;
+		(this._x = x), (this._y = y);
 		this._direction = Directions.U;
-		this.timeOfLastMove(0);
-		this.timeOfLastShoot(0);
+		this.timeOfLastMove = 0;
+		this.timeOfLastShoot = 0;
 	}
 
 	/** 
 		@brief update the last time of Move (helps in Move speed).
 	*/
-	updateTimeOfLastMove(){
+	updateTimeOfLastMove() {
 		this._timeOfLastMove = Date.now();
 	}
 
 	/** 
 		@brief update the last time of Shoot (helps in Shoot speed).
 	*/
-	updateTimeOfLastShoot(){
+	updateTimeOfLastShoot() {
 		this._timeOfLastShoot = Date.now();
 	}
 
@@ -146,16 +146,19 @@ class Player {
 		@brief check if player can shoot according to the last time they moved (move speed) and their number of bullets
 		@returns {bool} 1 - if can, 0 if not.
 	*/
-	canShoot(){
-		return ((Date.now() - this.timeOfLastShoot()) >= this.room().getShootSpeed() && this.bullets() > 0);
+	canShoot() {
+		return (
+			Date.now() - this.timeOfLastShoot >= this.room.getShootSpeed() &&
+			this.bullets > 0
+		);
 	}
-	
+
 	/**
 		@brief check if player can move according to the last time they moved (move speed)
 		@returns {bool} 1 - if can, 0 if not.
 	*/
-	canMove(){
-		return Date.now() - this.timeOfLastMove() >= this.room().getMoveSpeed();
+	canMove() {
+		return Date.now() - this.timeOfLastMove >= this.room.getMoveSpeed();
 	}
 
 	/**
@@ -163,7 +166,7 @@ class Player {
 	  @param {number} amount - The amount of damage to apply
 	 */
 	recieveDamage(amount) {
-		this._health = max(0, this.health - amount);
+		this._health = Math.max(0, this.health - amount);
 	}
 
 	/**
@@ -171,7 +174,16 @@ class Player {
 	 * @returns {{x: number, y: number}} The current (x, y) position of the player
 	 */
 	getPosition() {
-		return { x: this.x(), y: this.y() };
+		return { x: this.x, y: this.y };
+	}
+
+	/**
+	 * @brief Set the player's position
+	 * @param {{x: number, y: number}} pos - The new position of the player
+	 */
+	setPosition(pos) {
+		this._x = pos.x;
+		this._y = pos.y;
 	}
 
 	/**
@@ -179,7 +191,7 @@ class Player {
     @returns {Direction} The current direction the player is facing
    */
 	getDirection() {
-		return this.direction();
+		return this.direction;
 	}
 
 	/**
@@ -187,7 +199,7 @@ class Player {
 	 * @param {number} amount - The amount to add (or subtract) from the score
 	 */
 	updateScore(amount) {
-		this.score(this.score() + amount);
+		this.score = this.score + amount;
 	}
 
 	/**
@@ -195,13 +207,11 @@ class Player {
 	 * just update the bullets and other stuff
 	 */
 	shoot() {
-		if(this.bullets() > 0){
+		if (this.bullets > 0) {
 			this._bullets -= 1;
 			this.updateTimeOfLastShoot();
 		}
 	}
-	
 }
-
 
 module.exports = Player;

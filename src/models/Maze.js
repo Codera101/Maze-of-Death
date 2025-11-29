@@ -131,6 +131,16 @@ class Maze {
 	}
 
 	/**
+	 * @brief Check if the position (x, y) is valid for a player to occupy
+	 * @param {number} x
+	 * @param {number} y
+	 * @returns {boolean} True if the position is valid and empty, false otherwise
+	 */
+	isValidForPlayer(x, y) {
+		return this.isValidPosition(x, y) && this.isEmptyCell(x, y);
+	}
+
+	/**
 	 * @breif return empty cells of the maze
 	 * @returns {Array} array of empty cells
 	 */
@@ -156,6 +166,18 @@ class Maze {
 				row += this.maze[i][j] === 1 ? "█" : " ";
 			}
 			console.log(row);
+		}
+	}
+
+	/**
+	 * @brief Set all cells in the maze to empty (0)
+	 * @note it is used for testing purposes
+	 */
+	setEmptyMaze() {
+		for (let i = 0; i < this.height; i++) {
+			for (let j = 0; j < this.width; j++) {
+				this.maze[i][j] = 0;
+			}
 		}
 	}
 }
