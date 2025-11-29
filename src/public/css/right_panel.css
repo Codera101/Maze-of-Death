@@ -7,16 +7,19 @@
 #main-container {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    height: 600px;
+    /* align-items: center; */
+    /* height: 600px; */
 }
 
 
 #right-panel {
-    display: block;
-    background-color: var(--color-soft-bg);
-    height: 600px;
-    width: 20rem;
+    /* display: block; */
+    /* background-color: var(--color-soft-bg); */
+    background-color: var(--color-dark-elevated);
+    /* height: 600px; */
+    /* height: 100%; */
+    /* width: 25%; */
+    /* max-width: 20rem; */
     justify-content: center;
     align-items: start;
     gap: 20px;
