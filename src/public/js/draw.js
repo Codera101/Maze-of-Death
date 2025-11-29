@@ -1,4 +1,5 @@
-
+// import { app } from "./maze.js"
+// import { rows, cols, cellSize, strokeWidth, mazeLayout } from "./config.js"
 
 function drawRoundedRect(app,{
     x = 0,
@@ -137,6 +138,42 @@ function drawPlayers(app) {
             fillColor: player.fillColor
         });
     });
+}
+
+function fireLaser(app, {xStart, yStart, xEnd, yEnd, lineWidth}) {
+    if (!lineWidth || lineWidth <= 0) return;
+
+    const laser = new PIXI.Graphics();
+
+    // Glow (gold)
+    laser.poly([xStart, yStart, xEnd, yEnd], false)
+        .stroke({
+            width: lineWidth * 3,
+            color: 0xFFD966,
+            alpha: 0.25,
+            cap: 'round'
+        });
+
+    // Core gold beam
+    laser.poly([xStart, yStart, xEnd, yEnd], false)
+        .stroke({
+            width: lineWidth,
+            color: 0xFFCC00,
+            alpha: 1,
+            cap: 'round'
+        });
+
+    app.stage.addChild(laser);
+
+    // Increase removal time here (200ms)
+    setTimeout(() => {
+        if (laser.parent) {
+            laser.parent.removeChild(laser);
+            laser.destroy();
+        }
+    }, 200); // <—— change this to whatever duration you want
+
+    return laser;
 }
 
 

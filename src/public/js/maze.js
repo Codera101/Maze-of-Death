@@ -24,3 +24,12 @@ drawPlayer(app, {
     dir: 'up',
     fillColor: "#ccAc50"
 });
+
+
+fireLaser(app, {
+    xStart: 0 ,
+    yStart: 0,
+    xEnd: 300,
+    yEnd: 300,
+    lineWidth: 5, 
+});
