@@ -179,7 +179,14 @@ body {
   box-shadow: none;
 }
 
+/** Media_Queries  */
 
+@media (max-width: 450px) {
+  .title {
+    letter-spacing: -1.5px;
+    white-space: wrap;
+  }
+}
 
 /* ----------------------- */
 /*! POPUP STYLING */
