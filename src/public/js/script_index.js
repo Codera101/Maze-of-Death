@@ -11,6 +11,20 @@ username.addEventListener("input", () => {
 });
 
 // ********PLAY_BUTTON**********/
+function updatePlayButtonState() {
+  const isEmpty = username.value.trim().length === 0;
+
+  play_btn.disabled = isEmpty;
+
+  if (isEmpty) {
+    play_btn_container.classList.add("disabled");
+  } else {
+    play_btn_container.classList.remove("disabled");
+  }
+}
+
+updatePlayButtonState();
+username.addEventListener("input", updatePlayButtonState);
 
 //*********POPUP_CONTROLLER*************/
 
