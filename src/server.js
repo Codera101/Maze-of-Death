@@ -43,6 +43,20 @@ function refreshRankings() {
   io.emit("refresh_rank", JSON.stringify({ rankings }));
 }
 
+/**
+ * @brief Refresh player stats
+ */
+function refreshPlayerStats(playerID) {
+  const player = Room.players.find((p) => p.id === playerID);
+  if (!player) return;
+  const stats = {
+    score: player.score,
+    killCount: player.killCount,
+    color: player.color,
+  };
+  io.to(playerID).emit("refresh_player", JSON.stringify(stats));
+}
+
 io.on("connection", (socket) => {
 	
 	let player = new Player();
@@ -53,6 +67,10 @@ io.on("connection", (socket) => {
 	socket.on("pong", (data) => {
 		console.log("Received pong from", socket.id, data);
 	});
+
+  setInterval(() => {
+    refreshPlayerStats(socket.id);
+  }, 100);
 
 	socket.on("disconnect", (reason) => {
 		console.log("Socket disconnected:", socket.id, reason);
