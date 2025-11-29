@@ -22,6 +22,24 @@ const io = new Server(server);
 const Player = require("./models/Player");
 const Room = require("./models/Room");
 
+/**
+ * @brief Refresh panel rankings
+ * @return {void}
+ */
+function refreshRankings() {
+	const rankings = Room.players().sort((a, b) => {
+		if (a.score() === b.score()) return a.killCount() - b.killCount();
+		return b.score() - a.score();
+	}).map((player) => ({
+		username: player.userName(),
+		score: player.score(),
+		killCount: player.killCount(),
+		color: player.color()
+	}));
+	console.log("Updated rankings:", rankings);
+	io.emit("refresh_rank", JSON.stringify({ rankings }));
+}
+
 io.on("connection", (socket) => {
 	
 	let player = new Player();
