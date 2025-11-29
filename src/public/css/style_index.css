@@ -78,11 +78,6 @@ body {
   /* max-width: 65vw; */
 }
 
-.input_username img {
-  width: 22px;
-  margin-right: 12px;
-}
-
 .input_username input {
   width: 90%;
   background: transparent;
@@ -115,13 +110,6 @@ body {
   width: 100%;
   max-width: 420px;
   /* max-width: 65vw; */
-}
-
-.button_play img,
-.button_spectator img,
-.button_how_to_play img {
-  width: 24px;
-  margin-right: 12px;
 }
 
 .button_play:hover,
@@ -158,6 +146,11 @@ body {
   color: #777;
   text-align: center;
   letter-spacing: 4px;
+}
+
+i {
+  width: 22px;
+  margin-right: 12px;
 }
 
 /** play_btn **/
