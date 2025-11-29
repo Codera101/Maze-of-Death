@@ -9,8 +9,6 @@ await app.init({
 });
 mazeContent.appendChild(app.canvas);
 
-
-
 drawMaze(app);
 
 drawPlayer(app, {

@@ -138,3 +138,9 @@ function drawPlayers(app) {
         });
     });
 }
+
+
+function updateMaze(app) {
+    drawMaze(app);
+    drawPlayers(app);
+}
