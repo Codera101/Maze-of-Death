@@ -106,6 +106,24 @@ function refreshVisiblePlayers(playerID) {
   );
 }
 
+/** 
+ * @brief send the maze layout to the player at joinning time.
+ * @param {int} playerID 
+ */
+function drowMaze(playerID){
+	io.to(playerID).emit("draw_maze", {
+		maze : {
+			row: GameRoom.height,
+            col: GameRoom.width,
+            layout: GameRoom.maze
+		}
+	});
+}
+
+/** 
+ * @brief handle player join room
+ * @param {string, int} username, playerID 
+ */
 function joinPlayer(username, playerID){
 	let newPlayer = GameRoom.addNewPlayer(username, playerID);
 	io.to(playerID).emit("player_joined", {
@@ -115,6 +133,7 @@ function joinPlayer(username, playerID){
         health: newPlayer.health,
         kill_count: newPlayer.killCount
 	});
+	drowMaze(playerID);
 }
 
 io.on("connection", (socket) => {
