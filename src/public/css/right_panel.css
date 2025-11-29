@@ -14,10 +14,11 @@
 
 #right-panel {
     /* display: block; */
-    background-color: var(--color-soft-bg);
+    /* background-color: var(--color-soft-bg); */
+    background-color: var(--color-dark-elevated);
     /* height: 600px; */
     /* height: 100%; */
-    width: 25%;
+    /* width: 25%; */
     /* max-width: 20rem; */
     justify-content: center;
     align-items: start;
