@@ -88,4 +88,4 @@ server.listen(PORT, () => {
 	console.log(`Server listening on http://localhost:${PORT}`);
 });
 
-module.exports = { app, server, io, refreshRankings };
+module.exports = { app, server, io, refreshRankings, refreshPlayerStats };
