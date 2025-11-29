@@ -106,6 +106,17 @@ function refreshVisiblePlayers(playerID) {
   );
 }
 
+function joinPlayer(username, playerID){
+	let newPlayer = GameRoom.addNewPlayer(username, playerID);
+	io.to(playerID).emit("player_joined", {
+		id : newPlayer.id,
+		username: newPlayer.userName,
+        score: newPlayer.score,
+        health: newPlayer.health,
+        kill_count: newPlayer.killCount
+	});
+}
+
 io.on("connection", (socket) => {
   let player = new Player();
 
@@ -117,7 +128,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("join_player", (username) => {
-	
+	joinPlayer(username, socket.id);
   });
 
   setInterval(() => {
