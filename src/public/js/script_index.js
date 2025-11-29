@@ -5,6 +5,11 @@ const play_btn_container = document.getElementById("play_btn_container");
 
 //*********COUNTER****************/
 
+username.addEventListener("input", () => {
+  counter.textContent = `${username.value.length}/20`;
+  play_btn.disabled = username.value.trim().length === 0;
+});
+
 // ********PLAY_BUTTON**********/
 
 //*********POPUP_CONTROLLER*************/
