@@ -29,3 +29,8 @@ const reloadCost = document.querySelector("#reload-cost");
 
 // Socket Connection
 // const socket = io("http://localhost:3000");
+
+// Maze Variables
+const rows = 16;
+const cols = 16;
+const cellSize = 50;

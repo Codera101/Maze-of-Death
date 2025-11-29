@@ -13,6 +13,7 @@
 
     <link rel="stylesheet" href="css/top_panel.css" />
     <link rel="stylesheet" href="css/right_panel.css" />
+    <link rel="stylesheet" href="css/maze.css" />
     <script
       type="module"
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
@@ -64,12 +65,14 @@
       </div>
     </div>
     <div id="main-container">
+
       <div id="maze-container">
-        &nbsp;
-        <div id="maze-content">
-          <canvas id="maze"> </canvas>
-        </div>
+            &nbsp;
+            <div id="maze-content">
+                
+            </div>
       </div>
+
       <div id="right-panel">
         &nbsp;
         <div id="right-panel-title">
@@ -92,8 +95,11 @@
       <div id="reload-cost"></div>
     </div>
 
+
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.14.3/dist/pixi.min.js"></script>
     <script src="js/variables_mainpage.js"></script>
     <script src="js/top_panel.js"></script>
     <script src="js/right_panel.js"></script>
+    <script type="module" src="js/maze.js"></script>
   </body>
 </html>
