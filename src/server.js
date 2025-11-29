@@ -24,7 +24,7 @@ const Room = require("./models/Room");
 
 io.on("connection", (socket) => {
 	
-	let player = new Player();
+	// let player = new Player();
 
 	console.log("Socket connected:", socket.id);
 	socket.emit("message", "Hello from server — welcome!");
