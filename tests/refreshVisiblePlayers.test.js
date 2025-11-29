@@ -31,7 +31,7 @@ jest.mock("socket.io", () => {
 describe("refreshVisiblePlayers", () => {
   let io;
   let refreshVisiblePlayers;
-  let Room;
+  let GameRoom;
   let consoleLogSpy;
 
   beforeEach(() => {
@@ -43,9 +43,9 @@ describe("refreshVisiblePlayers", () => {
 
     // Re-require the server module to get a fresh instance
     jest.resetModules();
-    Room = require("../src/models/Room");
     const server = require("../src/server");
     io = server.io;
+    GameRoom = server.GameRoom;
 
     refreshVisiblePlayers = server.refreshVisiblePlayers;
   });
@@ -75,8 +75,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#00FF00",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => false),
       };
 
@@ -119,8 +119,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#00FF00",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => false),
       };
 
@@ -148,7 +148,7 @@ describe("refreshVisiblePlayers", () => {
           color: "#FF0000",
         },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       const mockToEmit = jest.fn();
       io.to = jest.fn(() => ({ emit: mockToEmit }));
@@ -167,9 +167,9 @@ describe("refreshVisiblePlayers", () => {
       expect(emittedData.visible_player_list).toEqual([]);
     });
 
-    test("should handle undefined Room.players", () => {
+    test("should handle undefined GameRoom.players", () => {
       // Arrange
-      Room.players = undefined;
+      GameRoom.players = undefined;
 
       const mockToEmit = jest.fn();
       io.to = jest.fn(() => ({ emit: mockToEmit }));
@@ -190,7 +190,7 @@ describe("refreshVisiblePlayers", () => {
 
     test("should handle empty players list", () => {
       // Arrange
-      Room.players = [];
+      GameRoom.players = [];
 
       const mockToEmit = jest.fn();
       io.to = jest.fn(() => ({ emit: mockToEmit }));
@@ -233,8 +233,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#0000FF",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn((x1, y1, x2, y2) => {
           // Obstacle between player1 and player2
           if (
@@ -287,8 +287,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#0000FF",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => false),
       };
 
@@ -326,9 +326,9 @@ describe("refreshVisiblePlayers", () => {
           color: "#00FF00",
         },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
       const isThereObstacleMock = jest.fn(() => false);
-      Room.maze = {
+      GameRoom.maze = {
         isThereObstacle: isThereObstacleMock,
       };
 
@@ -364,8 +364,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#00FF00",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => false),
       };
 
@@ -409,8 +409,8 @@ describe("refreshVisiblePlayers", () => {
           anotherExtraProp: "also should not appear",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => false),
       };
 
@@ -465,8 +465,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#FFFF00",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => false),
       };
 
@@ -504,7 +504,7 @@ describe("refreshVisiblePlayers", () => {
           color: "#FF0000",
         },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       const mockToEmit = jest.fn();
       io.to = jest.fn(() => ({ emit: mockToEmit }));
@@ -532,7 +532,7 @@ describe("refreshVisiblePlayers", () => {
           color: "#FF0000",
         },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       const mockToEmit = jest.fn();
       io.to = jest.fn(() => ({ emit: mockToEmit }));
@@ -561,7 +561,7 @@ describe("refreshVisiblePlayers", () => {
           color: "#FF0000",
         },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       const mockToEmit = jest.fn();
       io.to = jest.fn(() => ({ emit: mockToEmit }));
@@ -590,7 +590,7 @@ describe("refreshVisiblePlayers", () => {
           color: "#FF0000",
         },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       const mockToEmit = jest.fn();
       io.to = jest.fn(() => ({ emit: mockToEmit }));
@@ -623,8 +623,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#00FF00",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => false),
       };
 
@@ -661,8 +661,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#00FF00",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => false),
       };
 
@@ -699,8 +699,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#00FF00",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => false),
       };
 
@@ -744,8 +744,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#0000FF",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => true), // All blocked
       };
 
@@ -796,8 +796,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#FFFF00",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => false),
       };
 
@@ -835,8 +835,8 @@ describe("refreshVisiblePlayers", () => {
           color: "#00FF00",
         },
       ];
-      Room.players = mockPlayers;
-      Room.maze = {
+      GameRoom.players = mockPlayers;
+      GameRoom.maze = {
         isThereObstacle: jest.fn(() => false),
       };
 
@@ -866,7 +866,7 @@ describe("refreshVisiblePlayers", () => {
           color: "#FF0000",
         },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       const mockToEmit = jest.fn();
       io.to = jest.fn(() => ({ emit: mockToEmit }));

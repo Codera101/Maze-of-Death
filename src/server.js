@@ -21,13 +21,13 @@ const io = new Server(server);
 
 const Player = require("./models/Player");
 const Room = require("./models/Room");
-
+const GameRoom = new Room();
 /**
  * @brief Refresh panel rankings
  * @return {void}
  */
 function refreshRankings() {
-  let rankings = Room.players ?? [];
+  let rankings = GameRoom.players ?? [];
   rankings = rankings
     .sort((a, b) => {
       if (a.score === b.score) return b.killCount - a.killCount;
@@ -46,10 +46,10 @@ function refreshRankings() {
  * @brief Refresh player stats
  */
 function refreshPlayerStats(playerID) {
-  if (!Room.players) {
+  if (!GameRoom.players) {
     return;
   }
-  const player = Room.players.find((p) => p.id === playerID);
+  const player = GameRoom.players.find((p) => p.id === playerID);
   if (!player) return;
   const stats = {
     id: player.id,
@@ -69,7 +69,7 @@ function refreshPlayerStats(playerID) {
  * @return {void}
  */
 function refreshVisiblePlayers(playerID) {
-  if (!Room.players) {
+  if (!GameRoom.players) {
     io.to(playerID).emit(
       "refresh_players",
       JSON.stringify({ visible_player_list: [] })
@@ -77,7 +77,7 @@ function refreshVisiblePlayers(playerID) {
     return;
   }
 
-  const player = Room.players.find((p) => p.id === playerID);
+  const player = GameRoom.players.find((p) => p.id === playerID);
 
   if (!player) {
     io.to(playerID).emit(
@@ -86,10 +86,10 @@ function refreshVisiblePlayers(playerID) {
     );
     return;
   }
-  const visiblePlayers = Room.players.filter(
+  const visiblePlayers = GameRoom.players.filter(
     (p) =>
       p.id !== playerID &&
-      Room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false
+      GameRoom.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false
   );
   const visibleData = visiblePlayers.map((p) => ({
     id: p.id,
@@ -141,4 +141,4 @@ server.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });
 
-module.exports = { app, server, io, refreshRankings, refreshPlayerStats, refreshVisiblePlayers };
+module.exports = { app, server, io, refreshRankings, refreshPlayerStats, refreshVisiblePlayers, GameRoom };
