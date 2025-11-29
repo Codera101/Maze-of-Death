@@ -15,7 +15,7 @@
   </head>
   <body>
     <!--! main_page -->
-
+    <!-- style="display: none" -->
     <main class="menu_container">
       <!--^ heading  -->
 
@@ -42,12 +42,12 @@
         <button id="play_btn" disabled>PLAY</button>
       </div>
 
-      <div class="button_spectator">
+      <div class="button_spectator" id="spectator_mode_btn_container">
         <i class="fa-regular fa-eye"></i>
         <button id="spectator_mode_btn">SPECTATOR MODE</button>
       </div>
 
-      <div class="button_how_to_play">
+      <div class="button_how_to_play" id="how_to_play_btn_container">
         <i class="fa-solid fa-question"></i>
         <button id="how_to_play_btn">HOW TO PLAY</button>
       </div>
@@ -57,6 +57,83 @@
     </main>
 
     <!--! popup_controller -->
+
+    <div class="popup_container">
+      <div class="header">
+        <h1>HOW TO PLAY ?</h1>
+        <i
+          id="close_btn"
+          class="close_icon fa-solid fa-xmark close-icon"
+          role="button"
+          aria-label="Close"
+        ></i>
+      </div>
+
+      <div class="content">
+        <ol>
+          <li>
+            <strong>CONTROLS</strong>
+            <ul>
+              <li>
+                <i class="fa-solid fa-arrows-alt"></i>
+                <p>Arrow Keys</p>
+              </li>
+              <li>
+                <i class="fa-solid fa-bullseye"></i>
+                <p>Shoot: Spacebar</p>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>GAME RULES</strong>
+            <ul>
+              <li>
+                <i class="fa-solid fa-heart"></i>
+                <p>Start with 3 health and 10 bullets</p>
+              </li>
+              <li>
+                <i class="fa-solid fa-bolt"></i>
+                <p>
+                  You can only see and shoot players directly in front of you
+                </p>
+              </li>
+              <li>
+                <i class="fa-solid fa-bullseye"></i>
+                <p>
+                  Each successful hit: +5 points for you, -5 points and -1
+                  health for target
+                </p>
+              </li>
+              <li>
+                <i class="fa-solid fa-skull-crossbones"></i>
+                <p>
+                  When health reaches 0, you're eliminated and respawn after 3
+                  seconds
+                </p>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong>TIPS</strong>
+            <ul>
+              <li>
+                Watch your ammo count - running out leaves you defenseless
+              </li>
+              <li>
+                Watch your ammo count - running out leaves you defenseless
+              </li>
+              <li>Corner shots are deadly - peek carefully!</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+      <div class="footer">
+        <div class="btn_got_it" id="got_it_btn_container">
+          <button id="got_it_btn">GOT IT!</button>
+        </div>
+      </div>
+    </div>
+    <div class="popup_backdrop" id="popup_backdrop"></div>
 
     <script src="js/script_index.js"></script>
   </body>

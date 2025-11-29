@@ -1,16 +1,27 @@
 const username = document.getElementById("username");
 const counter = document.getElementById("counter");
-const play_btn = document.getElementById("play_btn");
-const play_btn_container = document.getElementById("play_btn_container");
 
-//*********COUNTER****************/
+//?     BUTTONS_CONTAINER      /
+
+const play_btn_container = document.getElementById("play_btn_container");
+const spectator_btn_container = document.getElementById(
+  "spectator_mode_btn_container"
+);
+const how_to_play_btn_container = document.getElementById(
+  "how_to_play_btn_container"
+);
+
+const play_btn = document.getElementById("play_btn");
+
+//?   COUNTER          /
 
 username.addEventListener("input", () => {
   counter.textContent = `${username.value.length}/20`;
-  play_btn.disabled = username.value.trim().length === 0;
+  //   play_btn_container.disabled = username.value.trim().length === 0;
 });
 
-// ********PLAY_BUTTON**********/
+//?     PLAY_BUTTON      /
+
 function updatePlayButtonState() {
   const isEmpty = username.value.trim().length === 0;
 
@@ -26,14 +37,6 @@ function updatePlayButtonState() {
 updatePlayButtonState();
 username.addEventListener("input", updatePlayButtonState);
 
-//*********POPUP_CONTROLLER*************/
+//?     POPUP_CONTROLLER      /
 
-//***********TEST**************/
 
-// play_btn.addEventListener("click", () => {
-//   alert("Starting game for: " + username.value);
-// });
-
-// document.getElementById("spectator_mode_btn").addEventListener("click", () => {
-//   alert("Entering Spectator Mode");
-// });

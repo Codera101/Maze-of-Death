@@ -5,7 +5,7 @@
 }
 
 body {
-  background: #000;
+  background-color: #000;
   color: #fff;
   font-family: Arial, sans-serif;
   height: 100vh;
@@ -24,6 +24,8 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+/**--------------    title_style    -------------------*/
 
 .title {
   /* font-size: 4vw; */
@@ -61,6 +63,8 @@ body {
   margin-bottom: 40px;
 }
 
+/**--------------    input_username    -------------------*/
+
 .input_username {
   position: relative;
   display: flex;
@@ -88,10 +92,14 @@ body {
   padding: 12px 0;
 }
 
+/**--------------    counter_style    -------------------*/
+
 #counter {
   font-size: 12px;
   color: #39ff85;
 }
+
+/**--------------    buttons_style    -------------------*/
 
 .button_play,
 .button_spectator,
@@ -140,6 +148,8 @@ body {
   font-weight: bold;
 }
 
+/**-------------     end_paragraph_in_page    ---------------*/
+
 .footer_paragraph {
   margin-top: 40px;
   font-size: 12px;
@@ -148,12 +158,7 @@ body {
   letter-spacing: 4px;
 }
 
-i {
-  width: 22px;
-  margin-right: 12px;
-}
-
-/** play_btn **/
+/**---------------     play_btn_disabled   ----------------**/
 
 .button_play.disabled {
   opacity: 0.4;
@@ -167,12 +172,13 @@ i {
 }
 
 .button_play.disabled:hover {
+  background-color: #ff2c4799;  
   border-color: #2c9bff55;
   transform: none;
   box-shadow: none;
 }
 
-/** Media_Queries  */
+/**--------------    Media_Queries    ----------------  */
 
 @media (max-width: 450px) {
   .title {
@@ -181,6 +187,8 @@ i {
   }
 }
 
-/* ----------------------- */
-/*! POPUP STYLING */
-/* ----------------------- */
+/* ----------------------------------- */
+/*!---------- POPUP STYLING -----------*/
+/* ----------------------------------- */
+
+
