@@ -47,6 +47,7 @@ function refreshRankings() {
  * @brief Refresh player stats
  */
 function refreshPlayerStats(playerID) {
+  if(!Room.players) return;
   const player = Room.players.find((p) => p.id === playerID);
   if (!player) return;
   const stats = {
@@ -57,6 +58,7 @@ function refreshPlayerStats(playerID) {
     bullets: player.bullets,
     killCount: player.killCount
   };
+  console.log(`Refreshing stats for player ${playerID}:`, stats);
   io.to(playerID).emit("refresh_player", JSON.stringify(stats));
 }
 
