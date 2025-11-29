@@ -1,0 +1,151 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu_container {
+  text-align: center;
+  /* width: 80%; */
+  width: 90%;
+  max-width: 4200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  /* font-size: 4vw; */
+  font-size: 50px;
+  font-weight: 900;
+  color: #ff2c47;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(255, 44, 71, 0.7), 0 0 40px rgba(255, 44, 71, 0.4),
+    0 0 80px rgba(255, 44, 71, 0.2);
+
+  filter: blur(0.5px);
+
+  animation: ultraSmoothNeon 1s ease-in-out infinite alternate; /*cubic-bezier(0.65, 0.05, 0.36, 1)*/
+}
+
+
+.subtitle {
+  color: #b2b2b2;
+  margin-bottom: 40px;
+}
+
+.input_username {
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+  justify-content: flex-start;
+  background: #1c1c2e;
+  border: 2px solid #2c9bff55;
+  border-radius: 10px;
+  padding: 10px 15px;
+  margin-bottom: 25px;
+  /* width: 420px; */
+  width: 100%;
+  max-width: 420px;
+  /* max-width: 65vw; */
+}
+
+.input_username img {
+  width: 22px;
+  margin-right: 12px;
+}
+
+.input_username input {
+  width: 90%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 16px;
+  padding: 12px 0;
+}
+
+#counter {
+  font-size: 12px;
+  color: #39ff85;
+}
+
+.button_play,
+.button_spectator,
+.button_how_to_play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1c1c2e;
+  border: 2px solid #2c9bff55;
+  padding: 12px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  transition: 0.2s;
+  /* width: 420px; */
+  width: 100%;
+  max-width: 420px;
+  /* max-width: 65vw; */
+}
+
+.button_play img,
+.button_spectator img,
+.button_how_to_play img {
+  width: 24px;
+  margin-right: 12px;
+}
+
+.button_play:hover,
+.button_spectator:hover,
+.button_how_to_play:hover {
+  border-color: #2c9bff;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 50px rgba(44, 155, 255, 0.18);
+}
+
+.button_play {
+  background: #ff2c47;
+  border-color: #ff2c4755;
+}
+
+.button_play:hover {
+  background: #ff3c57;
+}
+
+.button_play button,
+.button_spectator button,
+.button_how_to_play button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.footer_paragraph {
+  margin-top: 40px;
+  font-size: 12px;
+  color: #777;
+  text-align: center;
+  letter-spacing: 4px;
+}
+
+
+/* ----------------------- */
+/*! POPUP STYLING */
+/* ----------------------- */
