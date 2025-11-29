@@ -7,16 +7,18 @@
 #main-container {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    /* align-items: center; */
     /* height: 600px; */
 }
 
 
 #right-panel {
-    display: block;
+    /* display: block; */
     background-color: var(--color-soft-bg);
-    height: 600px;
-    width: 20rem;
+    /* height: 600px; */
+    /* height: 100%; */
+    width: 25%;
+    /* max-width: 20rem; */
     justify-content: center;
     align-items: start;
     gap: 20px;
