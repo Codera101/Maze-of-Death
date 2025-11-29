@@ -27,17 +27,19 @@ const Room = require("./models/Room");
  * @return {void}
  */
 function refreshRankings() {
-	const rankings = Room.players().sort((a, b) => {
-		if (a.score() === b.score()) return a.killCount() - b.killCount();
-		return b.score() - a.score();
-	}).map((player) => ({
-		username: player.userName(),
-		score: player.score(),
-		killCount: player.killCount(),
-		color: player.color()
-	}));
-	console.log("Updated rankings:", rankings);
-	io.emit("refresh_rank", JSON.stringify({ rankings }));
+  const rankings = Room.players
+    .sort((a, b) => {
+      if (a.score === b.score) return b.killCount - a.killCount;
+      return b.score - a.score;
+    })
+    .map((player) => ({
+      username: player.userName,
+      score: player.score,
+      killCount: player.killCount,
+      color: player.color,
+    }));
+  console.log("Updated rankings:", rankings);
+  io.emit("refresh_rank", JSON.stringify({ rankings }));
 }
 
 io.on("connection", (socket) => {
@@ -62,4 +64,4 @@ server.listen(PORT, () => {
 	console.log(`Server listening on http://localhost:${PORT}`);
 });
 
-module.exports = { app, server, io };
+module.exports = { app, server, io, refreshRankings };
