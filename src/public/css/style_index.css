@@ -40,6 +40,21 @@ body {
   animation: ultraSmoothNeon 1s ease-in-out infinite alternate; /*cubic-bezier(0.65, 0.05, 0.36, 1)*/
 }
 
+@keyframes ultraSmoothNeon {
+  0% {
+    text-shadow: 0 0 10px rgba(255, 44, 71, 0.7),
+      0 0 40px rgba(255, 44, 71, 0.4), 0 0 80px rgba(255, 44, 71, 0.2);
+    opacity: 0.95;
+  }
+
+  100% {
+    text-shadow: 0 0 20px rgba(255, 44, 71, 0.9),
+      0 0 60px rgba(255, 44, 71, 0.6), 0 0 150px rgba(255, 44, 71, 0.3),
+      0 0 250px rgba(255, 44, 71, 0.1);
+
+    opacity: 1;
+  }
+}
 
 .subtitle {
   color: #b2b2b2;
