@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maze of Death - Main Menu</title>
+    <link rel="stylesheet" href="css/style_index.css" />
+  </head>
+  <body>
+    <!--! main_page -->
+
+    <main class="menu_container">
+      <!--^ heading  -->
+
+      <h1 class="title">MAZE OF DEATH</h1>
+      <p class="subtitle">FAST-PACED MULTIPLAYER MAZE SHOOTER</p>
+
+      <!--^  input_username  -->
+
+      <div class="input_username">
+        <img src="imgs_index/user.png" alt="Icon User" />
+        <input
+          type="text"
+          id="username"
+          placeholder="Enter your username"
+          maxlength="20"
+        />
+        <span id="counter">0/20</span>
+      </div>
+
+      <!--^ buttons  -->
+
+      <div class="button_play" id="play_btn_container">
+        <img src="imgs_index/play.png" alt="Icon Play" />
+        <button id="play_btn" disabled>PLAY</button>
+      </div>
+
+      <div class="button_spectator">
+        <img src="imgs_index/eye.png" alt="Icon Eye" />
+        <button id="spectator_mode_btn">SPECTATOR MODE</button>
+      </div>
+
+      <div class="button_how_to_play">
+        <img src="imgs_index/question.png" alt="Icon Q" />
+        <button id="how_to_play_btn">HOW TO PLAY</button>
+      </div>
+
+      <!--^ paragraph  -->
+      <p class="footer_paragraph">READY TO ENTER THE MAZE?</p>
+    </main>
+
+    <!--! popup_controller -->
+
+    <script src="js/script_index.js"></script>
+  </body>
+</html>
