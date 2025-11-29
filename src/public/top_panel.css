@@ -96,12 +96,12 @@
     justify-content: center;
     width: 128px;
     height: 32px;
-    border-radius: 7px;
     gap: 3px;
     margin: 0px 6px 0px 6px;
     padding: 2px 3px 2px 3px;
-    border-width: 2px;
-    border: solid;
+    border-radius: 8px;
+    border-width: 1px;
+    border-style: solid;
 }
 
 .stats-icon {

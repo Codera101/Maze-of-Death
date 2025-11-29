@@ -12,6 +12,7 @@
     />
 
     <link rel="stylesheet" href="top_panel.css" />
+    <link rel="stylesheet" href="right_panel.css" />
     <script
       type="module"
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
@@ -62,15 +63,28 @@
         </button>
       </div>
     </div>
-
-    <div id="maze-container">
-      <div id="maze-content">
-        <canvas id="maze"> </canvas>
+    <div id="main-container">
+      <div id="maze-container">
+        &nbsp;
+        <div id="maze-content">
+          <canvas id="maze"> </canvas>
+        </div>
       </div>
-
-      <div id="leaderboard-panel"></div>
+      <div id="right-panel">
+        &nbsp;
+        <div id="right-panel-title">
+          <ion-icon name="ribbon"></ion-icon>
+          <span>Leaderboard</span>
+        </div>
+        <ul id="right-panel-list">
+          <!-- <li id="player-row">
+            <span id="player-rank">10</span>
+            <span id="player-name">Abo_WahbaZ</span>
+            <span id="player-score-kills">1999/30</span>
+          </li> -->
+        </ul>
+      </div>
     </div>
-
     <div id="footer">
       <div id="reload"></div>
 
@@ -80,5 +94,6 @@
 
     <script src="js/variables_mainpage.js"></script>
     <script src="js/top_panel.js"></script>
+    <script src="js/right_panel.js"></script>
   </body>
 </html>

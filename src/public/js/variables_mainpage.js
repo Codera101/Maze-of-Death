@@ -18,7 +18,8 @@ const mazeContainer = document.querySelector("#maze-container");
 const mazeContent = document.querySelector("#maze-content");
 const maze = document.querySelector("#maze");
 
-const leaderboardPanel = document.querySelector("#leaderboard-panel");
+const rightPanel = document.querySelector("#right-panel");
+const rightPanelList = document.querySelector("#right-panel-list");
 
 // Footer Elements
 const footer = document.querySelector("#footer");
