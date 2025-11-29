@@ -297,8 +297,12 @@ describe("refreshPlayerStats", () => {
       const mockToEmit = jest.fn();
       io.to = jest.fn(() => ({ emit: mockToEmit }));
 
-      // Act & Assert
-      expect(() => refreshPlayerStats("player1")).toThrow();
+      // Act
+      refreshPlayerStats("player1");
+
+      // Assert
+      expect(io.to).not.toHaveBeenCalled();
+      expect(mockToEmit).not.toHaveBeenCalled();
     });
 
     test("should handle player with missing optional fields", () => {
