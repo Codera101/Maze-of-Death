@@ -27,7 +27,7 @@ const Room = require("./models/Room");
  * @return {void}
  */
 function refreshRankings() {
-	const rankings = Room.players ?? [];
+	let rankings = Room.players ?? [];
     rankings = rankings
     .sort((a, b) => {
       if (a.score === b.score) return b.killCount - a.killCount;
