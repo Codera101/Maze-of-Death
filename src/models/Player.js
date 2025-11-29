@@ -1,7 +1,7 @@
 /** @format */
 
-import Directions, { getNextPosition } from "./Direction.js";
-
+//import Directions, { getNextPosition } from "./Direction.js";
+const Directions = require("./Direction.js");
 
 class Player {
 	constructor(x, y, room, userName, id) {
