@@ -40,7 +40,7 @@ function refreshRankings() {
       color: player.color,
     }));
   console.log("Updated rankings:", rankings);
-  io.emit("refresh_rank", JSON.stringify({ rankings }));
+  io.emit("refresh_rank", JSON.stringify({ "add_players": rankings }));
 }
 
 /**
