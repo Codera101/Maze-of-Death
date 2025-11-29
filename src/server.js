@@ -50,9 +50,12 @@ function refreshPlayerStats(playerID) {
   const player = Room.players.find((p) => p.id === playerID);
   if (!player) return;
   const stats = {
+    id: player.id,
+    username: player.userName,
+    health: player.health,
     score: player.score,
-    killCount: player.killCount,
-    color: player.color,
+    bullets: player.bullets,
+    killCount: player.killCount
   };
   io.to(playerID).emit("refresh_player", JSON.stringify(stats));
 }

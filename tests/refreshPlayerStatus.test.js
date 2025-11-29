@@ -50,9 +50,9 @@ describe("refreshPlayerStats", () => {
     test("should find player by id and emit their stats", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", score: 50, killCount: 5, color: "#FF0000" },
-        { id: "player2", score: 100, killCount: 10, color: "#00FF00" },
-        { id: "player3", score: 75, killCount: 7, color: "#0000FF" },
+        { id: "player1", userName: "User1", score: 50, killCount: 5, health: 80, bullets: 10 },
+        { id: "player2", userName: "User2", score: 100, killCount: 10, health: 100, bullets: 15 },
+        { id: "player3", userName: "User3", score: 75, killCount: 7, health: 60, bullets: 8 },
       ];
       Room.players = mockPlayers;
 
@@ -72,17 +72,20 @@ describe("refreshPlayerStats", () => {
 
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData).toEqual({
+        id: "player2",
+        username: "User2",
         score: 100,
         killCount: 10,
-        color: "#00FF00",
+        health: 100,
+        bullets: 15,
       });
     });
 
     test("should not emit if player id is not found", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", score: 50, killCount: 5, color: "#FF0000" },
-        { id: "player2", score: 100, killCount: 10, color: "#00FF00" },
+        { id: "player1", userName: "User1", score: 50, killCount: 5, health: 80, bullets: 10 },
+        { id: "player2", userName: "User2", score: 100, killCount: 10, health: 100, bullets: 15 },
       ];
       Room.players = mockPlayers;
 
@@ -114,17 +117,18 @@ describe("refreshPlayerStats", () => {
   });
 
   describe("data mapping", () => {
-    test("should emit only score, killCount, and color", () => {
+    test("should emit id, username, health, score, bullets, and killCount", () => {
       // Arrange
       const mockPlayers = [
         {
           id: "player1",
           score: 50,
           killCount: 5,
-          color: "#FF0000",
           userName: "TestUser",
           health: 100,
+          bullets: 20,
           extraField: "should not be included",
+          color: "#FF0000",
         },
       ];
       Room.players = mockPlayers;
@@ -138,19 +142,21 @@ describe("refreshPlayerStats", () => {
       // Assert
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData).toEqual({
+        id: "player1",
+        username: "TestUser",
+        health: 100,
         score: 50,
+        bullets: 20,
         killCount: 5,
-        color: "#FF0000",
       });
-      expect(emittedData.userName).toBeUndefined();
-      expect(emittedData.health).toBeUndefined();
       expect(emittedData.extraField).toBeUndefined();
+      expect(emittedData.color).toBeUndefined();
     });
 
     test("should handle player with zero stats", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", score: 0, killCount: 0, color: "#000000" },
+        { id: "player1", userName: "ZeroPlayer", score: 0, killCount: 0, health: 0, bullets: 0 },
       ];
       Room.players = mockPlayers;
 
@@ -163,16 +169,19 @@ describe("refreshPlayerStats", () => {
       // Assert
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData).toEqual({
+        id: "player1",
+        username: "ZeroPlayer",
+        health: 0,
         score: 0,
+        bullets: 0,
         killCount: 0,
-        color: "#000000",
       });
     });
 
     test("should handle player with negative values", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", score: -10, killCount: -5, color: "#FF0000" },
+        { id: "player1", userName: "NegPlayer", score: -10, killCount: -5, health: -20, bullets: -3 },
       ];
       Room.players = mockPlayers;
 
@@ -185,16 +194,19 @@ describe("refreshPlayerStats", () => {
       // Assert
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData).toEqual({
+        id: "player1",
+        username: "NegPlayer",
+        health: -20,
         score: -10,
+        bullets: -3,
         killCount: -5,
-        color: "#FF0000",
       });
     });
 
     test("should handle player with large numbers", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", score: 999999, killCount: 88888, color: "#ABCDEF" },
+        { id: "player1", userName: "BigPlayer", score: 999999, killCount: 88888, health: 777777, bullets: 66666 },
       ];
       Room.players = mockPlayers;
 
@@ -207,9 +219,12 @@ describe("refreshPlayerStats", () => {
       // Assert
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData).toEqual({
+        id: "player1",
+        username: "BigPlayer",
+        health: 777777,
         score: 999999,
+        bullets: 66666,
         killCount: 88888,
-        color: "#ABCDEF",
       });
     });
   });
@@ -218,8 +233,8 @@ describe("refreshPlayerStats", () => {
     test("should emit to the correct player socket", () => {
       // Arrange
       const mockPlayers = [
-        { id: "socket123", score: 75, killCount: 8, color: "#0000FF" },
-        { id: "socket456", score: 50, killCount: 3, color: "#00FF00" },
+        { id: "socket123", userName: "Socket123User", score: 75, killCount: 8, health: 90, bullets: 12 },
+        { id: "socket456", userName: "Socket456User", score: 50, killCount: 3, health: 70, bullets: 9 },
       ];
       Room.players = mockPlayers;
 
@@ -237,7 +252,7 @@ describe("refreshPlayerStats", () => {
     test("should emit with the correct event name", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", score: 100, killCount: 10, color: "#FF0000" },
+        { id: "player1", userName: "EventPlayer", score: 100, killCount: 10, health: 95, bullets: 14 },
       ];
       Room.players = mockPlayers;
 
@@ -257,7 +272,7 @@ describe("refreshPlayerStats", () => {
     test("should emit valid JSON string", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", score: 85, killCount: 9, color: "#AABBCC" },
+        { id: "player1", userName: "JSONPlayer", score: 85, killCount: 9, health: 88, bullets: 11 },
       ];
       Room.players = mockPlayers;
 
@@ -286,9 +301,9 @@ describe("refreshPlayerStats", () => {
       expect(() => refreshPlayerStats("player1")).toThrow();
     });
 
-    test("should handle player with missing color field", () => {
+    test("should handle player with missing optional fields", () => {
       // Arrange
-      const mockPlayers = [{ id: "player1", score: 50, killCount: 5 }];
+      const mockPlayers = [{ id: "player1", userName: "Incomplete", score: 50, killCount: 5 }];
       Room.players = mockPlayers;
 
       const mockToEmit = jest.fn();
@@ -300,18 +315,21 @@ describe("refreshPlayerStats", () => {
       // Assert
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData).toEqual({
+        id: "player1",
+        username: "Incomplete",
+        health: undefined,
         score: 50,
+        bullets: undefined,
         killCount: 5,
-        color: undefined,
       });
     });
 
     test("should handle first player in list", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", score: 10, killCount: 1, color: "#111111" },
-        { id: "player2", score: 20, killCount: 2, color: "#222222" },
-        { id: "player3", score: 30, killCount: 3, color: "#333333" },
+        { id: "player1", userName: "First", score: 10, killCount: 1, health: 50, bullets: 5 },
+        { id: "player2", userName: "Second", score: 20, killCount: 2, health: 60, bullets: 6 },
+        { id: "player3", userName: "Third", score: 30, killCount: 3, health: 70, bullets: 7 },
       ];
       Room.players = mockPlayers;
 
@@ -330,9 +348,9 @@ describe("refreshPlayerStats", () => {
     test("should handle last player in list", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", score: 10, killCount: 1, color: "#111111" },
-        { id: "player2", score: 20, killCount: 2, color: "#222222" },
-        { id: "player3", score: 30, killCount: 3, color: "#333333" },
+        { id: "player1", userName: "First", score: 10, killCount: 1, health: 50, bullets: 5 },
+        { id: "player2", userName: "Second", score: 20, killCount: 2, health: 60, bullets: 6 },
+        { id: "player3", userName: "Third", score: 30, killCount: 3, health: 70, bullets: 7 },
       ];
       Room.players = mockPlayers;
 
@@ -353,9 +371,11 @@ describe("refreshPlayerStats", () => {
       const mockPlayers = [
         {
           id: "player-with-dashes_123",
+          userName: "SpecialPlayer",
           score: 50,
           killCount: 5,
-          color: "#FF0000",
+          health: 75,
+          bullets: 10,
         },
       ];
       Room.players = mockPlayers;
@@ -374,7 +394,7 @@ describe("refreshPlayerStats", () => {
     test("should handle single player in list", () => {
       // Arrange
       const mockPlayers = [
-        { id: "onlyplayer", score: 42, killCount: 4, color: "#FFFFFF" },
+        { id: "onlyplayer", userName: "OnlyOne", score: 42, killCount: 4, health: 65, bullets: 8 },
       ];
       Room.players = mockPlayers;
 
@@ -387,9 +407,12 @@ describe("refreshPlayerStats", () => {
       // Assert
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData).toEqual({
+        id: "onlyplayer",
+        username: "OnlyOne",
+        health: 65,
         score: 42,
+        bullets: 8,
         killCount: 4,
-        color: "#FFFFFF",
       });
     });
   });
@@ -398,8 +421,8 @@ describe("refreshPlayerStats", () => {
     test("should handle multiple calls for different players", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", score: 10, killCount: 1, color: "#AA0000" },
-        { id: "player2", score: 20, killCount: 2, color: "#00AA00" },
+        { id: "player1", userName: "Multi1", score: 10, killCount: 1, health: 55, bullets: 7 },
+        { id: "player2", userName: "Multi2", score: 20, killCount: 2, health: 65, bullets: 8 },
       ];
       Room.players = mockPlayers;
 
@@ -420,7 +443,7 @@ describe("refreshPlayerStats", () => {
     test("should handle multiple calls for the same player", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", score: 50, killCount: 5, color: "#FF0000" },
+        { id: "player1", userName: "Repeater", score: 50, killCount: 5, health: 80, bullets: 10 },
       ];
       Room.players = mockPlayers;
 
