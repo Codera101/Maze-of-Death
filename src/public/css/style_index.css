@@ -191,4 +191,179 @@ body {
 /*!---------- POPUP STYLING -----------*/
 /* ----------------------------------- */
 
+.popup_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 90%;
+  width: min(600px, 90vw);
+  max-width: 600px;
+  /* max-width: 100%; */
+  height: auto;
+  max-height: 90vh;
+  background-color: #1c1c2e;
+  border: 2px solid #2c9afd;
+  border-radius: 12px;
+  box-shadow: 0 10px 50px rgba(44, 155, 255, 0.18);
+  position: fixed;
+  inset: 0; /* top , right, bottom, left  = 0 */
+  margin: auto;
+  overflow: hidden;
+  transform: scale(0.7);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.35s ease;
+  z-index: 1000;
+}
+.popup_container.active {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
 
+/**--------------    header_style      ------------------*/
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  /* height: 100%; */
+  flex-shrink: 0;
+  padding: 12px 35px;
+  margin: 0;
+  /* margin-bottom: 30px; */
+  background: linear-gradient(90deg, #1e3757, #214840);
+  border-radius: 12px 12px 0px 0px;
+}
+
+.header h1 {
+  font-size: 45px;
+  font-weight: bold;
+  color: #39ff85;
+}
+
+.close_icon {
+  font-size: 24px;
+  color: #9595ae;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.close_icon:hover {
+  color: #fff;
+  transform: scale(1.2);
+}
+
+/**------------      content_style    -------------------*/
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 25px;
+  gap: 20px;
+  width: 100%;
+  padding: 25px 35px;
+  margin: 0;
+  color: #9595ae;
+  text-align: left;
+}
+
+.content strong {
+  color: #2c9afd;
+  font-size: 20px;
+}
+
+.content ol {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  list-style-type: none;
+  padding-left: 22px;
+}
+
+.content ul {
+  margin-top: 8px;
+  padding-left: 28px;
+}
+
+.content ul li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  font-size: 17px;
+}
+
+/**------------    footer_style    -------------------*/
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 15px 35px;
+  margin: 0;
+  background-color: #13131f;
+  border-top: 1px solid #193252;
+  border-radius: 0px 0px 12px 12px;
+}
+
+.btn_got_it {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2c9bff;
+  width: 80%;
+  padding: 8px 5px;
+  border-radius: 12px;
+  transition: 0.2s;
+}
+
+.btn_got_it:hover {
+  cursor: pointer;
+  background-color: #39afff;
+  transform: scale(1.02);
+}
+
+.btn_got_it button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/**------------    popup_backdrop_style   -------------------*/
+
+.popup_backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.35s;
+  z-index: 999;
+}
+
+.popup_backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/**------------    Icon_style    -------------------*/
+
+i {
+  width: 22px;
+  margin-right: 12px;
+}
+
+.content i {
+  color: #2c9afd;
+  font-size: 20px;
+}
