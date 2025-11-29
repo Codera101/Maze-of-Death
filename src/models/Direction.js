@@ -30,7 +30,11 @@ function getNextPosition(currentPosition, direction) {
 	}
 }
 
+function isValidDirection(direction) {
+	return Object.values(Directions).includes(direction);
+}
+
 // Freeze the object to prevent modifications
 Object.freeze(Directions);
 
-module.exports = { Directions, getNextPosition };
+module.exports = { Directions, getNextPosition, isValidDirection };

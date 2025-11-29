@@ -33,9 +33,33 @@ io.on("connection", (socket) => {
 		console.log("Received pong from", socket.id, data);
 	});
 
+	// Room - Join Player
+	socket.on("join_player", (data) => {
+		const { username } = data;
+		console.log("join_player received:", username);
+		
+		socket.emit("player_joined");
+	});
+
+	// Player - Move
+	socket.on("player_move", (data) => {
+		const { dir } = data;
+		console.log("player_move received:", dir);
+		
+		socket.emit("player_moved");
+	});
+
+	// Player - Shoot
+	socket.on("shoot", (data) => {
+		console.log("shoot received");
+		
+		socket.emit("target_hit");
+	});
+
 	socket.on("disconnect", (reason) => {
 		console.log("Socket disconnected:", socket.id, reason);
 	});
+
 });
 
 // Start server when run directly
