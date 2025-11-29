@@ -14,7 +14,7 @@ function populateListExample() {
 
     const score = Math.round(Math.random() * 100, 0);
     const killCount = Math.round(Math.random() * 10, 0) + 1;
-    scoreKills.textContent = `+${score}/${killCount}`;
+    scoreKills.textContent = `${score}/${killCount}`;
 
     const playerData = [rank, name, scoreKills];
     const newPlayer = document.createElement("li");
@@ -29,6 +29,6 @@ function populateListExample() {
 
 populateListExample();
 
-function updateList(players){
-    // TODO
+function updateList(players) {
+  // TODO
 }

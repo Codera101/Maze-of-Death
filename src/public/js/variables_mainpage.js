@@ -28,4 +28,4 @@ const howToPlay = document.querySelector("#how-to-play");
 const reloadCost = document.querySelector("#reload-cost");
 
 // Socket Connection
-const socket = io("http://localhost:3000");
+// const socket = io("http://localhost:3000");
