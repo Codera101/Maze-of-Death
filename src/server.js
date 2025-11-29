@@ -116,6 +116,10 @@ io.on("connection", (socket) => {
     console.log("Received pong from", socket.id, data);
   });
 
+  socket.on("join_player", (username) => {
+	
+  });
+
   setInterval(() => {
     refreshPlayerStats(socket.id);
     refreshVisiblePlayers(socket.id);
