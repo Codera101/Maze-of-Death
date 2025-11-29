@@ -160,6 +160,26 @@ body {
   letter-spacing: 4px;
 }
 
+/** play_btn **/
+
+.button_play.disabled {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.button_play.disabled button {
+  cursor: not-allowed !important;
+}
+
+.button_play.disabled:hover {
+  border-color: #2c9bff55;
+  transform: none;
+  box-shadow: none;
+}
+
+
 
 /* ----------------------- */
 /*! POPUP STYLING */
