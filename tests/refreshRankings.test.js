@@ -29,7 +29,7 @@ describe("refreshRankings", () => {
   let io;
   let refreshRankings;
   let consoleLogSpy;
-  let Room;
+  let GameRoom;
 
   beforeEach(() => {
     // Clear all mocks before each test
@@ -40,9 +40,9 @@ describe("refreshRankings", () => {
 
     // Re-require the server module to get a fresh instance
     jest.resetModules();
-    Room = require("../src/models/Room");
     const server = require("../src/server");
     io = server.io;
+    GameRoom = server.GameRoom;
 
     refreshRankings = server.refreshRankings;
   });
@@ -59,7 +59,7 @@ describe("refreshRankings", () => {
         { userName: "player2", score: 100, killCount: 10, color: "#00FF00" },
         { userName: "player3", score: 75, killCount: 7, color: "#0000FF" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act: Call refreshRankings
       refreshRankings();
@@ -83,7 +83,7 @@ describe("refreshRankings", () => {
         { userName: "player2", score: 100, killCount: 10, color: "#00FF00" },
         { userName: "player3", score: 50, killCount: 7, color: "#0000FF" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -102,7 +102,7 @@ describe("refreshRankings", () => {
         { userName: "player2", score: 75, killCount: 8, color: "#00FF00" },
         { userName: "player3", score: 75, killCount: 5, color: "#0000FF" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -121,7 +121,7 @@ describe("refreshRankings", () => {
         { userName: "player2", score: 100, killCount: 10, color: "#00FF00" },
         { userName: "player3", score: 100, killCount: 3, color: "#0000FF" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -143,7 +143,7 @@ describe("refreshRankings", () => {
         { userName: "player1", score: 50, killCount: 20, color: "#FF0000" },
         { userName: "player2", score: 100, killCount: 5, color: "#00FF00" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -162,7 +162,7 @@ describe("refreshRankings", () => {
         { userName: "player3", score: 75, killCount: 15, color: "#0000FF" },
         { userName: "player4", score: 75, killCount: 8, color: "#FFFF00" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -191,7 +191,7 @@ describe("refreshRankings", () => {
           health: 100,
         },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -231,7 +231,7 @@ describe("refreshRankings", () => {
           color: "#FFFFFF",
         },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -253,7 +253,7 @@ describe("refreshRankings", () => {
         { userName: "bob", score: 120, killCount: 8, color: "#00BB00" },
         { userName: "charlie", score: 90, killCount: 5, color: "#0000CC" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -279,7 +279,7 @@ describe("refreshRankings", () => {
         { userName: "player1", score: 100, killCount: 10, color: "#FF0000" },
         { userName: "player2", score: 75, killCount: 5, color: "#00FF00" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -294,7 +294,7 @@ describe("refreshRankings", () => {
       const mockPlayers = [
         { userName: "player1", score: 100, killCount: 10, color: "#FF0000" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -313,7 +313,7 @@ describe("refreshRankings", () => {
       const mockPlayers = [
         { userName: "player1", score: 100, killCount: 10, color: "#FF0000" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -327,7 +327,7 @@ describe("refreshRankings", () => {
 
     test("should emit correctly with empty players list", () => {
       // Arrange
-      Room.players = [];
+      GameRoom.players = [];
 
       // Act
       refreshRankings();
@@ -345,7 +345,7 @@ describe("refreshRankings", () => {
       const mockPlayers = [
         { userName: "onlyPlayer", score: 50, killCount: 3, color: "#123456" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -362,7 +362,7 @@ describe("refreshRankings", () => {
         { userName: "player1", score: 0, killCount: 0, color: "#FF0000" },
         { userName: "player2", score: 0, killCount: 0, color: "#00FF00" },
       ];
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
@@ -384,7 +384,7 @@ describe("refreshRankings", () => {
         killCount: Math.floor(Math.random() * 50),
         color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
       }));
-      Room.players = mockPlayers;
+      GameRoom.players = mockPlayers;
 
       // Act
       refreshRankings();
