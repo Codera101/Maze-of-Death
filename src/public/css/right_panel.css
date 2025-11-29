@@ -8,14 +8,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 650px;
+    height: 600px;
 }
 
 
 #right-panel {
     display: block;
     background-color: var(--color-soft-bg);
-    height: 100%;
+    height: 600px;
     width: 20rem;
     justify-content: center;
     align-items: start;

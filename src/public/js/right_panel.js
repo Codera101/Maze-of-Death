@@ -1,5 +1,5 @@
 function populateListExample() {
-  const maxPlayers = Math.random() * 10 + 1;
+  const maxPlayers = Math.random() * 5+ 1;
   for (let i = 1; i <= maxPlayers; i++) {
     const rank = document.createElement("span");
     rank.id = "player-rank";
