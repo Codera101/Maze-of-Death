@@ -1,7 +1,7 @@
 const username = document.getElementById("username");
 const counter = document.getElementById("counter");
 
-//?     BUTTONS_CONTAINER      /
+//?--------------    BUTTONS_CONTAINER    -----------------/
 
 const play_btn_container = document.getElementById("play_btn_container");
 const spectator_btn_container = document.getElementById(
@@ -13,14 +13,14 @@ const how_to_play_btn_container = document.getElementById(
 
 const play_btn = document.getElementById("play_btn");
 
-//?   COUNTER          /
+//?--------------    COUNTER    --------------------/
 
 username.addEventListener("input", () => {
   counter.textContent = `${username.value.length}/20`;
   //   play_btn_container.disabled = username.value.trim().length === 0;
 });
 
-//?     PLAY_BUTTON      /
+//?--------------   PLAY_BUTTON   -----------------/
 
 function updatePlayButtonState() {
   const isEmpty = username.value.trim().length === 0;
@@ -37,7 +37,7 @@ function updatePlayButtonState() {
 updatePlayButtonState();
 username.addEventListener("input", updatePlayButtonState);
 
-//?     POPUP_CONTROLLER      /
+//?------------    POPUP_CONTROLLER    ---------------------------/
 
 const popup = document.querySelector(".popup_container");
 const backdrop = document.getElementById("popup_backdrop");
@@ -70,14 +70,39 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closePopup();
 });
 
-//?     TEST      /
+//?--------------  socket.io(join_player)  -----------------/
 
-play_btn_container.addEventListener("click", () => {
-  if (!play_btn.disabled) {
-    alert("Starting game for: " + username.value);
-  }
+const socket = io("http://localhost:3000");
+
+//& Send join request
+play_btn.addEventListener("click", () => {
+  const username_value = username.value.trim();
+  if (!username_value) return;
+
+  socket.emit("join_player", { username: username_value });
+  console.log("Joining as:", username_value);
 });
 
-spectator_btn_container.addEventListener("click", () => {
-  alert("Entering Spectator Mode");
+//& Receive response
+socket.on("join_player_response", (data) => {
+  window.player = data.current_player;
+  console.log("Logged player:", window.player);
+  window.location.href = "main.html";
 });
+
+//& Broadcast for other players
+socket.on("player_joined", (player) => {
+  console.log("Someone joined:", player);
+});
+
+//?--------------     TEST      -----------------/
+
+// play_btn_container.addEventListener("click", () => {
+//   if (!play_btn.disabled) {
+//     alert("Starting game for: " + username.value);
+//   }
+// });
+
+// spectator_btn_container.addEventListener("click", () => {
+//   alert("Entering Spectator Mode");
+// });
