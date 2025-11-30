@@ -43,47 +43,59 @@
     /* gap: 30px; */
 }
 
-
 #health {
     background-color: var(--color-dark-bg);
-    /* width: 255px; */
-    /* height: 26px; */
-    /* margin: 17px; */
+    width: 250px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap:12px;
+    gap: 10px;
     color: var(--color-danger);
     border: 1px solid var(--color-danger);
     border-radius: 7px;
-    padding: 12px 20px;
-    justify-content: center;
+    padding: 10px;
+    justify-content: flex-start;
     box-shadow: var(--color-danger) 2px;
 }
 
 #heart-icon {
-    /* position: fixed; */
-    /* margin: 2px; */
-    /* left: 35px; */
     font-size: 20px;
+    flex-shrink: 0;
+    width: 20px;
 }
 
 #health-progress {
-    background-image: linear-gradient(to right, var(--color-danger), var(--color-pink));
-    /* position: fixed; */
-    border-radius: 999px;
-    /* width: 128px; */
+    position: relative;
+    width: 140px;
     height: 9px;
-    /* margin: 9px; */
-    /* left: 65px; */
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.2);
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+#health-progress::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-image: linear-gradient(to right, var(--color-danger), var(--color-pink));
+    transition: width 0.3s ease-out;
+}
+
+#health-progress::before {
+    width: var(--health-percent, 100%);
 }
 
 #health-value {
-    /* position: fixed; */
-    /* margin-top: 2px; */
     font-size: 18px;
-    /* left: 238px; */
+    flex-shrink: 0;
+    width: 35px;
+    text-align: right;
 }
+
 
 
 #stats {
