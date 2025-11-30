@@ -15,7 +15,7 @@ describe('Room', () => {
 	describe('handlePlayerMove', () => {
 		test('should move player successfully in empty space', () => {
 			const player = room.addNewPlayerOnPosition({ x: 5, y: 5 }, 'Alice', 'socket1');
-			
+			player.direction = Directions.R;
 			const result = room.handlePlayerMove(player, Directions.R);
 			
 			expect(result).toBe(true);
@@ -25,7 +25,7 @@ describe('Room', () => {
 		test('should prevent move into obstacle', () => {
 			const player = room.addNewPlayerOnPosition({ x: 5, y: 5 }, 'Bob', 'socket2');
 			room.maze.maze[5][6] = 1; // Add obstacle to the right (y+1)
-			
+			player.direction = Directions.R;
 			const result = room.handlePlayerMove(player, Directions.R);
 			
 			expect(result).toBe(false);
@@ -35,7 +35,7 @@ describe('Room', () => {
 		test('should prevent move into another player', () => {
 			const player1 = room.addNewPlayerOnPosition({ x: 5, y: 5 }, 'Charlie', 'socket3');
 			const player2 = room.addNewPlayerOnPosition({ x: 5, y: 6 }, 'Dave', 'socket4');
-			
+			player1.direction = Directions.R;
 			const result = room.handlePlayerMove(player1, Directions.R);
 			
 			expect(result).toBe(false);
@@ -44,16 +44,19 @@ describe('Room', () => {
 
 		test('should move in all directions', () => {
 			const player = room.addNewPlayerOnPosition({ x: 5, y: 5 }, 'Eve', 'socket5');
-			
+			player.direction = Directions.U;
 			room.handlePlayerMove(player, Directions.U);
 			expect(player.getPosition()).toEqual({ x: 4, y: 5 });
 			
+			player.direction = Directions.R;
 			room.handlePlayerMove(player, Directions.R);
 			expect(player.getPosition()).toEqual({ x: 4, y: 6 });
 			
+			player.direction = Directions.D;
 			room.handlePlayerMove(player, Directions.D);
 			expect(player.getPosition()).toEqual({ x: 5, y: 6 });
 			
+			player.direction = Directions.L;
 			room.handlePlayerMove(player, Directions.L);
 			expect(player.getPosition()).toEqual({ x: 5, y: 5 });
 		});
