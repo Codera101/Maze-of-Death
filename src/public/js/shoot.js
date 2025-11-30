@@ -20,5 +20,6 @@ window.addEventListener("keydown", (e) => {
 socket.on("target_hit", ( { status } ) => {
     if (status === true) {
         console.log("Target hit!");
+        // fireLaser({x})
     }
 })

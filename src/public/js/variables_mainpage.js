@@ -60,3 +60,24 @@ let visiblePlayers = [];
 let myPlayer;
 // let shooting = false;
 
+myPlayer = {username: "mo"}
+
+function displayKillMessage(victim_name, killer_name) {
+    if (killMessage.children.length >= 3) {
+        killMessage.removeChild(killMessage.firstChild);
+    }
+    let message = document.createElement("div");
+
+    if (killer_name === myPlayer.username || victim_name === myPlayer.username) {
+        message.style.border = "3px solid red";
+    }
+
+    message.innerHTML = `<span style="color: red;">${killer_name}</span>&nbsp;&nbsp;killed&nbsp;&nbsp;<span style="color: blue;">${victim_name}</span>`;
+    killMessage.appendChild(message);
+}
+
+
+
+displayKillMessage("mo", "Joe");
+displayKillMessage("df", "mo");
+displayKillMessage("df", "ddddf");

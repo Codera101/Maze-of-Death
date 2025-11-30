@@ -18,3 +18,14 @@
     align-items: center;
     gap: 20px;
 }   
+
+#kill-message div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 10px 20px;
+    border-radius: 10px;
+    /* border-radius: 30px; */
+    background-color: hsla(240, 24%, 15%, 0.768);
+}
