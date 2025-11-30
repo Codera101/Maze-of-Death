@@ -1,5 +1,19 @@
 // import { app } from "./maze.js"
 // import { rows, cols, cellSize, strokeWidth, mazeLayout } from "./config.js"
+//const socket = io("http://localhost:3000");
+
+socket.on("connect", () => {
+    const params = new URLSearchParams(window.location.search);
+    const username_value = params.get("username");
+    socket.emit("join_player", { username: username_value });
+    console.log("Joining as:", username_value);
+});
+
+//& Receive response
+socket.on("player_joined", (data) => {
+  console.log("Logged player:", data.current_player);
+  window.player = data.current_player;
+});    
 
 function drawRoundedRect(app,{
     x = 0,

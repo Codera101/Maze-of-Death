@@ -12,12 +12,12 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Simple route serving the HTML client
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "html", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // route serving the game
 app.get("/game", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "html", "main.html"));
+  res.sendFile(path.join(__dirname, "public", "main.html"));
 });
 
 // Test client route
@@ -63,7 +63,8 @@ io.on("connection", (socket) => {
     console.log("Received pong from", socket.id, data);
   });
 
-	socket.on("join_player", (username) => {
+  socket.on("join_player", (username) => {
+    console.log("join_player listener:", username);
 		roomControler.handlePlayerJoin(socket.id, { username });
 	});
 
