@@ -4,9 +4,9 @@ const Player = require("./Player");
 const { Directions, getNextPosition } = require("./Direction");
 const Maze = require("./Maze");
 const {
-	ActionMessage,
-	ActionMessageTypes,
-	createActionMessage,
+  ActionMessage,
+  ActionMessageTypes,
+  createActionMessage,
 } = require("./Messages");
 
 /**
