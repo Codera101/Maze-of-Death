@@ -21,10 +21,23 @@ const io = new Server(server);
 
 const Player = require("./models/Player");
 const Room = require("./models/Room");
-const GameRoom = new Room();
+const RoomService = require("./services/RoomServices");
+const RoomControler = require("./controlers/RoomControler");
+const Messenger = require("./utils/Messenger");
+const Logger = require("./utils/Logger");
+
+// Initialize RoomService and get the global room
+const roomService = new RoomService();
+const GameRoom = roomService.getRoom('global');
+
+// Initialize Logger
+const logger = new Logger('SERVER');
+
+// RoomControler will be initialized per socket connection with its own Messenger
+
+
 /**
  * @brief Refresh panel rankings
- * @return {void}
  */
 function refreshRankings() {
   let rankings = GameRoom.players ?? [];
@@ -136,8 +149,29 @@ function joinPlayer(username, playerID){
 	drowMaze(playerID);
 }
 
+/**
+ * @brief Handle player movement
+ * @param {RoomControler} roomControler - The room controller instance
+ * @param {string} playerID - The socket ID of the player
+ * @param {string} dir - The direction to move
+ */
+function movePlayer(roomControler, playerID, dir){
+	roomControler.handlePlayerMove(playerID, { dir });
+}
+
+/**
+ * @brief Handle player shooting
+ * @param {RoomControler} roomControler - The room controller instance
+ * @param {string} playerID - The socket ID of the player
+ */
+function shoot(roomControler, playerID){
+	roomControler.handlePlayerShoot(playerID);
+}
+
 io.on("connection", (socket) => {
-  let player = new Player();
+  // Initialize Messenger and RoomControler for this socket
+  const messenger = new Messenger(io, socket);
+  const roomControler = new RoomControler(roomService, messenger, logger);
 
   console.log("Socket connected:", socket.id);
   socket.emit("message", "Hello from server — welcome!");
@@ -147,8 +181,16 @@ io.on("connection", (socket) => {
   });
 
   socket.on("join_player", (username) => {
-	joinPlayer(username, socket.id);
+	  joinPlayer(username, socket.id);
   });
+
+  socket.on("player_move", (dir) => {
+	  movePlayer(roomControler, socket.id, dir);
+  });
+
+  socket.on("shoot", () => {
+	  shoot(roomControler, socket.id);
+  }); 
 
   setInterval(() => {
     refreshPlayerStats(socket.id);
@@ -157,6 +199,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", (reason) => {
     console.log("Socket disconnected:", socket.id, reason);
+    roomControler.handlePlayerDisconnect(socket.id);
   });
 });
 
