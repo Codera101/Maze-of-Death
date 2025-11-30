@@ -9,7 +9,7 @@
 ```js
 {
     current_player: {
-        id: int,
+        id: string,
         username: string,
         score:int,
         health:int,
@@ -44,7 +44,7 @@
     {
         visible_player_list:[
             username:string,
-            id: int,
+            id: string,
             x: int,
             y: int,
             dir:string,
@@ -116,7 +116,7 @@ on `{died}`
 - returns : 
 ```js
 {
-    id: int,
+    id: string,
     username:string,
     x: int,
     y: int,    
@@ -140,7 +140,7 @@ on `{respawn_done}`
 - returns : 
 ```js
 {
-    id:int,
+    id:string,
     username: string,
     health: int,
     score:int,

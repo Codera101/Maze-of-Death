@@ -48,7 +48,7 @@ class Maze {
 			const ny = y + dy;
 
 			if (this.isValidPosition(nx, ny) && this.maze[nx][ny] === 1) {
-				this.maze[x + dx / 2][y + dy / 2] = 0; 
+				this.maze[x + dx / 2][y + dy / 2] = 0;
 				this.maze[nx][ny] = 0;
 				this.dfs(nx, ny);
 			}
@@ -77,8 +77,7 @@ class Maze {
 	 */
 	isThereObstacle(startX, startY, endX, endY) {
 		if (startX !== endX && startY !== endY) {
-			console.error("Invalid input: start and end points must be aligned either horizontally or vertically.");
-			return false;
+			return true;
 		}
 
 		if (startX === endX) {
@@ -131,6 +130,16 @@ class Maze {
 	}
 
 	/**
+	 * @brief Check if the position (x, y) is valid for a player to occupy
+	 * @param {number} x
+	 * @param {number} y
+	 * @returns {boolean} True if the position is valid and empty, false otherwise
+	 */
+	isValidForPlayer(x, y) {
+		return this.isValidPosition(x, y) && this.isEmptyCell(x, y);
+	}
+
+	/**
 	 * @breif return empty cells of the maze
 	 * @returns {Array} array of empty cells
 	 */
@@ -158,10 +167,21 @@ class Maze {
 			console.log(row);
 		}
 	}
+
+	/**
+	 * @brief Set all cells in the maze to empty (0)
+	 * @note it is used for testing purposes
+	 */
+	setEmptyMaze() {
+		for (let i = 0; i < this.height; i++) {
+			for (let j = 0; j < this.width; j++) {
+				this.maze[i][j] = 0;
+			}
+		}
+	}
 }
 
 module.exports = Maze;
-
 
 // Example usage:
 // const maze = new Maze(31, 31);

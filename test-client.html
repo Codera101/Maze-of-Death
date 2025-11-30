@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze of Death - Test Client</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .panel {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        input {
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background: #333;
+            color: #fff;
+            font-size: 14px;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+        .status.connected {
+            background: #4CAF50;
+        }
+        .status.disconnected {
+            background: #f44336;
+        }
+        .log {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px;
+            border-left: 3px solid transparent;
+        }
+        .log-entry.info { border-left-color: #2196F3; }
+        .log-entry.success { border-left-color: #4CAF50; }
+        .log-entry.error { border-left-color: #f44336; }
+        .log-entry.warning { border-left-color: #FF9800; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-card {
+            background: #333;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .stat-label {
+            color: #aaa;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .rankings {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .ranking-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #333;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .maze-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            overflow: auto;
+        }
+        #mazeCanvas {
+            border: 2px solid #444;
+            background: #000;
+            max-width: 100%;
+            height: auto;
+        }
+        .maze-info {
+            margin-top: 10px;
+            text-align: center;
+            color: #aaa;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Maze of Death - Test Client <span id="status" class="status disconnected">Disconnected</span></h1>
+        
+        <div class="panel">
+            <h2>Connection</h2>
+            <div class="controls">
+                <input type="text" id="username" placeholder="Enter username" value="TestPlayer">
+                <button id="connectBtn" onclick="connect()">Connect</button>
+                <button id="disconnectBtn" onclick="disconnect()" disabled>Disconnect</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Player Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Health</div>
+                    <div class="stat-value" id="health">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Score</div>
+                    <div class="stat-value" id="score">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Bullets</div>
+                    <div class="stat-value" id="bullets">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Kills</div>
+                    <div class="stat-value" id="kills">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Maze</h2>
+            <div class="maze-container">
+                <canvas id="mazeCanvas"></canvas>
+            </div>
+            <div class="maze-info" id="mazeInfo">Not loaded</div>
+        </div>
+
+        <div class="panel">
+            <h2>Actions</h2>
+            <div class="controls">
+                <button onclick="move('U')" id="moveUp">⬆️ Move Up</button>
+                <button onclick="move('D')" id="moveDown">⬇️ Move Down</button>
+                <button onclick="move('L')" id="moveLeft">⬅️ Move Left</button>
+                <button onclick="move('R')" id="moveRight">➡️ Move Right</button>
+                <button onclick="shoot()" id="shootBtn">🔫 Shoot</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Rankings</h2>
+            <div id="rankings" class="rankings">Not connected</div>
+        </div>
+
+        <div class="panel">
+            <h2>Event Log</h2>
+            <button onclick="clearLog()" style="margin-bottom: 10px; background: #666;">Clear Log</button>
+            <div id="log" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        let socket = null;
+        let connected = false;
+        let mazeData = null;
+        let currentPlayer = null;
+        let currentPlayerPos = null; // {x, y, dir, color}
+        let visiblePlayers = [];
+        let canvas, ctx;
+        let cellSize = 8; // pixels per cell
+        let lastMoveDirection = null; // Track last move direction for position update
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const time = new Date().toLocaleTimeString();
+            entry.textContent = `[${time}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function updateStatus(isConnected) {
+            connected = isConnected;
+            const statusEl = document.getElementById('status');
+            const connectBtn = document.getElementById('connectBtn');
+            const disconnectBtn = document.getElementById('disconnectBtn');
+            const actionButtons = ['moveUp', 'moveDown', 'moveLeft', 'moveRight', 'shootBtn'];
+
+            if (isConnected) {
+                statusEl.textContent = 'Connected';
+                statusEl.className = 'status connected';
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+                actionButtons.forEach(id => document.getElementById(id).disabled = false);
+            } else {
+                statusEl.textContent = 'Disconnected';
+                statusEl.className = 'status disconnected';
+                connectBtn.disabled = false;
+                disconnectBtn.disabled = true;
+                actionButtons.forEach(id => document.getElementById(id).disabled = true);
+            }
+        }
+
+        function connect() {
+            const username = document.getElementById('username').value || 'TestPlayer';
+            
+            if (socket) {
+                socket.disconnect();
+            }
+
+            log(`Connecting to server...`, 'info');
+            socket = io();
+
+            socket.on('connect', () => {
+                log(`✅ Connected! Socket ID: ${socket.id}`, 'success');
+                updateStatus(true);
+                log(`👤 Joining as: ${username}`, 'info');
+                socket.emit('join_player', username);
+            });
+
+            socket.on('disconnect', () => {
+                log('❌ Disconnected', 'error');
+                updateStatus(false);
+            });
+
+            // Room events
+            socket.on('player_joined', (data) => {
+                log(`🎮 Player joined: ${JSON.stringify(data)}`, 'success');
+                currentPlayer = data.current_player;
+                
+                // Set initial player position if provided
+                if (data.current_player.x !== undefined && data.current_player.y !== undefined) {
+                    currentPlayerPos = {
+                        x: data.current_player.x,
+                        y: data.current_player.y,
+                        dir: data.current_player.dir || 'D',
+                        color: data.current_player.color || '#4CAF50',
+                        username: data.current_player.username
+                    };
+                    if (mazeData) drawMaze();
+                }
+            });
+
+            socket.on('draw_maze', (data) => {
+                log(`🗺️ Maze received: ${data.maze.row}x${data.maze.col}`, 'info');
+                mazeData = data.maze;
+                drawMaze();
+            });
+
+            socket.on('refresh_players', (data) => {
+                log(`👥 Visible players: ${data.visible_player_list.length}`, 'info');
+                visiblePlayers = data.visible_player_list;
+                if (mazeData) drawMaze();
+            });
+
+            // Player events
+            socket.on('player_moved', (data) => {
+                const success = data.status;
+                log(`🚶 Move: ${success ? '✅ Success' : '❌ Failed'}`, success ? 'success' : 'error');
+                
+                // Track position from successful moves
+                if (success && currentPlayerPos && lastMoveDirection) {
+                    const { x, y } = currentPlayerPos;
+                    switch(lastMoveDirection) {
+                        case 'L': currentPlayerPos.y = y - 1; break;
+                        case 'R': currentPlayerPos.y = y + 1; break;
+                        case 'U': currentPlayerPos.x = x - 1; break;
+                        case 'D': currentPlayerPos.x = x + 1; break;
+                    }
+                    currentPlayerPos.dir = lastMoveDirection;
+                    if (mazeData) drawMaze();
+                }
+                lastMoveDirection = null;
+            });
+
+            socket.on('target_hit', (data) => {
+                log(`🎯 Shoot: ${data.status ? '✅ Hit' : '❌ Miss'}`, data.status ? 'success' : 'warning');
+            });
+
+            socket.on('got_hit', (data) => {
+                log(`💥 Got hit from ${data.shooter_name} (${data.dir})`, 'error');
+            });
+
+            socket.on('died', (data) => {
+                log(`☠️ Died! Killed by: ${data.killer_name}, Respawn in: ${data.respawn_time}ms`, 'error');
+            });
+
+            socket.on('respawn_done', (data) => {
+                log(`🔄 Respawned at (${data.x}, ${data.y})`, 'success');
+                currentPlayerPos = {
+                    x: data.x,
+                    y: data.y,
+                    dir: data.dir,
+                    color: data.color,
+                    username: data.username
+                };
+                if (mazeData) drawMaze();
+            });
+
+            // Panel events
+            socket.on('refresh_player', (data) => {
+                document.getElementById('health').textContent = data.health;
+                document.getElementById('score').textContent = data.score;
+                document.getElementById('bullets').textContent = data.bullets;
+                document.getElementById('kills').textContent = data.kill_count || 0;
+            });
+
+            socket.on('kill_message', (data) => {
+                log(`💀 ${data.killer_name} killed ${data.victim_name}`, 'warning');
+            });
+
+            socket.on('refresh_rank', (data) => {
+                const rankingsDiv = document.getElementById('rankings');
+                if (data.all_players && data.all_players.length > 0) {
+                    rankingsDiv.innerHTML = data.all_players.map((p, i) => 
+                        `<div class="ranking-item">
+                            <span>#${i + 1} ${p.username}</span>
+                            <span>Score: ${p.score} | Kills: ${p.kill_count}</span>
+                        </div>`
+                    ).join('');
+                } else {
+                    rankingsDiv.innerHTML = 'No players';
+                }
+            });
+
+            socket.on('error', (error) => {
+                log(`❌ Error: ${error}`, 'error');
+            });
+        }
+
+        function disconnect() {
+            if (socket) {
+                socket.disconnect();
+                socket = null;
+            }
+            updateStatus(false);
+            log('Disconnected', 'info');
+        }
+
+        function move(dir) {
+            if (!connected || !socket) return;
+            lastMoveDirection = dir; // Store direction for position tracking
+            log(`→ Moving ${dir}`, 'info');
+            socket.emit('player_move', dir);
+        }
+
+        function shoot() {
+            if (!connected || !socket) return;
+            log(`→ Shooting`, 'info');
+            socket.emit('shoot');
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (!connected) return;
+            
+            switch(e.key.toLowerCase()) {
+                case 'w':
+                case 'arrowup':
+                    e.preventDefault();
+                    move('U');
+                    break;
+                case 's':
+                case 'arrowdown':
+                    e.preventDefault();
+                    move('D');
+                    break;
+                case 'a':
+                case 'arrowleft':
+                    e.preventDefault();
+                    move('L');
+                    break;
+                case 'd':
+                case 'arrowright':
+                    e.preventDefault();
+                    move('R');
+                    break;
+                case ' ':
+                    e.preventDefault();
+                    shoot();
+                    break;
+            }
+        });
+
+        // Initialize canvas
+        function initCanvas() {
+            canvas = document.getElementById('mazeCanvas');
+            ctx = canvas.getContext('2d');
+        }
+
+        function drawMaze() {
+            if (!mazeData || !canvas) return;
+
+            const rows = mazeData.row;
+            const cols = mazeData.col;
+            const layout = mazeData.layout;
+
+            // Calculate cell size to fit in viewport
+            const maxWidth = Math.min(800, window.innerWidth - 100);
+            const maxHeight = Math.min(600, window.innerHeight - 400);
+            cellSize = Math.min(
+                Math.floor(maxWidth / cols),
+                Math.floor(maxHeight / rows),
+                20
+            );
+
+            canvas.width = cols * cellSize;
+            canvas.height = rows * cellSize;
+
+            // Clear canvas
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw maze
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const x = j * cellSize;
+                    const y = i * cellSize;
+                    
+                    // Check if it's an obstacle (1/true = wall, 0/false = empty)
+                    const cellValue = layout[i][j];
+                    const isWall = cellValue === 1 || cellValue === true;
+                    
+                    if (isWall) {
+                        ctx.fillStyle = '#444';
+                        ctx.fillRect(x, y, cellSize, cellSize);
+                    } else {
+                        ctx.fillStyle = '#1a1a1a';
+                        ctx.fillRect(x, y, cellSize, cellSize);
+                    }
+                }
+            }
+
+            // Draw visible players
+            visiblePlayers.forEach(player => {
+                const x = player.y * cellSize;
+                const y = player.x * cellSize;
+                
+                // Draw player circle
+                ctx.fillStyle = player.color || '#4CAF50';
+                ctx.beginPath();
+                ctx.arc(x + cellSize/2, y + cellSize/2, cellSize/2 - 1, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw direction indicator
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                const centerX = x + cellSize/2;
+                const centerY = y + cellSize/2;
+                const dir = player.dir || 'D';
+                let endX = centerX, endY = centerY;
+                
+                switch(dir) {
+                    case 'U':
+                    case 'up': endY -= cellSize/3; break;
+                    case 'D':
+                    case 'down': endY += cellSize/3; break;
+                    case 'L':
+                    case 'left': endX -= cellSize/3; break;
+                    case 'R':
+                    case 'right': endX += cellSize/3; break;
+                }
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            });
+
+            // Draw current player (if we have position info)
+            if (currentPlayerPos) {
+                const x = currentPlayerPos.y * cellSize;
+                const y = currentPlayerPos.x * cellSize;
+                
+                // Draw current player with a special style (outline)
+                ctx.fillStyle = currentPlayerPos.color || '#FFD700';
+                ctx.beginPath();
+                ctx.arc(x + cellSize/2, y + cellSize/2, cellSize/2 - 1, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw outline to distinguish from other players
+                ctx.strokeStyle = '#FFD700';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(x + cellSize/2, y + cellSize/2, cellSize/2, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Draw direction indicator
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                const centerX = x + cellSize/2;
+                const centerY = y + cellSize/2;
+                const dir = currentPlayerPos.dir || 'D';
+                let endX = centerX, endY = centerY;
+                
+                switch(dir) {
+                    case 'U':
+                    case 'up': endY -= cellSize/3; break;
+                    case 'D':
+                    case 'down': endY += cellSize/3; break;
+                    case 'L':
+                    case 'left': endX -= cellSize/3; break;
+                    case 'R':
+                    case 'right': endX += cellSize/3; break;
+                }
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            }
+
+            // Update info
+            document.getElementById('mazeInfo').textContent = 
+                `Maze: ${rows}x${cols} | Visible Players: ${visiblePlayers.length}`;
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            initCanvas();
+        });
+
+        // Redraw on resize
+        window.addEventListener('resize', () => {
+            if (mazeData) drawMaze();
+        });
+
+        // Auto-connect on load (optional)
+        // connect();
+    </script>
+</body>
+</html>
+
