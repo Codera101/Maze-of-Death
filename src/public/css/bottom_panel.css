@@ -21,6 +21,16 @@
     --text-secondary: #aaaaaa;
     --color-ammo: #FFB82C;
     --color-accent: #2C9BFF;
+    --color-dark-bg: #1c1f26; /* Equivalent to var(--color-dark-bg) */
+    --color-dark-elevated: #282c34; /* For key backgrounds */
+    --color-text-secondary: #a0a4ae;
+    --color-text-dim: #6c7078;
+
+    --color-blue: #2C9BFF; /* WASD */
+    --color-yellow: #FFB82C; /* SPACE */
+    --color-green: #39FF85; /* R */
+    --border-radius: 8px;
+    --font-family: 'Inter', sans-serif;
 }
 
 /* --- Global Styles for Context --- */
@@ -87,4 +97,13 @@
     text-align: center;
     margin-left: 0;
     line-height: 1;
+}
+
+#how-to-play {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px   ;
+    font-size: 16px;
+    color: var(--color-text-secondary);
 }

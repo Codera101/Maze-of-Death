@@ -28,6 +28,10 @@
     box-sizing: border-box;
 }
 
+body {
+    background-color: #1C1C2E; 
+}
+
 #container {
     /* background-color: var(--color-soft-bg); */
     border-bottom: 4px solid var(--color-dark-elevated);
@@ -36,7 +40,9 @@
 
 #header {
     /* width: 100vh; */
-    background-color: var(--color-dark-elevated);
+     background-color: var(--color-dark-elevated);
+    background-color: #1C1C2E;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -46,6 +52,8 @@
 
 #health {
     background-color: var(--color-dark-bg);
+    background-color: rgba(13, 13, 0.08); 
+
     width: 250px;
     display: flex;
     align-items: center;
@@ -113,6 +121,8 @@
 
 .stats-box {
     background-color: var(--color-dark-bg);
+    background-color: rgba(13, 13, 0.08); 
+
     display: flex;
     align-items: center;
     justify-content: space-between;
