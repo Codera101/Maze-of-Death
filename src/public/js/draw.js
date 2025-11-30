@@ -180,4 +180,5 @@ function fireLaser(app, {xStart, yStart, xEnd, yEnd, lineWidth}) {
 function updateMaze(app) {
     drawMaze(app);
     drawPlayers(app);
+    updateAmmoDisplay(myPlayer.bullets, 5);
 }

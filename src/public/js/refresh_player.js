@@ -7,6 +7,7 @@ function updateHealth(newHealth) {
 }
 socket.on("refresh_player", ({ player }) => {
   updatePlayerInfo(player);
+  updateAmmoDisplay(player.bullets, 5);
 });
 
 function updatePlayerInfo(player) {
