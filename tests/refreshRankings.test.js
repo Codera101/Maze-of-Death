@@ -1,50 +1,42 @@
 /** @format */
 
-// Mock the server module to avoid actually starting a server
-jest.mock("express", () => {
-  const mockExpress = jest.fn(() => ({
-    use: jest.fn(),
-    get: jest.fn(),
-  }));
-  mockExpress.static = jest.fn();
-  return mockExpress;
-});
+const RoomControler = require("../src/controlers/RoomControler");
+const Messenger = require("../src/utils/Messenger");
 
-jest.mock("http", () => ({
-  createServer: jest.fn(() => ({
-    listen: jest.fn(),
-  })),
-}));
+// Mock dependencies
+const mockRoomService = {
+  getRoom: jest.fn()
+};
+const mockLogger = {
+  log: jest.fn()
+};
 
-jest.mock("socket.io", () => {
-  return {
-    Server: jest.fn(() => ({
-      emit: jest.fn(),
-      on: jest.fn(),
-    })),
-  };
-});
+// Mock socket.io
+const mockIo = {
+  emit: jest.fn(),
+  to: jest.fn(() => ({
+    emit: jest.fn()
+  }))
+};
 
 describe("refreshRankings", () => {
-  let io;
-  let refreshRankings;
-  let consoleLogSpy;
+  let roomControler;
+  let messenger;
   let GameRoom;
+  let io;
+  let consoleLogSpy;
 
   beforeEach(() => {
-    // Clear all mocks before each test
     jest.clearAllMocks();
-
-    // Mock console.log to suppress output during tests
     consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
 
-    // Re-require the server module to get a fresh instance
-    jest.resetModules();
-    const server = require("../src/server");
-    io = server.io;
-    GameRoom = server.GameRoom;
+    // Setup GameRoom mock
+    GameRoom = { players: [] };
+    mockRoomService.getRoom.mockReturnValue(GameRoom);
 
-    refreshRankings = server.refreshRankings;
+    io = mockIo;
+    messenger = new Messenger(io, {});
+    roomControler = new RoomControler(mockRoomService, messenger, mockLogger);
   });
 
   afterEach(() => {
@@ -62,7 +54,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act: Call refreshRankings
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert: Verify io.emit was called with correctly sorted rankings
       expect(io.emit).toHaveBeenCalledTimes(1);
@@ -86,7 +78,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);
@@ -105,7 +97,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);
@@ -124,7 +116,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);
@@ -146,7 +138,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);
@@ -165,7 +157,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);
@@ -194,7 +186,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);
@@ -234,7 +226,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);
@@ -256,7 +248,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);
@@ -282,7 +274,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       expect(io.emit).toHaveBeenCalledTimes(1);
@@ -297,7 +289,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = io.emit.mock.calls[0][1];
@@ -316,7 +308,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);
@@ -330,7 +322,7 @@ describe("refreshRankings", () => {
       GameRoom.players = [];
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       expect(io.emit).toHaveBeenCalledTimes(1);
@@ -348,7 +340,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);
@@ -365,7 +357,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);
@@ -387,7 +379,7 @@ describe("refreshRankings", () => {
       GameRoom.players = mockPlayers;
 
       // Act
-      refreshRankings();
+      roomControler.refreshRankings();
 
       // Assert
       const emittedData = JSON.parse(io.emit.mock.calls[0][1]);

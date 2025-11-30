@@ -211,10 +211,10 @@ class Player {
 			this._bullets -= 1;
 			this.updateTimeOfLastShoot();
 			const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-			async function reloadBullets(){
+			const reloadBullets = async () => {
 				await sleep(this.room.reloadTime);
 				this._bullets += 1;
-			} 
+			}; 
 			reloadBullets();
 		}
 	}

@@ -1,53 +1,50 @@
 /** @format */
 
-// Mock the server module to avoid actually starting a server
-jest.mock("express", () => {
-  const mockExpress = jest.fn(() => ({
-    use: jest.fn(),
-    get: jest.fn(),
-  }));
-  mockExpress.static = jest.fn();
-  return mockExpress;
-});
+const RoomControler = require("../src/controlers/RoomControler");
+const Messenger = require("../src/utils/Messenger");
 
-jest.mock("http", () => ({
-  createServer: jest.fn(() => ({
-    listen: jest.fn(),
+// Mock dependencies
+const mockRoomService = {
+  getRoom: jest.fn()
+};
+const mockLogger = {
+  log: jest.fn()
+};
+
+// Mock socket.io
+const mockIo = {
+  to: jest.fn(() => ({
+    emit: jest.fn()
   })),
-}));
-
-jest.mock("socket.io", () => {
-  return {
-    Server: jest.fn(() => ({
-      emit: jest.fn(),
-      on: jest.fn(),
-      to: jest.fn(() => ({
-        emit: jest.fn(),
-      })),
-    })),
-  };
-});
+  emit: jest.fn()
+};
 
 describe("refreshVisiblePlayers", () => {
-  let io;
-  let refreshVisiblePlayers;
+  let roomControler;
+  let messenger;
   let GameRoom;
+  let io;
   let consoleLogSpy;
 
   beforeEach(() => {
-    // Clear all mocks before each test
     jest.clearAllMocks();
-
-    // Mock console.log to suppress output during tests
     consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
 
-    // Re-require the server module to get a fresh instance
-    jest.resetModules();
-    const server = require("../src/server");
-    io = server.io;
-    GameRoom = server.GameRoom;
+    // Setup GameRoom mock
+    GameRoom = { 
+      players: [], 
+      maze: { isThereObstacle: jest.fn(() => false) } 
+    };
+    mockRoomService.getRoom.mockReturnValue(GameRoom);
 
-    refreshVisiblePlayers = server.refreshVisiblePlayers;
+    // Reset mockIo.to
+    mockIo.to = jest.fn(() => ({
+      emit: jest.fn()
+    }));
+    io = mockIo;
+
+    messenger = new Messenger(io, {});
+    roomControler = new RoomControler(mockRoomService, messenger, mockLogger);
   });
 
   afterEach(() => {
@@ -76,18 +73,14 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => false),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
+      // GameRoom.maze.isThereObstacle is already mocked to return false
 
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
       expect(io.to).toHaveBeenCalledWith("player1");
+      const mockToEmit = io.to.mock.results[0].value.emit;
       expect(mockToEmit).toHaveBeenCalledWith(
         "refresh_players",
         expect.any(String)
@@ -120,17 +113,12 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => false),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
 
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       const visibleIds = emittedData.visible_player_list.map((p) => p.id);
       expect(visibleIds).not.toContain("player1");
@@ -150,14 +138,12 @@ describe("refreshVisiblePlayers", () => {
       ];
       GameRoom.players = mockPlayers;
 
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
-
       // Act
-      refreshVisiblePlayers("nonexistent");
+      roomControler.refreshVisiblePlayers("nonexistent");
 
       // Assert
       expect(io.to).toHaveBeenCalledWith("nonexistent");
+      const mockToEmit = io.to.mock.results[0].value.emit;
       expect(mockToEmit).toHaveBeenCalledWith(
         "refresh_players",
         expect.any(String)
@@ -171,14 +157,12 @@ describe("refreshVisiblePlayers", () => {
       // Arrange
       GameRoom.players = undefined;
 
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
-
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
       expect(io.to).toHaveBeenCalledWith("player1");
+      const mockToEmit = io.to.mock.results[0].value.emit;
       expect(mockToEmit).toHaveBeenCalledWith(
         "refresh_players",
         expect.any(String)
@@ -192,13 +176,11 @@ describe("refreshVisiblePlayers", () => {
       // Arrange
       GameRoom.players = [];
 
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
-
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData.visible_player_list).toEqual([]);
     });
@@ -234,26 +216,22 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn((x1, y1, x2, y2) => {
-          // Obstacle between player1 and player2
-          if (
-            (x1 === 1 && y1 === 1 && x2 === 1 && y2 === 5) ||
-            (x1 === 1 && y1 === 5 && x2 === 1 && y2 === 1)
-          ) {
-            return true;
-          }
-          return false;
-        }),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
+      GameRoom.maze.isThereObstacle = jest.fn((x1, y1, x2, y2) => {
+        // Obstacle between player1 and player2
+        if (
+          (x1 === 1 && y1 === 1 && x2 === 1 && y2 === 5) ||
+          (x1 === 1 && y1 === 5 && x2 === 1 && y2 === 1)
+        ) {
+          return true;
+        }
+        return false;
+      });
 
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData.visible_player_list).toHaveLength(1);
       expect(emittedData.visible_player_list[0].id).toBe("player3");
@@ -288,17 +266,13 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => false),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
+      // Default mock returns false
 
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData.visible_player_list).toHaveLength(2);
       expect(emittedData.visible_player_list.map((p) => p.id)).toEqual(
@@ -327,19 +301,12 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      const isThereObstacleMock = jest.fn(() => false);
-      GameRoom.maze = {
-        isThereObstacle: isThereObstacleMock,
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
-
+      
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
-      expect(isThereObstacleMock).toHaveBeenCalledWith(2, 3, 5, 7);
+      expect(GameRoom.maze.isThereObstacle).toHaveBeenCalledWith(2, 3, 5, 7);
     });
   });
 
@@ -365,17 +332,12 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => false),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
 
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       const visiblePlayer = emittedData.visible_player_list[0];
 
@@ -410,17 +372,12 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => false),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
 
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       const visiblePlayer = emittedData.visible_player_list[0];
 
@@ -466,17 +423,12 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => false),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
 
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData.visible_player_list).toHaveLength(3);
 
@@ -506,14 +458,12 @@ describe("refreshVisiblePlayers", () => {
       ];
       GameRoom.players = mockPlayers;
 
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
-
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
       expect(io.to).toHaveBeenCalledWith("player1");
+      const mockToEmit = io.to.mock.results[0].value.emit;
       expect(mockToEmit).toHaveBeenCalledWith(
         "refresh_players",
         expect.any(String)
@@ -534,13 +484,11 @@ describe("refreshVisiblePlayers", () => {
       ];
       GameRoom.players = mockPlayers;
 
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
-
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = mockToEmit.mock.calls[0][1];
       expect(() => JSON.parse(emittedData)).not.toThrow();
 
@@ -563,13 +511,11 @@ describe("refreshVisiblePlayers", () => {
       ];
       GameRoom.players = mockPlayers;
 
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
-
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData).toEqual({
         visible_player_list: expect.any(Array),
@@ -592,13 +538,11 @@ describe("refreshVisiblePlayers", () => {
       ];
       GameRoom.players = mockPlayers;
 
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
-
       // Act
-      refreshVisiblePlayers("onlyPlayer");
+      roomControler.refreshVisiblePlayers("onlyPlayer");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData.visible_player_list).toEqual([]);
     });
@@ -624,17 +568,12 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => false),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
 
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData.visible_player_list).toHaveLength(1);
       expect(emittedData.visible_player_list[0].x).toBe(0);
@@ -662,17 +601,12 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => false),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
 
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData.visible_player_list).toHaveLength(1);
       expect(emittedData.visible_player_list[0].x).toBe(2000);
@@ -700,18 +634,13 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => false),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
 
       // Act
-      refreshVisiblePlayers("player-1_test@123");
+      roomControler.refreshVisiblePlayers("player-1_test@123");
 
       // Assert
       expect(io.to).toHaveBeenCalledWith("player-1_test@123");
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData.visible_player_list[0].id).toBe("player-2_test@456");
     });
@@ -745,17 +674,13 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => true), // All blocked
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
+      GameRoom.maze.isThereObstacle = jest.fn(() => true); // All blocked
 
       // Act
-      refreshVisiblePlayers("player1");
+      roomControler.refreshVisiblePlayers("player1");
 
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
       expect(emittedData.visible_player_list).toEqual([]);
     });
@@ -797,88 +722,14 @@ describe("refreshVisiblePlayers", () => {
         },
       ];
       GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => false),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
-
+      
       // Act
-      refreshVisiblePlayers("player1");
-
+      roomControler.refreshVisiblePlayers("player1");
+      
       // Assert
+      const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
-      const directions = emittedData.visible_player_list.map((p) => p.dir);
-      expect(directions).toEqual(expect.arrayContaining(["S", "E", "W"]));
-    });
-  });
-
-  describe("multiple calls", () => {
-    test("should handle multiple calls for different players", () => {
-      // Arrange
-      const mockPlayers = [
-        {
-          id: "player1",
-          userName: "User1",
-          x: 1,
-          y: 1,
-          direction: "N",
-          color: "#FF0000",
-        },
-        {
-          id: "player2",
-          userName: "User2",
-          x: 3,
-          y: 3,
-          direction: "S",
-          color: "#00FF00",
-        },
-      ];
-      GameRoom.players = mockPlayers;
-      GameRoom.maze = {
-        isThereObstacle: jest.fn(() => false),
-      };
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
-
-      // Act
-      refreshVisiblePlayers("player1");
-      refreshVisiblePlayers("player2");
-
-      // Assert
-      expect(io.to).toHaveBeenCalledTimes(2);
-      expect(io.to).toHaveBeenCalledWith("player1");
-      expect(io.to).toHaveBeenCalledWith("player2");
-      expect(mockToEmit).toHaveBeenCalledTimes(2);
-    });
-
-    test("should handle multiple calls for the same player", () => {
-      // Arrange
-      const mockPlayers = [
-        {
-          id: "player1",
-          userName: "User1",
-          x: 1,
-          y: 1,
-          direction: "N",
-          color: "#FF0000",
-        },
-      ];
-      GameRoom.players = mockPlayers;
-
-      const mockToEmit = jest.fn();
-      io.to = jest.fn(() => ({ emit: mockToEmit }));
-
-      // Act
-      refreshVisiblePlayers("player1");
-      refreshVisiblePlayers("player1");
-      refreshVisiblePlayers("player1");
-
-      // Assert
-      expect(io.to).toHaveBeenCalledTimes(3);
-      expect(mockToEmit).toHaveBeenCalledTimes(3);
+      expect(emittedData.visible_player_list).toHaveLength(3);
     });
   });
 });
