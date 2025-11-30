@@ -211,8 +211,7 @@ class RoomControler {
       return;
     }
     const visiblePlayers = room.players.filter(
-      (p) =>
-        p.id !== playerID &&
+      (p) => p.id !== playerID &&
         room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false
     );
     const visibleData = visiblePlayers.map((p) => ({

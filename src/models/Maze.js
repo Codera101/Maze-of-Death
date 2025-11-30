@@ -77,7 +77,7 @@ class Maze {
 	 */
 	isThereObstacle(startX, startY, endX, endY) {
 		if (startX !== endX && startY !== endY) {
-			return false;
+			return true;
 		}
 
 		if (startX === endX) {
