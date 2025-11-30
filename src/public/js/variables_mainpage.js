@@ -27,6 +27,8 @@ const reload = document.querySelector("#reload");
 const howToPlay = document.querySelector("#how-to-play");
 const reloadCost = document.querySelector("#reload-cost");
 
+const killMessage = document.querySelector("#kill-message");
+
 // Socket Connection
 // const socket = io("http://localhost:3000");
 
@@ -54,3 +56,7 @@ let mazeLayout = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ];
 let visiblePlayers = [];
+
+let myPlayer;
+// let shooting = false;
+
