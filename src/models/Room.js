@@ -398,6 +398,15 @@ class Room {
 	}
 
 	/**
+	 * @brief Get a player by their username
+	 * @param {string} userName - The username of the player to retrieve
+	 * @returns {Player | null} The player object if found, null otherwise
+	 */
+	getPlayerByUsername(userName) {
+		return this._players.find((player) => player.userName === userName) || null;
+	}
+
+	/**
 	 * @brief check if there is a player on the given position
 	 * @param {{number,number}} position
 	 * @returns {boolean} true if there is a player on the position, false otherwise
@@ -405,6 +414,7 @@ class Room {
 	checkPlayerOnPosition(position) {
 		for (let player_inx = 0; player_inx < this.players.length; player_inx++) {
 			const playerPos = this._players[player_inx].getPosition();
+			if (this._players[player_inx].health <= 0) continue;		
 			if (playerPos.x === position.x && playerPos.y === position.y) {
 				return 1;
 			}
@@ -420,6 +430,7 @@ class Room {
 	getPlayerOnPosition(position) {
 		for (let player_inx = 0; player_inx < this.players.length; player_inx++) {
 			const playerPos = this._players[player_inx].getPosition();
+			if (this._players[player_inx].health <= 0) continue;	
 			if (playerPos.x === position.x && playerPos.y === position.y) {
 				return this._players[player_inx];
 			}
@@ -494,7 +505,7 @@ class Room {
 		let pos = player.getPosition();
 		let nextPos = getNextPosition(pos, direction);
 		if (
-			this.maze.isObstacleCell(nextPos.x, nextPos.y) ||
+			!this.maze.isValidForPlayer(nextPos.x, nextPos.y) ||
 			this.checkPlayerOnPosition(nextPos)
 		) {
 			return false;

@@ -154,6 +154,21 @@ class RoomService {
 
 		return room.getPlayerById(playerId);
 	}
+
+	/**
+	 * @brief Get a player object by their username
+	 * @param {string} userName - The username of the player to retrieve
+	 * @param {string} [roomId="global"] - The ID of the room to search in (defaults to "global")
+	 * @returns {Player|null} The player object if found, null if player not in the room or room not found
+	 */
+	getPlayerByUsername(userName, roomId = "global") {
+		let room = this.rooms.get(roomId);
+		if (!room) {
+			return null;
+		}
+
+		return room.getPlayerByUsername(userName);
+	}
 }
 
 module.exports = RoomService;
