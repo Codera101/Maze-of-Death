@@ -15,10 +15,10 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "html", "index.html"));
 });
 
+// route serving the game
 app.get("/game", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "html", "main.html"));
 });
-
 
 // Test client route
 app.get("/test", (req, res) => {
