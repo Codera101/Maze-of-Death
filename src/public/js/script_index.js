@@ -72,23 +72,16 @@ document.addEventListener("keydown", (e) => {
 
 //?--------------  socket.io(join_player)  -----------------/
 
-const socket = io("http://localhost:3000");
+
 
 //& Send join request
 play_btn_container.addEventListener("click", () => {
   const username_value = username.value.trim();
   console.log(username_value);
   if (!username_value) return;
+  
+  window.location.href = `/game?username=${encodeURIComponent(username_value)}`;
 
-  socket.emit("join_player", { username: username_value });
-  console.log("Joining as:", username_value);
-});
-
-//& Receive response
-socket.on("player_joined", (data) => {
-  console.log("Logged player:", data.current_player);
-  window.player = data.current_player;
-  window.location.href = "main.html";
 });
 
 //& Broadcast for other players
