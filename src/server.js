@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Simple route serving the HTML client
 app.get("/", (req, res) => {
-	res.sendFile(path.join(__dirname, "public", "html", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "html", "index.html"));
 });
 
 // Test client route
@@ -51,12 +51,12 @@ io.on("connection", (socket) => {
 	const messenger = new Messenger(io, socket);
 	const roomControler = new RoomControler(roomService, messenger, logger);
 
-	console.log("Socket connected:", socket.id);
-	socket.emit("message", "Hello from server — welcome!");
+  console.log("Socket connected:", socket.id);
+  socket.emit("message", "Hello from server — welcome!");
 
-	socket.on("pong", (data) => {
-		console.log("Received pong from", socket.id, data);
-	});
+  socket.on("pong", (data) => {
+    console.log("Received pong from", socket.id, data);
+  });
 
 	socket.on("join_player", (username) => {
 		roomControler.handlePlayerJoin(socket.id, { username });
@@ -104,7 +104,7 @@ setInterval(() => {
 // Start server when run directly
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-	console.log(`Server listening on http://localhost:${PORT}`);
+  console.log(`Server listening on http://localhost:${PORT}`);
 });
 
 module.exports = { app, server, io, GameRoom };
