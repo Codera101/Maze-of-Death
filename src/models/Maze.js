@@ -48,7 +48,7 @@ class Maze {
 			const ny = y + dy;
 
 			if (this.isValidPosition(nx, ny) && this.maze[nx][ny] === 1) {
-				this.maze[x + dx / 2][y + dy / 2] = 0; 
+				this.maze[x + dx / 2][y + dy / 2] = 0;
 				this.maze[nx][ny] = 0;
 				this.dfs(nx, ny);
 			}
@@ -77,7 +77,6 @@ class Maze {
 	 */
 	isThereObstacle(startX, startY, endX, endY) {
 		if (startX !== endX && startY !== endY) {
-			console.error("Invalid input: start and end points must be aligned either horizontally or vertically.");
 			return false;
 		}
 
@@ -183,7 +182,6 @@ class Maze {
 }
 
 module.exports = Maze;
-
 
 // Example usage:
 // const maze = new Maze(31, 31);

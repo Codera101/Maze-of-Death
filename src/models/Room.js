@@ -29,7 +29,7 @@ class Room {
 		this._respawnTime = 3000; // in ms
 		this._shootGainPoints = 5;
 		this._reloadTime = 500; // in ms
-		this._initPlayerHealth = 5;
+		this._initPlayerHealth = 10;
 		this._initBulltesNumber = 5;
 		this._shootSpeed = 400; // in ms;
 		this._moveSpeed = 400; // in ms;
@@ -303,7 +303,7 @@ class Room {
 	 * - Fallback: returns {x: -1, y: -1} if no valid position found
 	 * @returns {{x: number, y: number}} A valid position object with x and y coordinates
 	 */
-	genrateValidPotion() {
+	generateValidPosition() {
 		let emptyCells = this._maze.getEmptyCells();
 		let cellsOf2ndLvlPriority = [];
 		let cellsOf1stLvlPriority = [];
@@ -356,7 +356,7 @@ class Room {
 	 * @returns {Player} The newly created player object
 	 */
 	addNewPlayer(userName, socketId) {
-		let position = this.genrateValidPotion();
+		let position = this.generateValidPosition();
 		let newPlayer = new Player(
 			position.x,
 			position.y,
@@ -414,7 +414,6 @@ class Room {
 	checkPlayerOnPosition(position) {
 		for (let player_inx = 0; player_inx < this.players.length; player_inx++) {
 			const playerPos = this._players[player_inx].getPosition();
-			if (this._players[player_inx].health <= 0) continue;		
 			if (playerPos.x === position.x && playerPos.y === position.y) {
 				return 1;
 			}
@@ -430,7 +429,7 @@ class Room {
 	getPlayerOnPosition(position) {
 		for (let player_inx = 0; player_inx < this.players.length; player_inx++) {
 			const playerPos = this._players[player_inx].getPosition();
-			if (this._players[player_inx].health <= 0) continue;	
+			if (this._players[player_inx].health <= 0) continue;
 			if (playerPos.x === position.x && playerPos.y === position.y) {
 				return this._players[player_inx];
 			}
@@ -453,7 +452,7 @@ class Room {
 		if (!player.canShoot()) {
 			return createActionMessage(
 				ActionMessageTypes.INVALID,
-				player.userName,
+				player.id,
 				"",
 				player.direction
 			);
@@ -470,17 +469,18 @@ class Room {
 				targetPlayer.recieveDamage(this.getRoomDamage());
 				player.updateScore(this.getScorePerHit());
 				if (targetPlayer.health <= 0) {
+					player.increaseKills();
 					return createActionMessage(
 						ActionMessageTypes.KILL,
-						player.userName,
-						targetPlayer.userName,
+						player.id,
+						targetPlayer.id,
 						player.direction
 					);
 				} else {
 					return createActionMessage(
 						ActionMessageTypes.HIT,
-						player.userName,
-						targetPlayer.userName,
+						player.id,
+						targetPlayer.id,
 						player.direction
 					);
 				}
@@ -489,7 +489,7 @@ class Room {
 		}
 		return createActionMessage(
 			ActionMessageTypes.NOTHING,
-			player.userName,
+			player.id,
 			"",
 			player.direction
 		);
@@ -511,11 +511,9 @@ class Room {
 			return false;
 		}
 		player.setPosition(nextPos);
+		player.direction = direction; // Update facing direction
 		return true;
 	}
-
-
-
 }
 
 module.exports = Room;

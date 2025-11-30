@@ -19,12 +19,12 @@ describe('Room', () => {
 			const result = room.handlePlayerMove(player, Directions.R);
 			
 			expect(result).toBe(true);
-			expect(player.getPosition()).toEqual({ x: 6, y: 5 });
+			expect(player.getPosition()).toEqual({ x: 5, y: 6 });
 		});
 
 		test('should prevent move into obstacle', () => {
 			const player = room.addNewPlayerOnPosition({ x: 5, y: 5 }, 'Bob', 'socket2');
-			room.maze.maze[6][5] = 1; // Add obstacle to the right (x+1)
+			room.maze.maze[5][6] = 1; // Add obstacle to the right (y+1)
 			
 			const result = room.handlePlayerMove(player, Directions.R);
 			
@@ -34,7 +34,7 @@ describe('Room', () => {
 
 		test('should prevent move into another player', () => {
 			const player1 = room.addNewPlayerOnPosition({ x: 5, y: 5 }, 'Charlie', 'socket3');
-			const player2 = room.addNewPlayerOnPosition({ x: 6, y: 5 }, 'Dave', 'socket4');
+			const player2 = room.addNewPlayerOnPosition({ x: 5, y: 6 }, 'Dave', 'socket4');
 			
 			const result = room.handlePlayerMove(player1, Directions.R);
 			
@@ -46,13 +46,13 @@ describe('Room', () => {
 			const player = room.addNewPlayerOnPosition({ x: 5, y: 5 }, 'Eve', 'socket5');
 			
 			room.handlePlayerMove(player, Directions.U);
-			expect(player.getPosition()).toEqual({ x: 5, y: 4 });
+			expect(player.getPosition()).toEqual({ x: 4, y: 5 });
 			
 			room.handlePlayerMove(player, Directions.R);
-			expect(player.getPosition()).toEqual({ x: 6, y: 4 });
+			expect(player.getPosition()).toEqual({ x: 4, y: 6 });
 			
 			room.handlePlayerMove(player, Directions.D);
-			expect(player.getPosition()).toEqual({ x: 6, y: 5 });
+			expect(player.getPosition()).toEqual({ x: 5, y: 6 });
 			
 			room.handlePlayerMove(player, Directions.L);
 			expect(player.getPosition()).toEqual({ x: 5, y: 5 });
@@ -81,29 +81,29 @@ describe('Room', () => {
 
 		test('should return HIT when bullet hits player', () => {
 			const shooter = room.addNewPlayerOnPosition({ x: 5, y: 5 }, 'Henry', 'socket8');
-			const target = room.addNewPlayerOnPosition({ x: 7, y: 5 }, 'Ivy', 'socket9');
+			const target = room.addNewPlayerOnPosition({ x: 5, y: 7 }, 'Ivy', 'socket9');
 			shooter.direction = Directions.R;
 			target.health = 10;
 			
 			const result = room.handlePlayerShoot(shooter);
 			
 			expect(result.type).toBe(ActionMessageTypes.HIT);
-			expect(result.actionSource).toBe('Henry');
-			expect(result.actionTarget).toBe('Ivy');
+			expect(result.actionSource).toBe('socket8');
+			expect(result.actionTarget).toBe('socket9');
 			expect(target.health).toBe(10 - room.getRoomDamage());
 		});
 
 		test('should return KILL when bullet kills player', () => {
 			const shooter = room.addNewPlayerOnPosition({ x: 5, y: 5 }, 'Jack', 'socket10');
-			const target = room.addNewPlayerOnPosition({ x: 7, y: 5 }, 'Kate', 'socket11');
+			const target = room.addNewPlayerOnPosition({ x: 5, y: 7 }, 'Kate', 'socket11');
 			shooter.direction = Directions.R;
 			target.health = room.getRoomDamage(); // Just enough to kill
 			
 			const result = room.handlePlayerShoot(shooter);
 			
 			expect(result.type).toBe(ActionMessageTypes.KILL);
-			expect(result.actionSource).toBe('Jack');
-			expect(result.actionTarget).toBe('Kate');
+			expect(result.actionSource).toBe('socket10');
+			expect(result.actionTarget).toBe('socket11');
 			expect(target.health).toBe(0);
 		});
 
@@ -119,14 +119,14 @@ describe('Room', () => {
 
 		test('should shoot through empty cells and hit distant target', () => {
 			const shooter = room.addNewPlayerOnPosition({ x: 5, y: 5 }, 'Olivia', 'socket15');
-			const target = room.addNewPlayerOnPosition({ x: 10, y: 5 }, 'Paul', 'socket16');
+			const target = room.addNewPlayerOnPosition({ x: 5, y: 10 }, 'Paul', 'socket16');
 			shooter.direction = Directions.R;
 			target.health = 10;
 			
 			const result = room.handlePlayerShoot(shooter);
 			
 			expect(result.type).toBe(ActionMessageTypes.HIT);
-			expect(result.actionTarget).toBe('Paul');
+			expect(result.actionTarget).toBe('socket16');
 			expect(target.health).toBe(10 - room.getRoomDamage());
 		});
 	});

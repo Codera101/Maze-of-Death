@@ -199,7 +199,7 @@ describe('Maze', () => {
 				
 				expect(result).toBe(false);
 				expect(consoleErrorSpy).toHaveBeenCalledWith(
-					"Invalid input: start and end points must be aligned either horizontally or vertically."
+					"2. Invalid input: start and end points must be aligned either horizontally or vertically."
 				);
 			});
 

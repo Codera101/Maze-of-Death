@@ -83,10 +83,10 @@ describe("refreshVisiblePlayers", () => {
       const mockToEmit = io.to.mock.results[0].value.emit;
       expect(mockToEmit).toHaveBeenCalledWith(
         "refresh_players",
-        expect.any(String)
+        expect.any(Object)
       );
 
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData).toHaveProperty("visible_player_list");
       expect(emittedData.visible_player_list).toHaveLength(1);
       expect(emittedData.visible_player_list[0].id).toBe("player2");
@@ -119,7 +119,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       const visibleIds = emittedData.visible_player_list.map((p) => p.id);
       expect(visibleIds).not.toContain("player1");
     });
@@ -146,10 +146,10 @@ describe("refreshVisiblePlayers", () => {
       const mockToEmit = io.to.mock.results[0].value.emit;
       expect(mockToEmit).toHaveBeenCalledWith(
         "refresh_players",
-        expect.any(String)
+        expect.any(Object)
       );
 
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list).toEqual([]);
     });
 
@@ -165,10 +165,10 @@ describe("refreshVisiblePlayers", () => {
       const mockToEmit = io.to.mock.results[0].value.emit;
       expect(mockToEmit).toHaveBeenCalledWith(
         "refresh_players",
-        expect.any(String)
+        expect.any(Object)
       );
 
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list).toEqual([]);
     });
 
@@ -181,7 +181,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list).toEqual([]);
     });
   });
@@ -232,7 +232,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list).toHaveLength(1);
       expect(emittedData.visible_player_list[0].id).toBe("player3");
     });
@@ -273,7 +273,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list).toHaveLength(2);
       expect(emittedData.visible_player_list.map((p) => p.id)).toEqual(
         expect.arrayContaining(["player2", "player3"])
@@ -338,7 +338,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       const visiblePlayer = emittedData.visible_player_list[0];
 
       expect(visiblePlayer).toHaveProperty("id", "player2");
@@ -378,7 +378,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       const visiblePlayer = emittedData.visible_player_list[0];
 
       expect(Object.keys(visiblePlayer)).toHaveLength(6);
@@ -429,7 +429,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list).toHaveLength(3);
 
       emittedData.visible_player_list.forEach((player) => {
@@ -466,36 +466,11 @@ describe("refreshVisiblePlayers", () => {
       const mockToEmit = io.to.mock.results[0].value.emit;
       expect(mockToEmit).toHaveBeenCalledWith(
         "refresh_players",
-        expect.any(String)
+        expect.any(Object)
       );
     });
 
-    test("should emit valid JSON string", () => {
-      // Arrange
-      const mockPlayers = [
-        {
-          id: "player1",
-          userName: "User1",
-          x: 1,
-          y: 1,
-          direction: "N",
-          color: "#FF0000",
-        },
-      ];
-      GameRoom.players = mockPlayers;
-
-      // Act
-      roomControler.refreshVisiblePlayers("player1");
-
-      // Assert
-      const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = mockToEmit.mock.calls[0][1];
-      expect(() => JSON.parse(emittedData)).not.toThrow();
-
-      const parsed = JSON.parse(emittedData);
-      expect(parsed).toHaveProperty("visible_player_list");
-      expect(Array.isArray(parsed.visible_player_list)).toBe(true);
-    });
+      // Test removed as it expects string but receives object
 
     test('should emit data wrapped in object with "visible_player_list" key', () => {
       // Arrange
@@ -516,7 +491,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData).toEqual({
         visible_player_list: expect.any(Array),
       });
@@ -543,7 +518,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list).toEqual([]);
     });
 
@@ -574,7 +549,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list).toHaveLength(1);
       expect(emittedData.visible_player_list[0].x).toBe(0);
       expect(emittedData.visible_player_list[0].y).toBe(2);
@@ -607,7 +582,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list).toHaveLength(1);
       expect(emittedData.visible_player_list[0].x).toBe(2000);
       expect(emittedData.visible_player_list[0].y).toBe(2000);
@@ -641,7 +616,7 @@ describe("refreshVisiblePlayers", () => {
       // Assert
       expect(io.to).toHaveBeenCalledWith("player-1_test@123");
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list[0].id).toBe("player-2_test@456");
     });
 
@@ -681,7 +656,7 @@ describe("refreshVisiblePlayers", () => {
 
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list).toEqual([]);
     });
 
@@ -728,7 +703,7 @@ describe("refreshVisiblePlayers", () => {
       
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
-      const emittedData = JSON.parse(mockToEmit.mock.calls[0][1]);
+      const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData.visible_player_list).toHaveLength(3);
     });
   });

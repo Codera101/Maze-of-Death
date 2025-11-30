@@ -10,8 +10,8 @@ const ActionMessageTypes = {
 class ActionMessage {
 	constructor() {
 		this._type = ""; // ActionMessageTypes
-		this._actionSource = ""; // player name that send messages
-		this._actionTarget = ""; // player name that recieve messages
+		this._actionSource = ""; // player ID that send messages
+		this._actionTarget = ""; // player ID that recieve messages
 		this._actionDirection = ""; // direction of action
 	}
 

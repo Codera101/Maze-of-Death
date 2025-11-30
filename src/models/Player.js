@@ -1,7 +1,7 @@
 /** @format */
 
 //import Directions, { getNextPosition } from "./Direction.js";
-const Directions = require("./Direction.js");
+const { Directions } = require("./Direction.js");
 
 class Player {
 	constructor(x, y, room, userName, id) {
@@ -17,6 +17,11 @@ class Player {
 		this._bullets = room ? room.getInitBulltes() : 0;
 		this._timeOfLastMove = 0;
 		this._timeOfLastShoot = 0;
+		this._color =
+			"#" +
+			Math.floor(Math.random() * 16777215)
+				.toString(16)
+				.padStart(6, "0");
 	}
 
 	// ------------------ Getters / Setters ------------------
@@ -115,6 +120,14 @@ class Player {
 	set timeOfLastShoot(t) {
 		this._timeOfLastShoot = t;
 	}
+
+	get color() {
+		return this._color;
+	}
+
+	set color(c) {
+		this._color = c;
+	}
 	/**
 		@brief reset player data to be respawn again
 		@param {number, number} x, y 
@@ -210,13 +223,20 @@ class Player {
 		if (this.bullets > 0) {
 			this._bullets -= 1;
 			this.updateTimeOfLastShoot();
-			const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+			const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 			const reloadBullets = async () => {
 				await sleep(this.room.reloadTime);
 				this._bullets += 1;
-			}; 
+			};
 			reloadBullets();
 		}
+	}
+
+	/**
+	 * @brief Increase the player's kill count
+	 */
+	increaseKills() {
+		this._killCount += 1;
 	}
 }
 

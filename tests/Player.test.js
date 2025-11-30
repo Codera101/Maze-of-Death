@@ -2,7 +2,7 @@
 
 const Player = require('../src/models/Player');
 const Room = require('../src/models/Room');
-const Directions = require('../src/models/Direction');
+const { Directions } = require('../src/models/Direction');
 
 describe('Player', () => {
 	let room, player;
