@@ -19,6 +19,28 @@ const mockIo = {
   emit: jest.fn()
 };
 
+// Helper function to create mock player with serialize method
+function createMockPlayer(playerData) {
+  return {
+    ...playerData,
+    serialize() {
+      return {
+        id: this.id,
+        username: this.userName,
+        score: this.score,
+        kill_count: this.killCount,
+        health: this.health,
+        bullets: this.bullets,
+        x: this.x,
+        y: this.y,
+        direction: this.direction,
+        color: this.color
+      };
+    }
+  };
+}
+
+
 describe("refreshPlayerStats", () => {
   let roomControler;
   let messenger;
@@ -47,9 +69,9 @@ describe("refreshPlayerStats", () => {
     test("should find player by id and emit their stats", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", userName: "User1", score: 50, killCount: 5, health: 80, bullets: 10 },
-        { id: "player2", userName: "User2", score: 100, killCount: 10, health: 100, bullets: 15 },
-        { id: "player3", userName: "User3", score: 75, killCount: 7, health: 60, bullets: 8 },
+        createMockPlayer({ id: "player1", userName: "User1", score: 50, killCount: 5, health: 80, bullets: 10 }),
+        createMockPlayer({ id: "player2", userName: "User2", score: 100, killCount: 10, health: 100, bullets: 15 }),
+        createMockPlayer({ id: "player3", userName: "User3", score: 75, killCount: 7, health: 60, bullets: 8 }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -79,8 +101,8 @@ describe("refreshPlayerStats", () => {
     test("should not emit if player id is not found", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", userName: "User1", score: 50, killCount: 5, health: 80, bullets: 10 },
-        { id: "player2", userName: "User2", score: 100, killCount: 10, health: 100, bullets: 15 },
+        createMockPlayer({ id: "player1", userName: "User1", score: 50, killCount: 5, health: 80, bullets: 10 }),
+        createMockPlayer({ id: "player2", userName: "User2", score: 100, killCount: 10, health: 100, bullets: 15 }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -107,7 +129,7 @@ describe("refreshPlayerStats", () => {
     test("should emit id, username, health, score, bullets, and killCount", () => {
       // Arrange
       const mockPlayers = [
-        {
+        createMockPlayer({
           id: "player1",
           score: 50,
           killCount: 5,
@@ -116,7 +138,7 @@ describe("refreshPlayerStats", () => {
           bullets: 20,
           extraField: "should not be included",
           color: "#FF0000",
-        },
+        }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -133,15 +155,18 @@ describe("refreshPlayerStats", () => {
         score: 50,
         bullets: 20,
         kill_count: 5,
+        color: "#FF0000",
+        x: undefined,
+        y: undefined,
+        direction: undefined
       });
       expect(emittedData.extraField).toBeUndefined();
-      expect(emittedData.color).toBeUndefined();
     });
 
     test("should handle player with zero stats", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", userName: "ZeroPlayer", score: 0, killCount: 0, health: 0, bullets: 0 },
+        createMockPlayer({ id: "player1", userName: "ZeroPlayer", score: 0, killCount: 0, health: 0, bullets: 0 }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -164,7 +189,7 @@ describe("refreshPlayerStats", () => {
     test("should handle player with negative values", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", userName: "NegPlayer", score: -10, killCount: -5, health: -20, bullets: -3 },
+        createMockPlayer({ id: "player1", userName: "NegPlayer", score: -10, killCount: -5, health: -20, bullets: -3 }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -187,7 +212,7 @@ describe("refreshPlayerStats", () => {
     test("should handle player with large numbers", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", userName: "BigPlayer", score: 999999, killCount: 88888, health: 777777, bullets: 66666 },
+        createMockPlayer({ id: "player1", userName: "BigPlayer", score: 999999, killCount: 88888, health: 777777, bullets: 66666 }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -212,8 +237,8 @@ describe("refreshPlayerStats", () => {
     test("should emit to the correct player socket", () => {
       // Arrange
       const mockPlayers = [
-        { id: "socket123", userName: "Socket123User", score: 75, killCount: 8, health: 90, bullets: 12 },
-        { id: "socket456", userName: "Socket456User", score: 50, killCount: 3, health: 70, bullets: 9 },
+        createMockPlayer({ id: "socket123", userName: "Socket123User", score: 75, killCount: 8, health: 90, bullets: 12 }),
+        createMockPlayer({ id: "socket456", userName: "Socket456User", score: 50, killCount: 3, health: 70, bullets: 9 }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -228,7 +253,7 @@ describe("refreshPlayerStats", () => {
     test("should emit with the correct event name", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", userName: "EventPlayer", score: 100, killCount: 10, health: 95, bullets: 14 },
+        createMockPlayer({ id: "player1", userName: "EventPlayer", score: 100, killCount: 10, health: 95, bullets: 14 }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -261,7 +286,7 @@ describe("refreshPlayerStats", () => {
 
     test("should handle player with missing optional fields", () => {
       // Arrange
-      const mockPlayers = [{ id: "player1", userName: "Incomplete", score: 50, killCount: 5 }];
+      const mockPlayers = [createMockPlayer({ id: "player1", userName: "Incomplete", score: 50, killCount: 5 })];
       GameRoom.players = mockPlayers;
 
       // Act
@@ -283,9 +308,9 @@ describe("refreshPlayerStats", () => {
     test("should handle first player in list", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", userName: "First", score: 10, killCount: 1, health: 50, bullets: 5 },
-        { id: "player2", userName: "Second", score: 20, killCount: 2, health: 60, bullets: 6 },
-        { id: "player3", userName: "Third", score: 30, killCount: 3, health: 70, bullets: 7 },
+        createMockPlayer({ id: "player1", userName: "First", score: 10, killCount: 1, health: 50, bullets: 5 }),
+        createMockPlayer({ id: "player2", userName: "Second", score: 20, killCount: 2, health: 60, bullets: 6 }),
+        createMockPlayer({ id: "player3", userName: "Third", score: 30, killCount: 3, health: 70, bullets: 7 }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -302,9 +327,9 @@ describe("refreshPlayerStats", () => {
     test("should handle last player in list", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", userName: "First", score: 10, killCount: 1, health: 50, bullets: 5 },
-        { id: "player2", userName: "Second", score: 20, killCount: 2, health: 60, bullets: 6 },
-        { id: "player3", userName: "Third", score: 30, killCount: 3, health: 70, bullets: 7 },
+        createMockPlayer({ id: "player1", userName: "First", score: 10, killCount: 1, health: 50, bullets: 5 }),
+        createMockPlayer({ id: "player2", userName: "Second", score: 20, killCount: 2, health: 60, bullets: 6 }),
+        createMockPlayer({ id: "player3", userName: "Third", score: 30, killCount: 3, health: 70, bullets: 7 }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -321,14 +346,14 @@ describe("refreshPlayerStats", () => {
     test("should handle special characters in player id", () => {
       // Arrange
       const mockPlayers = [
-        {
+        createMockPlayer({
           id: "player-with-dashes_123",
           userName: "SpecialPlayer",
           score: 50,
           killCount: 5,
           health: 75,
           bullets: 10,
-        },
+        }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -344,7 +369,7 @@ describe("refreshPlayerStats", () => {
     test("should handle single player in list", () => {
       // Arrange
       const mockPlayers = [
-        { id: "onlyplayer", userName: "OnlyOne", score: 42, killCount: 4, health: 65, bullets: 8 },
+        createMockPlayer({ id: "onlyplayer", userName: "OnlyOne", score: 42, killCount: 4, health: 65, bullets: 8 }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -369,8 +394,8 @@ describe("refreshPlayerStats", () => {
     test("should handle multiple calls for different players", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", userName: "Multi1", score: 10, killCount: 1, health: 55, bullets: 7 },
-        { id: "player2", userName: "Multi2", score: 20, killCount: 2, health: 65, bullets: 8 },
+        createMockPlayer({ id: "player1", userName: "Multi1", score: 10, killCount: 1, health: 55, bullets: 7 }),
+        createMockPlayer({ id: "player2", userName: "Multi2", score: 20, killCount: 2, health: 65, bullets: 8 }),
       ];
       GameRoom.players = mockPlayers;
 
@@ -387,7 +412,7 @@ describe("refreshPlayerStats", () => {
     test("should handle multiple calls for the same player", () => {
       // Arrange
       const mockPlayers = [
-        { id: "player1", userName: "Repeater", score: 50, killCount: 5, health: 80, bullets: 10 },
+        createMockPlayer({ id: "player1", userName: "Repeater", score: 50, killCount: 5, health: 80, bullets: 10 }),
       ];
       GameRoom.players = mockPlayers;
 
