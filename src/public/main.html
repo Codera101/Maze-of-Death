@@ -93,63 +93,107 @@
       <div id="footer">
         <div id="reload">
           <div class="app-footer">
-        <div class="hud-container">
-            
-            <!-- AMMO CARD -->
-            <div class="ammo-card">
-                
+            <div class="hud-container">
+              <!-- AMMO CARD -->
+              <div class="ammo-card">
                 <!-- AMMO STATUS (ONE LINE ROW) -->
                 <div class="ammo-hud-row">
-                    
-                    <!-- Crosshair Icon (Static SVG from Lucide) -->
-                    <svg class="crosshair-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><circle cx="12" cy="12" r="7"></circle>
-                    </svg>
-                    
-                    <div class="ammo-display">
-                        <div id="bullet-indicators" class="bullet-indicators">
-                            <!-- Static placeholder for 3 active bullets -->
-                            <div class="bullet-bar" style="background-color: var(--color-ammo); box-shadow: 0 0 8px rgba(255, 184, 44, 0.5); transform: scaleY(1); transition-delay: 0s;"></div>
-                            <div class="bullet-bar" style="background-color: var(--color-ammo); box-shadow: 0 0 8px rgba(255, 184, 44, 0.5); transform: scaleY(1); transition-delay: 0.05s;"></div>
-                            <div class="bullet-bar" style="background-color: var(--color-ammo); box-shadow: 0 0 8px rgba(255, 184, 44, 0.5); transform: scaleY(1); transition-delay: 0.1s;"></div>
-                            <!-- Static placeholder for 2 empty bullets -->
-                            <div class="bullet-bar" style="background-color: var(--bg-base); box-shadow: none; transform: scaleY(0.8); transition-delay: 0.15s;"></div>
-                            <div class="bullet-bar" style="background-color: var(--bg-base); box-shadow: none; transform: scaleY(0.8); transition-delay: 0.2s;"></div>
-                        </div>
-                        <div class="bullet-count">
-                            3/5
-                        </div>
-                    </div>
-                </div>
+                  <!-- Crosshair Icon (Static SVG from Lucide) -->
+                  <svg
+                    class="crosshair-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <line x1="12" y1="2" x2="12" y2="6"></line>
+                    <line x1="12" y1="18" x2="12" y2="22"></line>
+                    <line x1="2" y1="12" x2="6" y2="12"></line>
+                    <line x1="18" y1="12" x2="22" y2="12"></line>
+                    <circle cx="12" cy="12" r="7"></circle>
+                  </svg>
 
+                  <div class="ammo-display">
+                    <div id="bullet-indicators" class="bullet-indicators">
+                      <!-- Static placeholder for 3 active bullets -->
+                      <div
+                        class="bullet-bar"
+                        style="
+                          background-color: var(--color-ammo);
+                          box-shadow: 0 0 8px rgba(255, 184, 44, 0.5);
+                          transform: scaleY(1);
+                          transition-delay: 0s;
+                        "
+                      ></div>
+                      <div
+                        class="bullet-bar"
+                        style="
+                          background-color: var(--color-ammo);
+                          box-shadow: 0 0 8px rgba(255, 184, 44, 0.5);
+                          transform: scaleY(1);
+                          transition-delay: 0.05s;
+                        "
+                      ></div>
+                      <div
+                        class="bullet-bar"
+                        style="
+                          background-color: var(--color-ammo);
+                          box-shadow: 0 0 8px rgba(255, 184, 44, 0.5);
+                          transform: scaleY(1);
+                          transition-delay: 0.1s;
+                        "
+                      ></div>
+                      <!-- Static placeholder for 2 empty bullets -->
+                      <div
+                        class="bullet-bar"
+                        style="
+                          background-color: var(--bg-base);
+                          box-shadow: none;
+                          transform: scaleY(0.8);
+                          transition-delay: 0.15s;
+                        "
+                      ></div>
+                      <div
+                        class="bullet-bar"
+                        style="
+                          background-color: var(--bg-base);
+                          box-shadow: none;
+                          transform: scaleY(0.8);
+                          transition-delay: 0.2s;
+                        "
+                      ></div>
+                    </div>
+                    <div class="bullet-count">3/5</div>
+                  </div>
+                </div>
+              </div>
             </div>
-        </div>
-    </div>
+          </div>
         </div>
 
         <div id="how-to-play">
           <div id="wasd-move">
-            <span style="color: var(--color-blue);">WASD</span> &nbsp; Move
+            <span style="color: var(--color-blue)">WASD</span> &nbsp; Move
           </div>
 
           <div id="space-shoot">
-            
-            <span style="color: var(--color-yellow);">Space</span> &nbsp;  Shoot
+            <span style="color: var(--color-yellow)">Space</span> &nbsp; Shoot
           </div>
-          
-          <div id="r-reload">
-            <span style="color: var(--color-green);">R</span>&nbsp;  Reload
 
+          <div id="r-reload">
+            <span style="color: var(--color-green)">R</span>&nbsp; Reload
           </div>
         </div>
-        
-        <div id="reload-cost">
-          
-        </div>
+
+        <div id="reload-cost"></div>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.14.3/dist/pixi.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="js/variables_mainpage.js"></script>
     <script src="js/draw.js"></script>
     <script type="module" src="js/top_panel.js"></script>
