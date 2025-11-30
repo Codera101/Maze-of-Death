@@ -502,6 +502,11 @@ class Room {
 	 * @returns {boolean} True if the move was successful, false otherwise
 	 */
 	handlePlayerMove(player, direction) {
+		if (player.direction != direction) {
+			// Just change facing direction without moving
+			player.direction = direction;
+			return true;
+		}
 		let pos = player.getPosition();
 		let nextPos = getNextPosition(pos, direction);
 		if (

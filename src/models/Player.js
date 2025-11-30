@@ -238,6 +238,24 @@ class Player {
 	increaseKills() {
 		this._killCount += 1;
 	}
+
+	/**	 * @brief Serialize the player object for transmission or storage
+	 * @returns {Object} A plain object representation of the player
+	 */
+	serialize() {
+		return {
+			id: this.id,
+			userName: this.userName,
+			x: this.x,
+			y: this.y,
+			dir: this.direction,
+			health: this.health,
+			score: this.score,
+			kill_count: this.killCount,
+			bullets: this.bullets,
+			color: this.color,
+		};
+	}
 }
 
 module.exports = Player;
