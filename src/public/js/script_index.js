@@ -77,6 +77,7 @@ const socket = io("http://localhost:3000");
 //& Send join request
 play_btn_container.addEventListener("click", () => {
   const username_value = username.value.trim();
+  console.log(username_value);
   if (!username_value) return;
 
   socket.emit("join_player", { username: username_value });
@@ -87,7 +88,7 @@ play_btn_container.addEventListener("click", () => {
 socket.on("player_joined", (data) => {
   console.log("Logged player:", data.current_player);
   window.player = data.current_player;
-  window.location.href = "/main.html";
+  window.location.href = "main.html";
 });
 
 //& Broadcast for other players
