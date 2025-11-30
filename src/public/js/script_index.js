@@ -75,7 +75,7 @@ document.addEventListener("keydown", (e) => {
 const socket = io("http://localhost:3000");
 
 //& Send join request
-play_btn.addEventListener("click", () => {
+play_btn_container.addEventListener("click", () => {
   const username_value = username.value.trim();
   if (!username_value) return;
 
@@ -84,16 +84,16 @@ play_btn.addEventListener("click", () => {
 });
 
 //& Receive response
-socket.on("join_player_response", (data) => {
+socket.on("player_joined", (data) => {
+  console.log("Logged player:", data.current_player);
   window.player = data.current_player;
-  console.log("Logged player:", window.player);
-  window.location.href = "main.html";
+  window.location.href = "/main.html";
 });
 
 //& Broadcast for other players
-socket.on("player_joined", (player) => {
-  console.log("Someone joined:", player);
-});
+// socket.on("player_joined_broadcast", (player) => {
+//   console.log("Someone joined:", player);
+// });
 
 //?--------------     TEST      -----------------/
 
