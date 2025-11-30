@@ -320,20 +320,6 @@
             socket.on('player_moved', (data) => {
                 const success = data.status;
                 log(`🚶 Move: ${success ? '✅ Success' : '❌ Failed'}`, success ? 'success' : 'error');
-                
-                // Track position from successful moves
-                if (success && currentPlayerPos && lastMoveDirection) {
-                    const { x, y } = currentPlayerPos;
-                    switch(lastMoveDirection) {
-                        case 'L': currentPlayerPos.y = y - 1; break;
-                        case 'R': currentPlayerPos.y = y + 1; break;
-                        case 'U': currentPlayerPos.x = x - 1; break;
-                        case 'D': currentPlayerPos.x = x + 1; break;
-                    }
-                    currentPlayerPos.dir = lastMoveDirection;
-                    if (mazeData) drawMaze();
-                }
-                lastMoveDirection = null;
             });
 
             socket.on('target_hit', (data) => {
@@ -366,6 +352,16 @@
                 document.getElementById('score').textContent = data.score;
                 document.getElementById('bullets').textContent = data.bullets;
                 document.getElementById('kills').textContent = data.kill_count || 0;
+
+                currentPlayerPos = {
+                    x: data.x,
+                    y: data.y,
+                    dir: data.dir,
+                    color: data.color,
+                    username: data.username
+                };
+                if (mazeData) drawMaze();   
+
             });
 
             socket.on('kill_message', (data) => {
