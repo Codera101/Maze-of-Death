@@ -30,7 +30,8 @@ const reloadCost = document.querySelector("#reload-cost");
 const killMessage = document.querySelector("#kill-message");
 
 // Socket Connection
-const socket = io("http://localhost:3000");
+// const socket = io("http://localhost:3000");
+const socket = io("http://localhost:8080");
 
 // Maze Variables
 let rows = 16;
