@@ -1,6 +1,6 @@
 function updateHealth(newHealth) {
   healthValue.textContent = newHealth;
-  const newWidth = (newHealth * 150) / 100;
+  const newWidth = (newHealth * 150) / 25;
   document
     .getElementById("health-progress")
     .style.setProperty("--health-percent", `${newWidth}px`);
