@@ -1,18 +1,17 @@
 import { app } from "./maze.js";
 socket.on("respawn", (player) => {
-  myPlayer = {
-    id: player.id,
-    username: player.username,
-    health: player.health,
-    score: player.score,
-    bullets: player.bullets,
-    kill_count: player.kill_count,
-    x: player.x,
-    y: player.y,
-    dir: player.dir,
-    color: player.color,
-  };
-  // TODO : refresh player
-  updatePlayerInfo(myPlayer);
+  // Update myPlayer properties from server response
+  myPlayer.id = player.id;
+  myPlayer.username = player.userName;
+  myPlayer.x = player.x;
+  myPlayer.y = player.y;
+  myPlayer.dir = player.dir;
+  myPlayer.health = player.health;
+  myPlayer.score = player.score;
+  myPlayer.kill_count = player.kill_count;
+  myPlayer.bullets = player.bullets;
+  myPlayer.color = player.color;
+  
+  updatePlayerInfo(player);
   console.log("Respawned player:", myPlayer);
 });
