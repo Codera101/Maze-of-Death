@@ -252,9 +252,6 @@ function drawPlayers(app) {
         // console.log("Drawing player:", player);
         drawPlayer(app, {
             // Convert Grid Coordinates -> Pixel Coordinates
-            // Backend: x=row (vertical), y=column (horizontal)
-            // Screen: x=horizontal, y=vertical
-            // Therefore: screen_x = player.y, screen_y = player.x
             x: player.y * gridStep,
             y: player.x * gridStep,
             dir: player.dir,
