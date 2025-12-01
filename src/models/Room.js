@@ -20,8 +20,8 @@ class Room {
 	 * and sets up game parameters like damage, speed, and respawn settings
 	 */
 	constructor() {
-		this._height = 16;
-		this._width = 16;
+		this._height = 15;
+		this._width = 15;
 		this._maze = new Maze(this._height, this._width);
 		this._players = [];
 		this._viewers = [];
@@ -29,7 +29,7 @@ class Room {
 		this._respawnTime = 3000; // in ms
 		this._shootGainPoints = 5;
 		this._reloadTime = 1000; // in ms
-		this._initPlayerHealth = 10;
+		this._initPlayerHealth = 25;
 		this._initBulltesNumber = 5;
 		this._shootSpeed = 400; // in ms;
 		this._moveSpeed = 250; // in ms;
@@ -518,6 +518,11 @@ class Room {
 		
 		if (!this.maze.isValidForPlayer(nextPos.x, nextPos.y)) {
 			console.log("Invalid move: position not valid for player");
+			return false;
+		}
+		// check if there is a player on the next position
+		if (this.checkPlayerOnPosition(nextPos)) {
+			console.log("Invalid move: another player is on the target position");
 			return false;
 		}
 

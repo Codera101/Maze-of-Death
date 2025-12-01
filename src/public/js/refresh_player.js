@@ -1,11 +1,10 @@
 function updateHealth(newHealth) {
   healthValue.textContent = newHealth;
-  const newWidth = (newHealth * 150) / 100;
+  const percentage = (newHealth / 25) * 100;
   document
     .getElementById("health-progress")
-    .style.setProperty("--health-percent", `${newWidth}px`);
+    .style.setProperty("--health-percent", `${percentage}%`);
 }
-
 
 function updatePlayerInfo(playerData) {
   // Update myPlayer state
@@ -16,18 +15,17 @@ function updatePlayerInfo(playerData) {
   myPlayer.score = playerData.score;
   myPlayer.kill_count = playerData.kill_count;
   myPlayer.bullets = playerData.bullets;
-  
+
   // Update UI elements
   updateHealth(playerData.health);
   scoreValue.textContent = playerData.score;
   killsValue.textContent = playerData.kill_count;
-  
+
   // Update ammo display if the function exists
-  if (typeof updateAmmoDisplay === 'function') {
+  if (typeof updateAmmoDisplay === "function") {
     updateAmmoDisplay(playerData.bullets, 5);
   }
 }
-
 
 socket.on("refresh_player", (playerData) => {
   updatePlayerInfo(playerData);

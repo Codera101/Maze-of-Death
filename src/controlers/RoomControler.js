@@ -196,7 +196,7 @@ class RoomControler {
 
 		const player = room.players.find((p) => p.id === playerID);
 
-		if (!player) {
+		if (!player || player.health <= 0) {
 			this.messenger.notifyGivenUser(playerID, "refresh_players", {
 				visible_player_list: [],
 			});
