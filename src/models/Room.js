@@ -29,7 +29,7 @@ class Room {
 		this._respawnTime = 3000; // in ms
 		this._shootGainPoints = 5;
 		this._reloadTime = 1000; // in ms
-		this._initPlayerHealth = 25;
+		this._initPlayerHealth = 10;
 		this._initBulltesNumber = 5;
 		this._shootSpeed = 400; // in ms;
 		this._moveSpeed = 250; // in ms;
