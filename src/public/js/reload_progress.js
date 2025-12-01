@@ -80,9 +80,9 @@ function handleKeydown(e) {
         if (state.bullets > 0) {
             // Call the central update function to decrement bullets
             updateAmmoDisplay(state.bullets - 1);
-            console.log(`Fired! ${state.bullets} rounds remaining. Press 'R' to reload.`);
+            // console.log(`Fired! ${state.bullets} rounds remaining. Press 'R' to reload.`);
         } else {
-            console.log("Empty clip! Press 'R' to reload.");
+            // console.log("Empty clip! Press 'R' to reload.");
         }
     } 
     // Reload (Key 'R')
@@ -90,9 +90,9 @@ function handleKeydown(e) {
         if (state.bullets < state.maxBullets) {
             // Call the central update function to reset bullets
             updateAmmoDisplay(state.maxBullets);
-            console.log("Reloading complete.");
+            // console.log("Reloading complete.");
         } else {
-            console.log("Ammunition is already full.");
+            // console.log("Ammunition is already full.");
         }
     }
 }

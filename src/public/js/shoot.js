@@ -19,7 +19,7 @@ window.addEventListener("keydown", (e) => {
 
 socket.on("target_hit", ( { status } ) => {
     if (status === true) {
-        console.log("Target hit!");
+        // console.log("Target hit!");
         // fireLaser({x})
         updateAmmoDisplay(myPlayer.bullets, 5);
     }

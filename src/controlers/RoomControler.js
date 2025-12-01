@@ -61,7 +61,7 @@ class RoomControler {
         }
       }
     } else {
-      console.log(`⚠️ [MOVE] Player ${playerId} not found`);
+      // console.log(`⚠️ [MOVE] Player ${playerId} not found`);
       this.messenger.notifyGivenUser(playerId, "player_moved", {
         status: false,
       });
@@ -69,14 +69,14 @@ class RoomControler {
   }
 
   handlePlayerShoot(playerId) {
-    console.log(`🔫 [SHOOT] Player ${playerId} attempting to shoot`);
+    // console.log(`🔫 [SHOOT] Player ${playerId} attempting to shoot`);
     try {
       const actionMessage = this.roomService.playerShoot(playerId);
 
       if (actionMessage) {
         const { ActionMessageTypes } = require("../models/Messages");
 
-        console.log(`📩 [SHOOT] Action message:`, actionMessage);
+        // console.log(`📩 [SHOOT] Action message:`, actionMessage);
 
         // Determine status based on action message type
         const status = actionMessage.type !== ActionMessageTypes.INVALID;
@@ -98,9 +98,9 @@ class RoomControler {
           const shooterPlayer = room.getPlayerById(actionMessage.actionSource);
 
           if (victim && shooterPlayer) {
-            console.log(
-              `💥 [HIT] ${shooterPlayer.userName} hit ${victim.userName}`
-            );
+            // console.log(
+            //   `💥 [HIT] ${shooterPlayer.userName} hit ${victim.userName}`
+            // );
             // Notify the victim they got hit (only if not a bot)
             if (!victim.isBot) {
               this.messenger.notifyGivenUser(victim.id, "got_hit", {
@@ -111,9 +111,9 @@ class RoomControler {
 
             // If it was a kill, send death notification and broadcast kill message
             if (actionMessage.type === ActionMessageTypes.KILL) {
-              console.log(
-                `☠️ [KILL] ${shooterPlayer.userName} killed ${victim.userName}`
-              );
+              // console.log(
+              //   `☠️ [KILL] ${shooterPlayer.userName} killed ${victim.userName}`
+              // );
               const respawnTime = room ? room.respawnTime : 3000;
 
               if (!victim.isBot) {
@@ -124,9 +124,9 @@ class RoomControler {
               }
 
               // Broadcast kill message to all players in the room
-              console.log(
-                `📢 [KILL_MESSAGE] Broadcasting: ${shooterPlayer.userName} killed ${victim.userName}`
-              );
+              // console.log(
+              //   `📢 [KILL_MESSAGE] Broadcasting: ${shooterPlayer.userName} killed ${victim.userName}`
+              // );
               this.messenger.broadcastToAll("kill_message", {
                 victim_name: victim.userName,
                 killer_name: shooterPlayer.userName,
@@ -149,7 +149,7 @@ class RoomControler {
           }
         }
       } else {
-        console.log(`⚠️ [SHOOT] No action message returned for ${playerId}`);
+        // console.log(`⚠️ [SHOOT] No action message returned for ${playerId}`);
         const room = this.roomService.getRoom("global");
         const shooter = room?.getPlayerById(playerId);
         if (shooter && !shooter.isBot) {
@@ -181,7 +181,7 @@ class RoomControler {
   refreshRankings() {
     const room = this.roomService.getRoom("global");
     let rankings = room.players ?? [];
-    console.log(`📊 [RANKINGS] Found ${rankings.length} players`);
+    // console.log(`📊 [RANKINGS] Found ${rankings.length} players`);
     rankings = rankings
       .sort((a, b) => {
         if (a.score === b.score) return b.killCount - a.killCount;
@@ -193,7 +193,7 @@ class RoomControler {
         kill_count: player.killCount,
         color: player.color,
       }));
-    console.log(`📢 [RANKINGS] Broadcasting to all:`, rankings);
+    // console.log(`📢 [RANKINGS] Broadcasting to all:`, rankings);
     this.messenger.broadcastToAll("refresh_ranking", { all_players: rankings });
   }
 

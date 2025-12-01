@@ -77,7 +77,7 @@ document.addEventListener("keydown", (e) => {
 //& Send join request
 play_btn_container.addEventListener("click", () => {
   const username_value = username.value.trim();
-  console.log(username_value);
+  // console.log(username_value);
   if (!username_value) return;
   
   window.location.href = `/game?username=${encodeURIComponent(username_value)}`;

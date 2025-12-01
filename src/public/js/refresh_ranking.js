@@ -28,7 +28,7 @@
 // }
 
 socket.on("refresh_ranking", ({ all_players }) => {
-  console.log("[FRONTEND] Received refresh_ranking:", all_players);
+  // console.log("[FRONTEND] Received refresh_ranking:", all_players);
   rightPanelList.innerHTML = "";
 
   all_players.sort((a, b) => {

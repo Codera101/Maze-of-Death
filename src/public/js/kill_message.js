@@ -4,7 +4,7 @@ function displayKillMessage(victim_name, killer_name) {
     return;
   }
 
-  console.log("Displaying kill message:", killer_name, "killed", victim_name);
+  // console.log("Displaying kill message:", killer_name, "killed", victim_name);
 
   // Keep max 3 messages
   if (killMessage.children.length >= 3) {
@@ -26,36 +26,36 @@ function displayKillMessage(victim_name, killer_name) {
   message.innerHTML = `<span style="color: #ff4444; font-weight: bold;">${killer_name}</span> <span style="color: #ccc;">killed</span> <span style="color: #4444ff; font-weight: bold;">${victim_name}</span>`;
   killMessage.appendChild(message);
 
-  console.log("Message appended. Total messages:", killMessage.children.length);
+  // console.log("Message appended. Total messages:", killMessage.children.length);
 
   // Auto-remove this specific message after 5 seconds
   setTimeout(() => {
     if (message.parentNode === killMessage) {
       killMessage.removeChild(message);
-      console.log(
-        "Message removed. Remaining messages:",
-        killMessage.children.length
-      );
+      // console.log(
+      //   "Message removed. Remaining messages:",
+      //   killMessage.children.length
+      // );
     }
   }, 5000);
 }
 
-console.log("[KILL_MESSAGE] Script loaded");
-console.log("[KILL_MESSAGE] Socket exists:", typeof socket !== "undefined");
-console.log("[KILL_MESSAGE] Socket object:", socket);
+// console.log("[KILL_MESSAGE] Script loaded");
+// console.log("[KILL_MESSAGE] Socket exists:", typeof socket !== "undefined");
+// console.log("[KILL_MESSAGE] Socket object:", socket);
 
 if (typeof socket !== "undefined") {
-  console.log("[KILL_MESSAGE] Registering kill_message event listener");
+  // console.log("[KILL_MESSAGE] Registering kill_message event listener");
   socket.on("kill_message", ({ victim_name, killer_name }) => {
-    console.log(
-      "[KILL_MESSAGE] ✅ Received kill_message event:",
-      killer_name,
-      "killed",
-      victim_name
-    );
+    // console.log(
+    //   "[KILL_MESSAGE] ✅ Received kill_message event:",
+    //   killer_name,
+    //   "killed",
+    //   victim_name
+    // );
     displayKillMessage(victim_name, killer_name);
   });
-  console.log("[KILL_MESSAGE] Event listener registered successfully");
+  // console.log("[KILL_MESSAGE] Event listener registered successfully");
 } else {
   console.error(
     "[KILL_MESSAGE] ❌ Socket is undefined! Cannot register event listener."
