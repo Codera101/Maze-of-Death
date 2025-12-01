@@ -5,3 +5,7 @@ function initHealth() {
 }
 
 initHealth();
+
+pauseMenu.addEventListener("click", () => {
+  window.location.href = "/";
+});
