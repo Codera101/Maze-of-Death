@@ -96,15 +96,24 @@ function drawCircle(
 }
 
 function drawMaze(app) {
+  // Check if variables are available (defensive coding)
   if (typeof rows === "undefined" || typeof cols === "undefined") return;
-  const rowLimit = rows * cellsize + (rows - 1) * strokeWidth;
-  const colLimit = cols * cellsize + (cols - 1) * strokeWidth;
-  for (let row = 0; row < rowLimit; row += cellSize + strokeWidth * 2) {
-    for (let col = 0; col < colLimit; col += cellSize + strokeWidth * 2) {
+
+  for (
+    let row = 0;
+    row < rows * cellSize + (rows - 1) * strokeWidth;
+    row += cellSize + strokeWidth * 2
+  ) {
+    for (
+      let col = 0;
+      col < cols * cellSize + (cols - 1) * strokeWidth;
+      col += cellSize + strokeWidth * 2
+    ) {
       // Determine cell type
       const rowIndex = Math.round(row / (cellSize + strokeWidth * 2));
       const colIndex = Math.round(col / (cellSize + strokeWidth * 2));
 
+      // Safety check for array bounds
       if (!mazeLayout[rowIndex] || mazeLayout[rowIndex][colIndex] === undefined)
         continue;
 
