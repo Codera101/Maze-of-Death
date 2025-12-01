@@ -123,7 +123,7 @@ const MIN_BOT_COUNT = 3; // Minimum bots to maintain
 // Start server when run directly
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  // console.log(`Server listening on http://localhost:${PORT}`);
+  console.log(`Server listening on http://localhost:${PORT}`);
 
   // Add initial bots after a short delay to ensure everything is initialized
   setTimeout(() => {
