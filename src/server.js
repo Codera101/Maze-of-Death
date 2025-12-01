@@ -69,7 +69,7 @@ io.on("connection", (socket) => {
 
   socket.on("join_player", (username) => {
     console.log("join_player listener:", username);
-    roomControler.handlePlayerJoin(socket.id, { username });
+    roomControler.handlePlayerJoin(socket.id, username);
   });
 
   socket.on("player_move", (data) => {
