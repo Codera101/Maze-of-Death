@@ -47,7 +47,7 @@ class Maze {
 			const nx = x + dx;
 			const ny = y + dy;
 
-			if (this.isValidPosition(nx, ny) && this.maze[nx][ny] === 1) {
+			if (this.isValidPosition(nx, ny) && nx < this.height - 1 && ny < this.width - 1 && this.maze[nx][ny] === 1) {
 				this.maze[x + dx / 2][y + dy / 2] = 0;
 				this.maze[nx][ny] = 0;
 				this.dfs(nx, ny);
