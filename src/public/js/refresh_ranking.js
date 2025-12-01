@@ -1,54 +1,35 @@
-const MAX_ROWS = 10;
-const rowCache = [];
+// function populateListExample() {
+//   const maxPlayers = Math.random() * 5+ 1;
+//   for (let i = 1; i <= maxPlayers; i++) {
+//     const rank = document.createElement("span");
+//     rank.id = "player-rank";
+//     rank.textContent = `${i}`;
 
-function initLeaderboard() {
-  const list = document.getElementById("right-panel-list"); 
-  list.innerHTML = "";
+//     const name = document.createElement("span");
+//     name.id = "player-name";
+//     name.textContent = `username_${i}`;
 
-  const fragment = document.createDocumentFragment();
+//     const scoreKills = document.createElement("span");
+//     scoreKills.id = "player-score-kills";
 
-  for (let i = 0; i < MAX_ROWS; i++) {
-    
-    //  <!-- <li id="player-row">
-    //                 <span id="player-rank">10</span>
-    //                 <span id="player-name">Abo_WahbaZ</span>
-    //                 <span id="player-score-kills">1999/30</span>
-    //             </li> -->
+//     const score = Math.round(Math.random() * 100, 0);
+//     const killCount = Math.round(Math.random() * 10, 0) + 1;
+//     scoreKills.textContent = `${score}/${killCount}`;
 
-    const li = document.createElement("li");
-    li.id = 'player-row';
-    li.className = "hidden";
+//     const playerData = [rank, name, scoreKills];
+//     const newPlayer = document.createElement("li");
 
-    const rankSpan = document.createElement("span");
-    rankSpan.id = "player-rank";
+//     playerData.forEach((entry) => {
+//       newPlayer.appendChild(entry);
+//     });
+//     newPlayer.id = "player-row";
+//     rightPanelList.appendChild(newPlayer);
+//   }
+// }
 
-    const nameSpan = document.createElement("span");
-    nameSpan.id = "player-name";
+socket.on("refresh_ranking", ({ all_players }) => {
+  rightPanelList.innerHTML = "";
 
-    const scoreSpan = document.createElement("span");
-    scoreSpan.id = "player-score-kills";
-
-    li.appendChild(rankSpan);
-    li.appendChild(nameSpan);
-    li.appendChild(scoreSpan);
-    fragment.appendChild(li);
-
-    rowCache.push({
-      li: li,
-      rank: rankSpan,
-      name: nameSpan,
-      score: scoreSpan
-    });
-  }
-
-  list.appendChild(fragment);
-}
-
-initLeaderboard();
-
-
-socket.on("refresh_rank", ({ all_players }) => {
-  console.log("all-players",all_players);
   all_players.sort((a, b) => {
     if (b.score === a.score) {
       return b.kill_count - a.kill_count;
@@ -56,24 +37,34 @@ socket.on("refresh_rank", ({ all_players }) => {
     return b.score - a.score;
   });
 
-  for (let i = 0; i < MAX_ROWS; i++) {
-    const cachedRow = rowCache[i];
-    const playerData = all_players[i];
+  let limit = Math.min(all_players.length, 10);
 
-    if (playerData) {
-      console.log(playerData);
-      cachedRow.rank.textContent = i + 1;
-      cachedRow.name.textContent = playerData.username.username;
-      cachedRow.score.textContent = `+${playerData.score}/${playerData.kill_count}`;
-      
-      if (cachedRow.li.classList.contains("hidden")) {
-        cachedRow.li.classList.remove("hidden");
-      }
+  const fragment = document.createDocumentFragment();
 
-    } else {
-      if (!cachedRow.li.classList.contains("hidden")) {
-        cachedRow.li.classList.add("hidden");
-      }
-    }
+  for (let i = 0; i < limit; i++) {
+    const player = all_players[i];
+
+    const rank = document.createElement("span");
+    rank.id = "player-rank";
+    rank.textContent = `${i + 1}`;
+
+    const name = document.createElement("span");
+    name.id = "player-name";
+    name.textContent = `${player.username}`;
+
+    const scoreKills = document.createElement("span");
+    scoreKills.id = "player-score-kills";
+    scoreKills.textContent = `+${player.score}/${player.kill_count}`;
+
+    const newPlayer = document.createElement("li");
+    newPlayer.id = "player-row";
+
+    newPlayer.appendChild(rank);
+    newPlayer.appendChild(name);
+    newPlayer.appendChild(scoreKills);
+
+    fragment.appendChild(newPlayer);
   }
+
+  rightPanelList.appendChild(fragment);
 });
