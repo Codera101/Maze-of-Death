@@ -137,6 +137,8 @@ class Player {
 		this._health = this.room.getInitHealth();
 		(this._x = x), (this._y = y);
 		this._direction = Directions.U;
+		this._score = 0;
+		this._killCount = 0;
 		this.timeOfLastMove = 0;
 		this.timeOfLastShoot = 0;
 	}
