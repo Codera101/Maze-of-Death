@@ -234,8 +234,8 @@ function drawPlayers(app) {
         // console.log("Drawing player:", player);
         drawPlayer(app, {
             // Convert Grid Coordinates -> Pixel Coordinates
-            x: player.x * gridStep,
-            y: player.y * gridStep,
+            x: player.y * gridStep,
+            y: player.x * gridStep,
             dir: player.dir,
             fillColor: player.color,
         });
