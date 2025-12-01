@@ -414,7 +414,7 @@ class Room {
 	checkPlayerOnPosition(position) {
 		for (let player_inx = 0; player_inx < this.players.length; player_inx++) {
 			const playerPos = this._players[player_inx].getPosition();
-			if (playerPos.x === position.x && playerPos.y === position.y && this._players[player_inx].health() > 0) {
+			if (playerPos.x === position.x && playerPos.y === position.y && this._players[player_inx].health > 0) {
 				return 1;
 			}
 		}
