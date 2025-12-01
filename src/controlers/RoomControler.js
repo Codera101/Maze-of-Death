@@ -34,16 +34,18 @@ class RoomControler {
 
 		if (player) {
 			const oldPos = player.getPosition();
-			console.log(
-				`🎯 [MOVE] Player ${playerId} at (${oldPos.x},${oldPos.y}) wants to move ${dir}`
-			);
+			// Disabled for performance - too frequent
+			// console.log(
+			// 	`🎯 [MOVE] Player ${playerId} at (${oldPos.x},${oldPos.y}) wants to move ${dir}`
+			// );
 
 			try {
 				const result = this.roomService.playerMove(playerId, dir);
 				const newPos = player.getPosition();
-				console.log(
-					`✅ [MOVE] Result: ${result}, old (${oldPos.x},${oldPos.y}) now at (${newPos.x},${newPos.y}), facing: ${player.direction}`
-				);
+				// Disabled for performance - too frequent
+				// console.log(
+				// 	`✅ [MOVE] Result: ${result}, old (${oldPos.x},${oldPos.y}) now at (${newPos.x},${newPos.y}), facing: ${player.direction}`
+				// );
 				this.messenger.notifyGivenUser(playerId, "player_moved", {
 					status: result,
 				});
@@ -202,7 +204,7 @@ class RoomControler {
 		}
 		const visiblePlayers = room.players.filter(
 			(p) =>
-				// p.id !== playerID &&
+				p.health > 0 &&
 				room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false
 		);
 		const visibleData = visiblePlayers.map((p) => ({

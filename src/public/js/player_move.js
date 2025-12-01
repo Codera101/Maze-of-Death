@@ -1,5 +1,5 @@
-let dx = [0, 0, -1, 1];
-let dy = [-1, 1, 0, 0];
+// Direction mapping: Backend uses x=row (vertical), y=column (horizontal)
+// U/D modify x (row), L/R modify y (column)
 let dirArr = ["U", "D", "L", "R"];
 let arrows = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 let wasd = ["w", "s", "a", "d"];
