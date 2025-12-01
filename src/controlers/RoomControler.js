@@ -127,7 +127,7 @@ class RoomControler {
               console.log(
                 `📢 [KILL_MESSAGE] Broadcasting: ${shooterPlayer.userName} killed ${victim.userName}`
               );
-              this.messenger.notifyAllUsersInRoom("global", "kill_message", {
+              this.messenger.broadcastToAll("kill_message", {
                 victim_name: victim.userName,
                 killer_name: shooterPlayer.userName,
               });

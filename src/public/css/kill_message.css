@@ -1,31 +1,39 @@
-#maze-container {
-    position: relative;
+#kill-message {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: white;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+  font-family: "DM Mono", monospace;
 }
 
-#kill-message {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 32px;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-}   
-
 #kill-message div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: rgba(20, 20, 35, 0.95);
+  border: 2px solid rgba(100, 100, 120, 0.5);
+  font-size: 16px;
+  animation: slideIn 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
 
-    padding: 10px 20px;
-    border-radius: 10px;
-    /* border-radius: 30px; */
-    background-color: hsla(240, 24%, 15%, 0.768);
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
