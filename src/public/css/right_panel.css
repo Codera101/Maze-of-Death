@@ -81,3 +81,7 @@
     font-size: 18px;
     margin-right: 15px;
 }
+
+.hidden{
+    display: none !important;
+}
