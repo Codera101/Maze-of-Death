@@ -400,7 +400,7 @@
             if (!connected || !socket) return;
             lastMoveDirection = dir; // Store direction for position tracking
             log(`→ Moving ${dir}`, 'info');
-            socket.emit('player_move', dir);
+            socket.emit('player_move', {dir:dir});
         }
 
         function shoot() {

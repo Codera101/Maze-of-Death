@@ -68,8 +68,10 @@ io.on("connection", (socket) => {
 		roomControler.handlePlayerJoin(socket.id, { username });
 	});
 
-	socket.on("player_move", (dir) => {
+	socket.on("player_move", (data) => {
+		const { dir } = data;
 		// Normalize direction input (support both "up"/"U", "down"/"D", etc.)
+		console.log("player_move listener:", dir);
 		let normalized = dir;
 		if (typeof dir === "string") {
 			const dirMap = {
