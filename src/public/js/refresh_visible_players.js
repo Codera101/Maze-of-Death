@@ -1,10 +1,7 @@
-import { app } from "./maze.js"
+import { app } from "./maze.js";
 
-socket.on("refresh_players", ({visible_player_list}) => {
-    // TODO: Update visible players on the maze
-    visiblePlayers = visible_player_list;
-    visiblePlayers.array.forEach(ele => {
-        ele.fillColor = ele.color;
-    });
-    updateMaze(app);
-})
+socket.on("refresh_players", ({ visible_player_list }) => {
+  // TODO: Update visible players on the maze
+  visiblePlayers = visible_player_list;
+  updateMaze(app);
+});

@@ -1,42 +1,49 @@
 // import { app } from "./maze.js"
 // import { rows, cols, cellSize, strokeWidth, mazeLayout } from "./config.js"
-//const socket = io("http://localhost:3000");
 
-socket.on("connect", () => {
-    const params = new URLSearchParams(window.location.search);
-    const username_value = params.get("username");
-    socket.emit("join_player", { username: username_value });
-    console.log("Joining as:", username_value);
-});
+// Socket setup
+// const socket = io("http://localhost:3000");
 
-//& Receive response
-socket.on("player_joined", (data) => {
-  console.log("Logged player:", data.current_player);
-  window.player = data.current_player;
-});    
+if (typeof socket !== 'undefined') {
+    socket.on("connect", () => {
+        const params = new URLSearchParams(window.location.search);
+        const username_value = params.get("username");
+        socket.emit("join_player", { username: username_value });
+        console.log("Joining as:", username_value);
+    });
 
-function drawRoundedRect(app,{
-    x = 0,
-    y = 0,
-    width = 100,
-    height = 100,
-    radius = 0,
-    fillColor = 0xffffff,
-    strokeColor = 0x000000,
-    strokeWidth = 0
-}) {
+    socket.on("player_joined", (data) => {
+        window.player = data.current_player;
+    });
+}
+
+/**
+ * Draws a rounded rectangle. 
+ * Note: Accounts for strokeWidth by shrinking the visual box slightly 
+ * so borders render inside the bounds.
+ */
+function drawRoundedRect(
+    app,
+    {
+        x,
+        y,
+        width = 100,
+        height = 100,
+        radius = 0,
+        fillColor = 0xffffff,
+        strokeColor = 0x000000,
+        strokeWidth = 0,
+    }
+) {
     const g = new PIXI.Graphics();
 
-    // BORDER IS INSIDE: reduce drawing area by strokeWidth
-    const half = strokeWidth / 2;
+    // Calculate visual bounds (border inside)
+    const visualX = x + strokeWidth;
+    const visualY = y + strokeWidth;
+    const visualWidth = width - strokeWidth;
+    const visualHeight = height - strokeWidth;
 
-    g.roundRect(
-        x + half,
-        y + half,
-        width - strokeWidth,
-        height - strokeWidth,
-        radius
-    );
+    g.roundRect(visualX, visualY, visualWidth, visualHeight, radius);
 
     // Fill
     g.fill({ color: fillColor });
@@ -46,52 +53,71 @@ function drawRoundedRect(app,{
         g.stroke({
             color: strokeColor,
             width: strokeWidth,
-            alignment: 0 // 0 = inside border
+            alignment: 0, // 0 = inside border
         });
     }
     app.stage.addChild(g);
-    
+
     return g;
 }
 
-
-
-function drawCircle(app,{
-    x = 0,
-    y = 0,
-    radius = 50,
-    fillColor = 0xffffff,
-    strokeColor = 0x000000,
-    strokeWidth = 0
-}) {
+/**
+ * UPDATED: Uses PIXI v8 syntax to match drawRoundedRect.
+ */
+function drawCircle(
+    app,
+    {
+        x,
+        y,
+        radius = 50,
+        fillColor = 0xffffff,
+        strokeColor = 0x000000,
+        strokeWidth = 0,
+    }
+) {
     const g = new PIXI.Graphics();
 
     // BORDER INSIDE: reduce radius by half of strokeWidth
     const r = radius - strokeWidth / 2;
 
-    // Fill
-    g.beginFill(fillColor);
-    g.drawCircle(x, y, r);
-    g.endFill();
+    g.circle(x, y, r);
+    g.fill({ color: fillColor });
 
-    // Border
     if (strokeWidth > 0) {
-        g.lineStyle(strokeWidth, strokeColor, 1, 0, false, false);
-        g.drawCircle(x, y, r);
+        g.stroke({
+            color: strokeColor,
+            width: strokeWidth,
+            alignment: 0.5 
+        });
     }
 
     app.stage.addChild(g);
     return g;
 }
 
-
-
-
 function drawMaze(app) {
-    for (let row = 0; row < rows * cellSize + (rows - 1) * strokeWidth; row += cellSize + strokeWidth * 2) {
-        for (let col = 0; col < cols * cellSize + (cols - 1) * strokeWidth; col += cellSize + strokeWidth * 2) {
+    // Check if variables are available (defensive coding)
+    if (typeof rows === 'undefined' || typeof cols === 'undefined') return;
 
-            if (mazeLayout[row / (cellSize + strokeWidth * 2)][col / (cellSize + strokeWidth * 2)] === 0) {
+    for (
+        let row = 0;
+        row < rows * cellSize + (rows - 1) * strokeWidth;
+        row += cellSize + strokeWidth * 2
+    ) {
+        for (
+            let col = 0;
+            col < cols * cellSize + (cols - 1) * strokeWidth;
+            col += cellSize + strokeWidth * 2
+        ) {
+            // Determine cell type
+            const rowIndex = Math.round(row / (cellSize + strokeWidth * 2));
+            const colIndex = Math.round(col / (cellSize + strokeWidth * 2));
+            
+            // Safety check for array bounds
+            if (!mazeLayout[rowIndex] || mazeLayout[rowIndex][colIndex] === undefined) continue;
+
+            if (mazeLayout[rowIndex][colIndex] === 1) {
+                // Wall
                 drawRoundedRect(app, {
                     x: col,
                     y: row,
@@ -100,10 +126,11 @@ function drawMaze(app) {
                     radius: 1,
                     fillColor: "#1a1a28",
                     strokeColor: "#FF2C47",
-                    strokeWidth: strokeWidth  
+                    strokeWidth: strokeWidth,
                 });
             } else {
-                drawRoundedRect(app,{
+                // Floor
+                drawRoundedRect(app, {
                     x: col,
                     y: row,
                     width: cellSize,
@@ -111,88 +138,145 @@ function drawMaze(app) {
                     radius: 1,
                     fillColor: "#0D0D16",
                     strokeColor: "#10212A",
-                    strokeWidth: strokeWidth
-                })
+                    strokeWidth: strokeWidth,
+                });
             }
         }
     }
-} 
+}
 
-
-
-function drawPlayer(app, {
-    x = 0,
-    y = 0,
-    width = cellSize,
-    height = cellSize,
-    radius = 7,
-    dir = "up",
-    fillColor,
-}) {
-    drawRoundedRect(app, {x, y, width: width, height: height, radius: 15, fillColor: fillColor, strokeColor: "#FFFFFF", strokeWidth: 0});
-    let cx, cy;
-    
-    if (dir === 'up' || dir === 'down') {
-        cx = x + width / 2;
-        cy = dir === 'up' ? y + 15 : y + height - 15;
-    } else if (dir === 'left' || dir === 'right') {
-        cx = dir === 'left' ? x + 15 : x + width - 15;
-        cy = y + height / 2;
+/**
+ * FIXED: Player drawing logic.
+ * Calculates position dynamically to push the dot to the edge
+ * based on the direction.
+ */
+function drawPlayer(
+    app,
+    {
+        x,
+        y,
+        width = cellSize,
+        height = cellSize,
+        radius = 7, // Radius of the direction dot
+        dir,
+        fillColor,
     }
-    drawCircle(app, {x: cx, y: cy, radius: radius, fillColor: "#fff", strokeColor: "#FFFFFF", strokeWidth: 2});
+) {
+    // 1. Draw the Body
+    drawRoundedRect(app, {
+        x,
+        y,
+        width: width,
+        height: height,
+        radius: 10, // Rounded corners
+        fillColor: fillColor,
+        strokeColor: "#FFFFFF",
+        strokeWidth: 0,
+    });
+
+    // 2. Calculate Visual Center
+    // Since drawRoundedRect shifts x by strokeWidth and width by -strokeWidth,
+    // we need to calculate the actual center of the drawn rectangle.
+    
+    const playerStrokeWidth = 0; 
+    
+    const visualBodyX = x + playerStrokeWidth;
+    const visualBodyY = y + playerStrokeWidth;
+    const visualBodyW = width - playerStrokeWidth;
+    const visualBodyH = height - playerStrokeWidth;
+
+    const centerX = visualBodyX + (visualBodyW / 2);
+    const centerY = visualBodyY + (visualBodyH / 2);
+
+    // 3. Calculate Dot Position
+    // Logic: Push the dot to the edge, minus its own radius, minus a small padding (3px)
+    const padding = 3;
+    const maxOffset = (visualBodyW / 2) - radius - padding;
+    
+    // Safety: ensure offset is positive, otherwise fallback to 25% of width
+    const offsetDistance = maxOffset > 0 ? maxOffset : (visualBodyW / 4);
+
+    let dotX = centerX;
+    let dotY = centerY;
+    
+    // console.log(typeof(dirUpper));
+    const dirUpper = (typeof dir == "string") ? dir.toUpperCase() : dir.direction;
+
+    if (dirUpper == "UP") {
+        dotY = centerY - offsetDistance;
+    } else if (dirUpper == "DOWN") {
+        dotY = centerY + offsetDistance;
+    } else if (dirUpper == "LEFT") {
+        dotX = centerX - offsetDistance;
+    } else if (dirUpper == "RIGHT") {
+        dotX = centerX + offsetDistance;
+    }
+
+    // 4. Draw the Direction Dot
+    drawCircle(app, {
+        x: dotX,
+        y: dotY,
+        radius: radius,
+        fillColor: "#fff",
+        strokeColor: "#FFFFFF",
+        strokeWidth: 0,
+    });
 }
 
 function drawPlayers(app) {
-    if (visiblePlayers.length === 0) return;
-    visiblePlayers.forEach(player => {
+    if (typeof visiblePlayers === 'undefined' || visiblePlayers.length === 0) return;
+
+    // Calculate the size of a single grid block including borders/spacing
+    // This formula matches the iteration logic in drawMaze
+    const gridStep = cellSize + (strokeWidth * 2); 
+    
+    visiblePlayers.forEach((player) => {
+        // console.log("Drawing player:", player);
         drawPlayer(app, {
-            x: player.x,
-            y: player.y,
+            // Convert Grid Coordinates -> Pixel Coordinates
+            x: player.x * gridStep,
+            y: player.y * gridStep,
             dir: player.dir,
-            fillColor: player.fillColor
+            fillColor: player.color,
         });
     });
 }
 
-function fireLaser(app, {xStart, yStart, xEnd, yEnd, lineWidth}) {
+function fireLaser(app, { xStart, yStart, xEnd, yEnd, lineWidth }) {
     if (!lineWidth || lineWidth <= 0) return;
 
     const laser = new PIXI.Graphics();
 
     // Glow (gold)
-    laser.poly([xStart, yStart, xEnd, yEnd], false)
-        .stroke({
-            width: lineWidth * 3,
-            color: 0xFFD966,
-            alpha: 0.25,
-            cap: 'round'
-        });
+    laser.poly([xStart, yStart, xEnd, yEnd], false).stroke({
+        width: lineWidth * 3,
+        color: 0xffd966,
+        alpha: 0.25,
+        cap: "round",
+    });
 
     // Core gold beam
-    laser.poly([xStart, yStart, xEnd, yEnd], false)
-        .stroke({
-            width: lineWidth,
-            color: 0xFFCC00,
-            alpha: 1,
-            cap: 'round'
-        });
+    laser.poly([xStart, yStart, xEnd, yEnd], false).stroke({
+        width: lineWidth,
+        color: 0xffcc00,
+        alpha: 1,
+        cap: "round",
+    });
 
     app.stage.addChild(laser);
 
-    // Increase removal time here (200ms)
     setTimeout(() => {
         if (laser.parent) {
             laser.parent.removeChild(laser);
             laser.destroy();
         }
-    }, 200); // <—— change this to whatever duration you want
+    }, 200);
 
     return laser;
 }
 
-
 function updateMaze(app) {
     drawMaze(app);
     drawPlayers(app);
-    updateAmmoDisplay(myPlayer.bullets, 5);
+    // updateAmmoDisplay(myPlayer.bullets, 5);
 }

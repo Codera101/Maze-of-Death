@@ -15,9 +15,9 @@ function displayKillMessage(victim_name, killer_name) {
 }
 
 socket.on("kill_message", ({ victim_name, killer_name }) => {
-    displayKillMessage(victim_name, killer_name);
+    // displayKillMessage(victim_name, killer_name);
     console.log("add kill message");
     
 })
 
-displayKillMessage("mo", "Joe");
+// displayKillMessage("mo", "Joe");

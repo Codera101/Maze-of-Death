@@ -9,27 +9,27 @@ await app.init({
 });
 mazeContent.appendChild(app.canvas);
 
-drawMaze(app);
+// drawMaze(app);
 
-drawPlayer(app, {
-    x: 0 + (cellSize + strokeWidth * 2) * 3,
-    y: 0 + (cellSize + strokeWidth * 2) * 5,
-    dir: 'right',
-    fillColor: "#4CAF50"
-});
+// drawPlayer(app, {
+//     x: 0 + (cellSize + strokeWidth * 2) * 3,
+//     y: 0 + (cellSize + strokeWidth * 2) * 5,
+//     dir: 'right',
+//     fillColor: "#4CAF50"
+// });
 
-drawPlayer(app, {
-    x: 0 + (cellSize + strokeWidth * 2) * 3,
-    y: 0 + (cellSize + strokeWidth * 2) * 2,
-    dir: 'up',
-    fillColor: "#ccAc50"
-});
+// drawPlayer(app, {
+//     x: 0 + (cellSize + strokeWidth * 2) * 3,
+//     y: 0 + (cellSize + strokeWidth * 2) * 2,
+//     dir: 'up',
+//     fillColor: "#ccAc50"
+// });
 
 
-fireLaser(app, {
-    xStart: 0 ,
-    yStart: 0,
-    xEnd: 300,
-    yEnd: 300,
-    lineWidth: 5, 
-});
+// fireLaser(app, {
+//     xStart: 0 ,
+//     yStart: 0,
+//     xEnd: 300,
+//     yEnd: 300,
+//     lineWidth: 5, 
+// });

@@ -5,21 +5,20 @@ function updateHealth(newHealth) {
     .getElementById("health-progress")
     .style.setProperty("--health-percent", `${newWidth}px`);
 }
-socket.on("refresh_player", ({ player }) => {
-  updatePlayerInfo(player);
-  updateAmmoDisplay(player.bullets, 5);
-});
 
-function updatePlayerInfo(player) {
-  myPlayer = player;
-  myPlayer.x = 0 + (cellSize + strokeWidth * 2) * 3;
-  myPlayer.y = 0 + (cellSize + strokeWidth * 2) * 2;
 
-  const health = player.health;
-  const bullets = player.bullets;
-  const kill_count = player.kill_count;
-
-  updateHealth(health);
-  killsValue.textContent = kill_count;
-  scoreValue.textContent = player.score;
+function updatePlayerInfo(playerData) {
+  myPlayer.x = playerData.x;
+  myPlayer.y = playerData.y;
+  myPlayer.dir = playerData.dir;
+  myPlayer.health = playerData.health;
+  myPlayer.score = playerData.score;
+  myPlayer.kill_count = playerData.kill_count;
+  myPlayer.bullets = playerData.bullets;
+  updateHealth(playerData.health);
 }
+
+
+socket.on("refresh_player", (playerData) => {
+  updatePlayerInfo(playerData);
+});
