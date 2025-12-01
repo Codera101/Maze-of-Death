@@ -509,7 +509,7 @@ class Room {
 		}
 		
 		if (!player.canMove()) {
-			console.log("Player cannot move yet (cooldown)");
+			// console.log("Player cannot move yet (cooldown)");
 			return false;
 		}
 		
@@ -517,12 +517,12 @@ class Room {
 		let nextPos = getNextPosition(pos, direction);
 		
 		if (!this.maze.isValidForPlayer(nextPos.x, nextPos.y)) {
-			console.log("Invalid move: position not valid for player");
+			// console.log("Invalid move: position not valid for player");
 			return false;
 		}
 		// check if there is a player on the next position
 		if (this.checkPlayerOnPosition(nextPos)) {
-			console.log("Invalid move: another player is on the target position");
+			// console.log("Invalid move: another player is on the target position");
 			return false;
 		}
 

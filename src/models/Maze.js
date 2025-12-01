@@ -164,7 +164,7 @@ class Maze {
 			for (let j = 0; j < this.width; j++) {
 				row += this.maze[i][j] === 1 ? "█" : " ";
 			}
-			console.log(row);
+			// console.log(row);
 		}
 	}
 

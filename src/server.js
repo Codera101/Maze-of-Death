@@ -60,15 +60,15 @@ io.on("connection", (socket) => {
   const messenger = new Messenger(io, socket);
   const roomControler = new RoomControler(roomService, messenger, logger);
 
-  console.log("Socket connected:", socket.id);
+  // console.log("Socket connected:", socket.id);
   socket.emit("message", "Hello from server — welcome!");
 
   socket.on("pong", (data) => {
-    console.log("Received pong from", socket.id, data);
+    // console.log("Received pong from", socket.id, data);
   });
 
   socket.on("join_player", (username) => {
-    console.log("join_player listener:", username);
+    // console.log("join_player listener:", username);
     roomControler.handlePlayerJoin(socket.id, username);
   });
 
@@ -104,7 +104,7 @@ io.on("connection", (socket) => {
   }, 400);
 
   socket.on("disconnect", (reason) => {
-    console.log("Socket disconnected:", socket.id, reason);
+    // console.log("Socket disconnected:", socket.id, reason);
     // Clear the interval to prevent memory leak
     clearInterval(refreshInterval);
     roomControler.handlePlayerDisconnect(socket.id);
@@ -123,11 +123,11 @@ const MIN_BOT_COUNT = 3; // Minimum bots to maintain
 // Start server when run directly
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+  // console.log(`Server listening on http://localhost:${PORT}`);
 
   // Add initial bots after a short delay to ensure everything is initialized
   setTimeout(() => {
-    console.log(`Adding ${INITIAL_BOT_COUNT} initial bots to the game...`);
+    // console.log(`Adding ${INITIAL_BOT_COUNT} initial bots to the game...`);
     botService.addBots(
       GameRoom,
       INITIAL_BOT_COUNT,

@@ -106,9 +106,9 @@ class BotService {
     // Store bot reference
     this._bots.set(botId, bot);
 
-    console.log(
-      `Bot created: ${botName} (${difficulty}) at position (${spawnPos.x}, ${spawnPos.y})`
-    );
+    // console.log(
+    //   `Bot created: ${botName} (${difficulty}) at position (${spawnPos.x}, ${spawnPos.y})`
+    // );
 
     return bot;
   }
@@ -162,7 +162,7 @@ class BotService {
     }, 100); // Bot thinks every 100ms
 
     this._botUpdateIntervals.set(botId, intervalId);
-    console.log(`Bot AI started: ${bot.userName}`);
+    // console.log(`Bot AI started: ${bot.userName}`);
   }
 
   /**
@@ -176,7 +176,7 @@ class BotService {
       this._botUpdateIntervals.delete(botId);
       const bot = this._bots.get(botId);
       if (bot) {
-        console.log(`Bot AI stopped: ${bot.userName}`);
+        // console.log(`Bot AI stopped: ${bot.userName}`);
       }
     }
   }
@@ -205,7 +205,7 @@ class BotService {
       // Remove from bots map
       this._bots.delete(botId);
 
-      console.log(`Bot removed: ${bot.userName}`);
+      // console.log(`Bot removed: ${bot.userName}`);
     }
   }
 
@@ -247,7 +247,7 @@ class BotService {
       }
     }
 
-    console.log(`Added ${addedBots.length} bots to the game`);
+    // console.log(`Added ${addedBots.length} bots to the game`);
     return addedBots;
   }
 
@@ -258,7 +258,7 @@ class BotService {
   removeAllBots(room) {
     const botIds = Array.from(this._bots.keys());
     botIds.forEach((botId) => this.removeBot(botId, room));
-    console.log("All bots removed");
+    // console.log("All bots removed");
   }
 
   /**
@@ -305,7 +305,7 @@ class BotService {
     const botsToAdd = minBots - currentBotCount;
 
     if (botsToAdd > 0) {
-      console.log(`Maintaining bot count: adding ${botsToAdd} bots`);
+      // console.log(`Maintaining bot count: adding ${botsToAdd} bots`);
       this.addBots(room, botsToAdd, roomControler, difficulty, roomService);
     }
   }

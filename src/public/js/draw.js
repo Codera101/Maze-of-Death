@@ -9,7 +9,7 @@ if (typeof socket !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         const username_value = params.get("username");
         socket.emit("join_player", { username: username_value });
-        console.log("Joining as:", username_value);
+        // console.log("Joining as:", username_value);
     });
 
     socket.on("player_joined", (data) => {
@@ -31,7 +31,7 @@ if (typeof socket !== 'undefined') {
             updatePlayerInfo(player);
         }
         
-        console.log("Player joined and initialized:", myPlayer);
+        // console.log("Player joined and initialized:", myPlayer);
     });
 }
 

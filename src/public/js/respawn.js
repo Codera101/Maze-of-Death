@@ -13,5 +13,5 @@ socket.on("respawn", (player) => {
   myPlayer.color = player.color;
   
   updatePlayerInfo(player);
-  console.log("Respawned player:", myPlayer);
+  // console.log("Respawned player:", myPlayer);
 });
