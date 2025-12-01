@@ -202,13 +202,13 @@ function drawPlayer(
     // console.log(typeof(dirUpper));
     const dirUpper = (typeof dir == "string") ? dir.toUpperCase() : dir;
 
-    if (dirUpper == "UP") {
+    if (dirUpper == "U") {
         dotY = centerY - offsetDistance;
-    } else if (dirUpper == "DOWN") {
+    } else if (dirUpper == "D") {
         dotY = centerY + offsetDistance;
-    } else if (dirUpper == "LEFT") {
+    } else if (dirUpper == "L") {
         dotX = centerX - offsetDistance;
-    } else if (dirUpper == "RIGHT") {
+    } else if (dirUpper == "R") {
         dotX = centerX + offsetDistance;
     }
 
