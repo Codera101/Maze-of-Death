@@ -1,7 +1,7 @@
 function initHealth() {
-  healthValue.textContent = 10;  // Match backend's initPlayerHealth
-  const initialWidth = (10 * 150) / 100;
-  healthProgress.style.width = `${initialWidth}px`;
+  healthValue.textContent = 25; // Match backend's initPlayerHealth
+  const percentage = (25 / 25) * 100;
+  healthProgress.style.setProperty("--health-percent", `${percentage}%`);
 }
 
 initHealth();
