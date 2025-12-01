@@ -17,11 +17,12 @@ class Player {
 		this._bullets = room ? room.getInitBulltes() : 0;
 		this._timeOfLastMove = 0;
 		this._timeOfLastShoot = 0;
-		this._color =
-			"#" +
-			Math.floor(Math.random() * 16777215)
-				.toString(16)
-				.padStart(6, "0");
+		this._color = this._room.getNewColor();
+		// this._color =
+		// 	"#" +
+		// 	Math.floor(Math.random() * 16777215)
+		// 		.toString(16)
+		// 		.padStart(6, "0");
 	}
 
 	// ------------------ Getters / Setters ------------------

@@ -49,6 +49,11 @@ socket.on("refresh_ranking", ({ all_players }) => {
     rank.id = "player-rank";
     rank.textContent = `${i + 1}`;
 
+    // added
+    rank.style.backgroundColor = player.color; 
+    rank.style.color = "#000000ff";
+    rank.style.fontWeight = "bold";
+
     const name = document.createElement("span");
     name.id = "player-name";
     name.textContent = `${player.username}`;
@@ -63,6 +68,11 @@ socket.on("refresh_ranking", ({ all_players }) => {
     newPlayer.appendChild(rank);
     newPlayer.appendChild(name);
     newPlayer.appendChild(scoreKills);
+
+    // added
+    newPlayer.style.borderColor = player.color;
+    newPlayer.style.boxShadow = `-2px 2px 8px ${player.color}`;
+
 
     fragment.appendChild(newPlayer);
   }

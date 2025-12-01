@@ -33,6 +33,20 @@ class Room {
 		this._initBulltesNumber = 5;
 		this._shootSpeed = 400; // in ms;
 		this._moveSpeed = 250; // in ms;
+		this._colorsPalet = [
+				"#FF0000", // Electric Red
+				"#FF6600", // Safety Orange
+				"#FFFF00", // Sun Yellow
+				"#00FF00", // Lime Green
+				"#007FFF", // Cerulean Blue
+				"#FF00FF", // Fuchsia/Magenta
+				"#FF1493", // Hot Pink
+				"#00FFFF", // Aqua/Cyan
+				"#6600FF", // Electric Purple
+				"#FFD700", // Bright Gold
+				"#00FF7F", // Spring Green
+				"#00BFFF"  // Deep Sky Blue
+				];
 	}
 
 	// ------------------ Getters / Setters ------------------
@@ -348,7 +362,12 @@ class Room {
 			return { x: -1, y: -1 };
 		}
 	}
-
+	getNewColor(){
+		let color = this._colorsPalet[0];
+		this._colorsPalet.shift();
+		this._colorsPalet.push(color);
+		return color;
+	}
 	/**
 	 * @brief Add a new player to the room
 	 * @param {string} userName - The username of the new player
