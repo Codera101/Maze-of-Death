@@ -71,7 +71,7 @@ socket.on("refresh_ranking", ({ all_players }) => {
 
     // added
     newPlayer.style.borderColor = player.color;
-    newPlayer.style.boxShadow = `-2px 2px 8px ${player.color}`;
+    newPlayer.style.boxShadow = `-1px 1px 6px 0px ${player.color}`;
 
 
     fragment.appendChild(newPlayer);

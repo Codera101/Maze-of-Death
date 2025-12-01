@@ -20,7 +20,7 @@
     /* height: 600px; */
     /* height: 100%; */
     /* width: 25%; */
-    /* max-width: 20rem; */
+    width: 25rem;
     justify-content: center;
     align-items: start;
     gap: 20px;
@@ -50,18 +50,23 @@
 }
 
 #player-row {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    flex-direction: column;
+    grid-template-columns: 30px 150px 50px; 
     align-items: center;
     gap: 15px;
     font-size: 20px;
     margin: 15px;
     width: 90%;
     background-color: var(--color-dark-surface);
-    height: 40px;
+    height: 50px;
     border: 1px solid var(--color-text-dim);
     border-radius: 5px;
     color: var(--color-text-primary);
+    
+}
+#player-name{
+    font-size: 18px;
 }
 
 #player-rank {
@@ -76,8 +81,8 @@
     margin-left: 5px;
 }
 
+
 #player-score-kills {
     color: var(--color-success);
     font-size: 18px;
-    margin-right: 15px;
 }

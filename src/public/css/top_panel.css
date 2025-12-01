@@ -67,7 +67,7 @@ body {
 }
 
 #heart-icon {
-    font-size: 20px;
+    font-size: 28px;
     flex-shrink: 0;
     width: 20px;
 }
@@ -99,7 +99,7 @@ body {
 }
 
 #health-value {
-    font-size: 18px;
+    font-size: 24px;
     flex-shrink: 0;
     width: 35px;
     text-align: right;
@@ -132,18 +132,18 @@ body {
     /* margin: 0px 6px 0px 6px; */
     padding: 15px;
     border-radius: 8px;
-    border-width: 1px;
+    border-width: 2px;
     border-style: solid;
 }
 
 .stats-icon {
     /* position: relative; */
     /* right: 13px; */
-    font-size: 18px;
+    font-size: 28px;
 }
 
 .stats-value {
-    font-size: 18px;
+    font-size: 20px;
     /* right: 4px; */
     /* position: relative; */
 }
@@ -151,9 +151,9 @@ body {
 .stats-label {
     /* position: relative; */
     /* left: 21px; */
-    color: var(--color-text-dim);
-    font-size: 15px;
-    opacity: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 100%;
     /* bottom: 2px; */
 }
 
@@ -166,6 +166,9 @@ body {
 }
 
 #score-value {
+    color: var(--color-neon-green);
+}
+#score-label{
     color: var(--color-neon-green);
 }
 
@@ -181,13 +184,16 @@ body {
     color: var(--color-danger);
 }
 
+#kills-label{
+    color: var(--color-danger);
+}
 
 #exit-menu {
     border: none;
     border-radius: 8px;
     background-color: var(--color-danger);
     /* position: relative; */
-    width: 80px;
+    width: 120px;
     height: 40px;
     /* left: 370px; */
     cursor: pointer;
@@ -199,10 +205,10 @@ body {
 
 #exit-icon {
     color: var(--color-text-primary);
-    font-size: 24px;
+    font-size: 28px;
 }
 
 #exit-label {
     color: var(--color-text-primary);
-    font-size: 16px;
+    font-size: 20px;
 }
