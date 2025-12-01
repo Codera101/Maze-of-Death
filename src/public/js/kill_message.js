@@ -6,9 +6,14 @@ function displayKillMessage(victim_name, killer_name) {
 
   // console.log("Displaying kill message:", killer_name, "killed", victim_name);
 
-  // Keep max 3 messages
-  if (killMessage.children.length >= 3) {
-    killMessage.removeChild(killMessage.firstChild);
+  // Keep max 3 messages - properly remove old ones
+  while (killMessage.children.length >= 3) {
+    const oldMessage = killMessage.firstChild;
+    killMessage.removeChild(oldMessage);
+    // Clear any pending timeouts to prevent memory leaks
+    if (oldMessage._removeTimeout) {
+      clearTimeout(oldMessage._removeTimeout);
+    }
   }
 
   let message = document.createElement("div");
@@ -29,9 +34,11 @@ function displayKillMessage(victim_name, killer_name) {
   // console.log("Message appended. Total messages:", killMessage.children.length);
 
   // Auto-remove this specific message after 5 seconds
-  setTimeout(() => {
+  // Store timeout ID to allow cleanup if needed
+  message._removeTimeout = setTimeout(() => {
     if (message.parentNode === killMessage) {
       killMessage.removeChild(message);
+      message._removeTimeout = null;
       // console.log(
       //   "Message removed. Remaining messages:",
       //   killMessage.children.length
