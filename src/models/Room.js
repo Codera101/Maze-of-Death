@@ -28,11 +28,11 @@ class Room {
 		this._shootDamage = 5;
 		this._respawnTime = 3000; // in ms
 		this._shootGainPoints = 5;
-		this._reloadTime = 500; // in ms
+		this._reloadTime = 1000; // in ms
 		this._initPlayerHealth = 10;
 		this._initBulltesNumber = 5;
 		this._shootSpeed = 400; // in ms;
-		this._moveSpeed = 400; // in ms;
+		this._moveSpeed = 250; // in ms;
 	}
 
 	// ------------------ Getters / Setters ------------------
@@ -507,16 +507,23 @@ class Room {
 			player.direction = direction;
 			return true;
 		}
-		let pos = player.getPosition();
-		let nextPos = getNextPosition(pos, direction);
-		if (
-			!this.maze.isValidForPlayer(nextPos.x, nextPos.y) ||
-			this.checkPlayerOnPosition(nextPos)
-		) {
+		
+		if (!player.canMove()) {
+			console.log("Player cannot move yet (cooldown)");
 			return false;
 		}
+		
+		let pos = player.getPosition();
+		let nextPos = getNextPosition(pos, direction);
+		
+		if (!this.maze.isValidForPlayer(nextPos.x, nextPos.y)) {
+			console.log("Invalid move: position not valid for player");
+			return false;
+		}
+
 		player.setPosition(nextPos);
 		player.direction = direction; // Update facing direction
+		player.updateTimeOfLastMove(); // Update movement cooldown
 		return true;
 	}
 }

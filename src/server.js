@@ -68,8 +68,10 @@ io.on("connection", (socket) => {
 		roomControler.handlePlayerJoin(socket.id, { username });
 	});
 
-	socket.on("player_move", (dir) => {
+	socket.on("player_move", (data) => {
+		const dir = data.direction;
 		// Normalize direction input (support both "up"/"U", "down"/"D", etc.)
+		// console.log("player_move listener:", dir); // Disabled for performance
 		let normalized = dir;
 		if (typeof dir === "string") {
 			const dirMap = {
@@ -91,13 +93,16 @@ io.on("connection", (socket) => {
 		roomControler.handlePlayerShoot(socket.id);
 	});
 
-	setInterval(() => {
+	// Store interval ID so we can clear it on disconnect
+	const refreshInterval = setInterval(() => {
 		roomControler.refreshPlayerStats(socket.id);
 		roomControler.refreshVisiblePlayers(socket.id);
-	}, 1000);
+	}, 400);
 
 	socket.on("disconnect", (reason) => {
 		console.log("Socket disconnected:", socket.id, reason);
+		// Clear the interval to prevent memory leak
+		clearInterval(refreshInterval);
 		roomControler.handlePlayerDisconnect(socket.id);
 	});
 });

@@ -13,7 +13,25 @@ if (typeof socket !== 'undefined') {
     });
 
     socket.on("player_joined", (data) => {
-        window.player = data.current_player;
+        const player = data.current_player;
+        // Initialize myPlayer with all properties from server
+        myPlayer.id = player.id;
+        myPlayer.username = player.userName;
+        myPlayer.x = player.x;
+        myPlayer.y = player.y;
+        myPlayer.dir = player.dir;
+        myPlayer.health = player.health;
+        myPlayer.score = player.score;
+        myPlayer.kill_count = player.kill_count;
+        myPlayer.bullets = player.bullets;
+        myPlayer.color = player.color;
+        
+        // Update UI with initial player state
+        if (typeof updatePlayerInfo === 'function') {
+            updatePlayerInfo(player);
+        }
+        
+        console.log("Player joined and initialized:", myPlayer);
     });
 }
 
@@ -200,15 +218,15 @@ function drawPlayer(
     let dotY = centerY;
     
     // console.log(typeof(dirUpper));
-    const dirUpper = (typeof dir == "string") ? dir.toUpperCase() : dir.direction;
+    const dirUpper = (typeof dir == "string") ? dir.toUpperCase() : dir;
 
-    if (dirUpper == "UP") {
+    if (dirUpper == "U") {
         dotY = centerY - offsetDistance;
-    } else if (dirUpper == "DOWN") {
+    } else if (dirUpper == "D") {
         dotY = centerY + offsetDistance;
-    } else if (dirUpper == "LEFT") {
+    } else if (dirUpper == "L") {
         dotX = centerX - offsetDistance;
-    } else if (dirUpper == "RIGHT") {
+    } else if (dirUpper == "R") {
         dotX = centerX + offsetDistance;
     }
 
@@ -234,8 +252,8 @@ function drawPlayers(app) {
         // console.log("Drawing player:", player);
         drawPlayer(app, {
             // Convert Grid Coordinates -> Pixel Coordinates
-            x: player.x * gridStep,
-            y: player.y * gridStep,
+            x: player.y * gridStep,
+            y: player.x * gridStep,
             dir: player.dir,
             fillColor: player.color,
         });
@@ -276,6 +294,10 @@ function fireLaser(app, { xStart, yStart, xEnd, yEnd, lineWidth }) {
 }
 
 function updateMaze(app) {
+    // Clear all existing graphics to prevent memory leak and corruption
+    app.stage.removeChildren();
+    
+    // Redraw everything fresh
     drawMaze(app);
     drawPlayers(app);
     // updateAmmoDisplay(myPlayer.bullets, 5);

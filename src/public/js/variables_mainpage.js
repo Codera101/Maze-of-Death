@@ -61,14 +61,15 @@ let myPlayer;
 // let shooting = false;
 
 myPlayer = {
-    id:null,
+    id: null,
     username: null,
-    x:0,
-    y:0,
-    dir:"up",
-    health:100,
-    score:0,
-    kills:0,
+    x: 0,
+    y: 0,
+    dir: "U",
+    health: 10,  // Match backend's initPlayerHealth
+    score: 0,
+    kill_count: 0,  // Use consistent property name
+    bullets: 5,  // Match backend's initBulltesNumber
     color: "#FF5733"
 };
 
