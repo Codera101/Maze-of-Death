@@ -504,17 +504,25 @@ class Room {
 	handlePlayerMove(player, direction) {
 		if (player.direction != direction) {
 			// Just change facing direction without moving
-			player.direction = direction;
+		player.direction = direction;
 			return true;
 		}
 		let pos = player.getPosition();
 		let nextPos = getNextPosition(pos, direction);
 		if (
-			!this.maze.isValidForPlayer(nextPos.x, nextPos.y) ||
-			this.checkPlayerOnPosition(nextPos)
+			!this.maze.isValidForPlayer(nextPos.x, nextPos.y)
 		) {
+			console.log("1. Invalid move");
 			return false;
 		}
+
+		if (
+			!this.maze.isValidForPlayer(nextPos.x, nextPos.y)
+		) {
+			console.log("2. Invalid move");
+			return false;
+		}
+
 		player.setPosition(nextPos);
 		player.direction = direction; // Update facing direction
 		return true;

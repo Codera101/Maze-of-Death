@@ -42,7 +42,7 @@ class RoomControler {
 				const result = this.roomService.playerMove(playerId, dir);
 				const newPos = player.getPosition();
 				console.log(
-					`✅ [MOVE] Result: ${result}, now at (${newPos.x},${newPos.y}), facing: ${player.direction}`
+					`✅ [MOVE] Result: ${result}, old (${oldPos.x},${oldPos.y}) now at (${newPos.x},${newPos.y}), facing: ${player.direction}`
 				);
 				this.messenger.notifyGivenUser(playerId, "player_moved", {
 					status: result,

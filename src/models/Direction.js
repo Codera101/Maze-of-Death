@@ -18,13 +18,13 @@ function getNextPosition(currentPosition, direction) {
   const { x, y } = currentPosition;
   switch (direction) {
     case Directions.U:
-      return { x: x, y: y - 1 }; // UP decreases row (x)
+      return { x: x - 1, y: y }; // UP decreases row (x)
     case Directions.D:
-      return { x: x, y: y + 1 }; // DOWN increases row (x)
+      return { x: x + 1, y: y }; // DOWN increases row (x)
     case Directions.L:
-      return { x: x - 1, y: y }; // LEFT decreases column (y)
+      return { x: x, y: y - 1 }; // LEFT decreases column (y)
     case Directions.R:
-      return { x: x + 1, y: y }; // RIGHT increases column (y)
+      return { x: x, y: y + 1 }; // RIGHT increases column (y)
     default:
       throw new Error(`Invalid direction: ${direction}`);
   }

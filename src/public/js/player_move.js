@@ -7,6 +7,7 @@ let moveDir;
 
 window.addEventListener("keydown", (e) => {
   e.preventDefault();
+  moveDir = null; // Reset moveDir at the start of each key press
   for (let i = 0; i < wasd.length; i++) {
     if (e.key === wasd[i] || e.key === arrows[i]) {
       moveDir = dirArr[i];
