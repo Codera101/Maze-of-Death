@@ -200,7 +200,7 @@ function drawPlayer(
     let dotY = centerY;
     
     // console.log(typeof(dirUpper));
-    const dirUpper = (typeof dir == "string") ? dir.toUpperCase() : dir.direction;
+    const dirUpper = (typeof dir == "string") ? dir.toUpperCase() : dir;
 
     if (dirUpper == "UP") {
         dotY = centerY - offsetDistance;

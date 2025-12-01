@@ -69,7 +69,7 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("player_move", (data) => {
-		const { dir } = data;
+		const dir = data.direction;
 		// Normalize direction input (support both "up"/"U", "down"/"D", etc.)
 		console.log("player_move listener:", dir);
 		let normalized = dir;
