@@ -1,0 +1,52 @@
+/* ================================ */
+/* CSS Color Variables             */
+/* ================================ */
+
+:root {
+    /* Background Colors */
+    --color-dark-bg: #0A0A0F;
+    --color-soft-bg: #0A0A0FE5;
+    --color-dark-surface: #14141F;
+    --color-dark-elevated: #1C1C2E;
+    --bg-base: #0d0d0d;
+
+    /* Neon Colors */
+    --color-neon-red: #FF2C47;
+    --color-neon-red-glow: rgba(255, 44, 71, 0.5);
+    --color-neon-blue: #2C9BFF;
+    --color-neon-blue-glow: rgba(44, 155, 255, 0.5);
+    --color-neon-green: #39FF85;
+    --color-neon-green-glow: rgba(57, 255, 133, 0.5);
+
+    /* Text Colors */
+    --color-text-primary: #FFFFFF;
+    --color-text-secondary: #A0A0B8;
+    --color-text-dim: #6B6B7F;
+
+    /* Semantic Colors */
+    --color-danger: #FF2C47;
+    --color-success: #39FF85;
+    --color-warning: #FFB82C;
+    --color-ammo: #FFB82C;
+    --color-pink: #FF6B9D;
+
+    /* Additional Colors */
+    --color-accent: #2C9BFF;
+    --color-blue: #2C9BFF;
+    --color-yellow: #FFB82C;
+    --color-green: #39FF85;
+    
+    /* Specific UI Colors */
+    --color-black: #000000;
+    --color-white: #FFFFFF;
+    --color-gray: #B2B2B2;
+    --color-gray-dark: #777777;
+    --color-gray-medium: #9595AE;
+    --color-red: #FF0000;
+
+    /* Border Radius */
+    --border-radius: 8px;
+    
+    /* Font Family */
+    --font-family: 'Inter', sans-serif;
+}

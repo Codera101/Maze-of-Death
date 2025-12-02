@@ -5,8 +5,8 @@
 }
 
 body {
-  background-color: #000;
-  color: #fff;
+  background-color: var(--color-black);
+  color: var(--color-white);
   font-family: Arial, sans-serif;
   height: 100vh;
   display: flex;
@@ -31,10 +31,10 @@ body {
   /* font-size: 4vw; */
   font-size: 50px;
   font-weight: 900;
-  color: #ff2c47;
+  color: var(--color-neon-red);
   margin-bottom: 8px;
   white-space: nowrap;
-  text-shadow: 0 0 10px rgba(255, 44, 71, 0.7), 0 0 40px rgba(255, 44, 71, 0.4),
+  text-shadow: 0 0 10px var(--color-neon-red-glow), 0 0 40px rgba(255, 44, 71, 0.4),
     0 0 80px rgba(255, 44, 71, 0.2);
 
   filter: blur(0.5px);
@@ -44,7 +44,7 @@ body {
 
 @keyframes ultraSmoothNeon {
   0% {
-    text-shadow: 0 0 10px rgba(255, 44, 71, 0.7),
+    text-shadow: 0 0 10px var(--color-neon-red-glow),
       0 0 40px rgba(255, 44, 71, 0.4), 0 0 80px rgba(255, 44, 71, 0.2);
     opacity: 0.95;
   }
@@ -59,7 +59,7 @@ body {
 }
 
 .subtitle {
-  color: #b2b2b2;
+  color: var(--color-gray);
   margin-bottom: 40px;
 }
 
@@ -71,8 +71,8 @@ body {
   align-items: center;
   /* justify-content: center; */
   justify-content: flex-start;
-  background: #1c1c2e;
-  border: 2px solid #2c9bff55;
+  background: var(--color-dark-elevated);
+  border: 2px solid rgba(44, 155, 255, 0.33);
   border-radius: 10px;
   padding: 10px 15px;
   margin-bottom: 25px;
@@ -87,22 +87,22 @@ body {
   background: transparent;
   border: none;
   outline: none;
-  color: #fff;
+  color: var(--color-white);
   font-size: 16px;
   padding: 12px 0;
 }
 
 /*! Fixing the browser's autofill overlay */
 input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px #1c1c2e inset !important;
-  -webkit-text-fill-color: #fff !important;
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-dark-elevated) inset !important;
+  -webkit-text-fill-color: var(--color-white) !important;
 }
 
 /**--------------    counter_style    -------------------*/
 
 #counter {
   font-size: 12px;
-  color: #39ff85;
+  color: var(--color-neon-green);
 }
 
 /**--------------    buttons_style    -------------------*/
@@ -113,8 +113,8 @@ input:-webkit-autofill {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #1c1c2e;
-  border: 2px solid #2c9bff55;
+  background: var(--color-dark-elevated);
+  border: 2px solid rgba(44, 155, 255, 0.33);
   padding: 12px 15px;
   border-radius: 10px;
   cursor: pointer;
@@ -129,14 +129,14 @@ input:-webkit-autofill {
 .button_play:hover,
 .button_spectator:hover,
 .button_how_to_play:hover {
-  border-color: #2c9bff;
+  border-color: var(--color-neon-blue);
   transform: translateY(-4px);
   box-shadow: 0 10px 50px rgba(44, 155, 255, 0.18);
 }
 
 .button_play {
-  background: #ff2c47;
-  border-color: #ff2c4755;
+  background: var(--color-neon-red);
+  border-color: rgba(255, 44, 71, 0.33);
 }
 
 .button_play:hover {
@@ -148,7 +148,7 @@ input:-webkit-autofill {
 .button_how_to_play button {
   background: none;
   border: none;
-  color: #fff;
+  color: var(--color-white);
   font-size: 20px;
   cursor: pointer;
   font-weight: bold;
@@ -159,7 +159,7 @@ input:-webkit-autofill {
 .footer_paragraph {
   margin-top: 40px;
   font-size: 12px;
-  color: #777;
+  color: var(--color-gray-dark);
   text-align: center;
   letter-spacing: 4px;
 }
@@ -178,8 +178,8 @@ input:-webkit-autofill {
 }
 
 .button_play.disabled:hover {
-  background-color: #ff2c4799;
-  border-color: #2c9bff55;
+  background-color: rgba(255, 44, 71, 0.6);
+  border-color: rgba(44, 155, 255, 0.33);
   transform: none;
   box-shadow: none;
 }
@@ -208,8 +208,8 @@ input:-webkit-autofill {
   /* max-width: 100%; */
   height: auto;
   max-height: 90vh;
-  background-color: #1c1c2e;
-  border: 2px solid #2c9afd;
+  background-color: var(--color-dark-elevated);
+  border: 2px solid var(--color-neon-blue);
   border-radius: 12px;
   box-shadow: 0 10px 50px rgba(44, 155, 255, 0.18);
   position: fixed;
@@ -247,18 +247,18 @@ input:-webkit-autofill {
 .header h1 {
   font-size: 45px;
   font-weight: bold;
-  color: #39ff85;
+  color: var(--color-neon-green);
 }
 
 .close_icon {
   font-size: 24px;
-  color: #9595ae;
+  color: var(--color-gray-medium);
   cursor: pointer;
   transition: 0.2s;
 }
 
 .close_icon:hover {
-  color: #ff0000;
+  color: var(--color-red);
   transform: scale(1.2);
 }
 
@@ -275,12 +275,12 @@ input:-webkit-autofill {
   width: 100%;
   padding: 25px 35px;
   margin: 0;
-  color: #9595ae;
+  color: var(--color-gray-medium);
   text-align: left;
 }
 
 .content strong {
-  color: #2c9afd;
+  color: var(--color-neon-blue);
   font-size: 20px;
 }
 
@@ -312,11 +312,11 @@ input:-webkit-autofill {
 }
 
 .green_circle li::marker {
-  color: #39ff85;
+  color: var(--color-neon-green);
 }
 
 .green_circle li {
-  color: #9595ae;
+  color: var(--color-gray-medium);
   margin-bottom: 6px;
   font-size: 17px;
 }
@@ -339,7 +339,7 @@ input:-webkit-autofill {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #2c9bff;
+  background-color: var(--color-neon-blue);
   width: 80%;
   padding: 8px 5px;
   border-radius: 12px;
@@ -355,7 +355,7 @@ input:-webkit-autofill {
 .btn_got_it button {
   background: none;
   border: none;
-  color: #fff;
+  color: var(--color-white);
   font-size: 20px;
   cursor: pointer;
   font-weight: bold;
@@ -391,18 +391,18 @@ ion-icon {
 }
 
 .content i {
-  color: #fd2c2c;
+  color: var(--color-danger);
 }
 #username_icon,
 #arrow_i {
-  color: #2c9afd;
+  color: var(--color-neon-blue);
 }
 .heart_i {
-  color: #2cfd33;
+  color: var(--color-success);
 }
 
 #flash_i {
-  color: #f2d12a;
+  color: var(--color-warning);
 }
 
 /**---------------------------------------------------------------------  */
