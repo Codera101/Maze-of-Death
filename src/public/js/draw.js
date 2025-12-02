@@ -380,6 +380,203 @@ function fireLaser(app, { xStart, yStart, xEnd, yEnd, lineWidth }) {
   return laser;
 }
 
+/**
+ * Animate hit effect on player - red flash and shake
+ */
+function animateHit(app, playerId) {
+  if (!app || typeof myPlayer === "undefined") return;
+
+  const gridStep = cellSize + strokeWidth * 2;
+  const gridX = myPlayer.y * gridStep;
+  const gridY = myPlayer.x * gridStep;
+  const visualX = gridX + strokeWidth;
+  const visualY = gridY + strokeWidth;
+  const visualWidth = cellSize - strokeWidth;
+  const visualHeight = cellSize - strokeWidth;
+  const centerX = visualX + visualWidth / 2;
+  const centerY = visualY + visualHeight / 2;
+
+  // Create red damage flash overlay
+  const damageFlash = new PIXI.Graphics();
+  damageFlash.roundRect(
+    visualX - 5,
+    visualY - 5,
+    visualWidth + 10,
+    visualHeight + 10,
+    12
+  );
+  damageFlash.fill({ color: 0xff0000, alpha: 0.6 });
+  app.stage.addChild(damageFlash);
+
+  // Create blood particle effect
+  const particleCount = 8;
+  const particles = [];
+  for (let i = 0; i < particleCount; i++) {
+    const angle = (Math.PI * 2 * i) / particleCount;
+    const particle = new PIXI.Graphics();
+    particle.circle(0, 0, 3);
+    particle.fill({ color: 0xff0000 });
+    particle.x = centerX;
+    particle.y = centerY;
+    particle.velocity = {
+      x: Math.cos(angle) * 3,
+      y: Math.sin(angle) * 3,
+    };
+    app.stage.addChild(particle);
+    particles.push(particle);
+  }
+
+  // Animate particles
+  let particleFrame = 0;
+  const particleInterval = setInterval(() => {
+    particleFrame++;
+    particles.forEach((particle) => {
+      particle.x += particle.velocity.x;
+      particle.y += particle.velocity.y;
+      particle.alpha = 1 - particleFrame / 10;
+    });
+
+    if (particleFrame >= 10) {
+      clearInterval(particleInterval);
+      particles.forEach((particle) => {
+        if (particle.parent) {
+          particle.parent.removeChild(particle);
+          particle.destroy();
+        }
+      });
+    }
+  }, 30);
+
+  // Fade out damage flash
+  let flashAlpha = 0.6;
+  const flashInterval = setInterval(() => {
+    flashAlpha -= 0.1;
+    damageFlash.alpha = flashAlpha;
+    if (flashAlpha <= 0) {
+      clearInterval(flashInterval);
+      if (damageFlash.parent) {
+        damageFlash.parent.removeChild(damageFlash);
+        damageFlash.destroy();
+      }
+    }
+  }, 50);
+
+  // Screen shake effect
+  if (typeof mazeContent !== "undefined" && mazeContent) {
+    let shakeCount = 0;
+    const originalTransform = mazeContent.style.transform;
+    const shakeInterval = setInterval(() => {
+      const offsetX = (Math.random() - 0.5) * 10;
+      const offsetY = (Math.random() - 0.5) * 10;
+      mazeContent.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      shakeCount++;
+      if (shakeCount >= 6) {
+        clearInterval(shakeInterval);
+        mazeContent.style.transform = originalTransform || "";
+      }
+    }, 50);
+  }
+}
+
+/**
+ * Animate death effect - explosion and fade out
+ */
+function animateDeath(app, playerId) {
+  if (!app || typeof myPlayer === "undefined") return;
+
+  const gridStep = cellSize + strokeWidth * 2;
+  const gridX = myPlayer.y * gridStep;
+  const gridY = myPlayer.x * gridStep;
+  const visualX = gridX + strokeWidth;
+  const visualY = gridY + strokeWidth;
+  const visualWidth = cellSize - strokeWidth;
+  const visualHeight = cellSize - strokeWidth;
+  const centerX = visualX + visualWidth / 2;
+  const centerY = visualY + visualHeight / 2;
+
+  // Create explosion particles
+  const particleCount = 20;
+  const particles = [];
+
+  for (let i = 0; i < particleCount; i++) {
+    const angle =
+      (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5;
+    const speed = 2 + Math.random() * 4;
+    const size = 3 + Math.random() * 5;
+    const particle = new PIXI.Graphics();
+
+    // Mix of red and orange particles
+    const colors = [0xff0000, 0xff4400, 0xff6600, 0xff8800];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    particle.circle(0, 0, size);
+    particle.fill({ color });
+    particle.x = centerX;
+    particle.y = centerY;
+    particle.velocity = {
+      x: Math.cos(angle) * speed,
+      y: Math.sin(angle) * speed,
+    };
+    particle.life = 1;
+    app.stage.addChild(particle);
+    particles.push(particle);
+  }
+
+  // Explosion flash
+  const flash = new PIXI.Graphics();
+  flash.circle(centerX, centerY, visualWidth);
+  flash.fill({ color: 0xffffff, alpha: 0.8 });
+  app.stage.addChild(flash);
+
+  // Animate explosion
+  let frame = 0;
+  const animationInterval = setInterval(() => {
+    frame++;
+
+    // Update particles
+    particles.forEach((particle, index) => {
+      particle.x += particle.velocity.x;
+      particle.y += particle.velocity.y;
+      particle.velocity.y += 0.2; // Gravity
+      particle.life -= 0.05;
+      particle.alpha = Math.max(0, particle.life);
+
+      if (particle.life <= 0 && particle.parent) {
+        particle.parent.removeChild(particle);
+        particle.destroy();
+        particles.splice(index, 1);
+      }
+    });
+
+    // Fade flash
+    flash.alpha = Math.max(0, 0.8 - frame * 0.1);
+    if (flash.alpha <= 0 && flash.parent) {
+      flash.parent.removeChild(flash);
+      flash.destroy();
+    }
+
+    if (frame >= 20 && particles.length === 0) {
+      clearInterval(animationInterval);
+    }
+  }, 50);
+
+  // Heavy screen shake for death
+  if (typeof mazeContent !== "undefined" && mazeContent) {
+    let shakeCount = 0;
+    const originalTransform = mazeContent.style.transform;
+    const shakeInterval = setInterval(() => {
+      const offsetX = (Math.random() - 0.5) * 20;
+      const offsetY = (Math.random() - 0.5) * 20;
+      mazeContent.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      shakeCount++;
+      if (shakeCount >= 10) {
+        clearInterval(shakeInterval);
+        mazeContent.style.transform = originalTransform || "";
+      }
+    }, 50);
+  }
+}
+
 function updateMaze(app) {
   // Only update what changed - maze is cached, players are pooled
   drawMaze(app); // Will skip if maze unchanged
