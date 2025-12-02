@@ -326,6 +326,19 @@ class RoomControler {
   }
 
   /**
+   * @breif Check if a player is nearby on diag
+   * @param {number} currentPlayerX - Current player's X position
+   * @param {number} currentPlayerY - Current player's Y position
+   * @param {number} checkX - X position to check
+   * @param {number} checkY - Y position to check
+   * @return {boolean} - True if a player is nearby diagonally, false otherwise
+   */
+  isPlayerNearbyOnDiag(currentPlayerX, currentPlayerY, checkX, checkY) {
+    const deltaX = Math.abs(currentPlayerX - checkX);
+    const deltaY = Math.abs(currentPlayerY - checkY);
+    return deltaX + deltaY <= 3;
+  }
+  /**
    * @brief Refresh visible players for each player
    * @param {string} playerID - Socket ID of the player
    * @return {void}
@@ -350,7 +363,7 @@ class RoomControler {
     const visiblePlayers = room.players.filter(
       (p) =>
         p.health > 0 &&
-        room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false
+        (room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false || this.isPlayerNearbyOnDiag(player.x, player.y, p.x, p.y))
     );
     const visibleData = visiblePlayers.map((p) => ({
       id: p.id,

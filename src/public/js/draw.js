@@ -339,6 +339,22 @@ function drawPlayers(app) {
     const visualWidth = cellSize - strokeWidth;
     const visualHeight = cellSize - strokeWidth;
 
+    // Check if this is the current player
+    const isMyPlayer =
+      typeof myPlayer !== "undefined" && player.id === myPlayer.id;
+
+    // Add glowing border for your player
+    if (isMyPlayer) {
+      body.roundRect(
+        visualX - 3,
+        visualY - 3,
+        visualWidth + 8,
+        visualHeight + 8,
+        12
+      );
+      body.fill({ color: 0xffffff, alpha: 0.5 }); // Green glow
+    }
+
     body.roundRect(visualX, visualY, visualWidth, visualHeight, 10);
     body.fill({ color: player.color });
     playerContainer.addChild(body);
@@ -554,20 +570,33 @@ function showWallImpact(app, shooterX, shooterY, direction) {
   let frame = 0;
   const interval = setInterval(() => {
     frame++;
-    particles.forEach((particle, index) => {
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const particle = particles[i];
       particle.x += particle.velocity.x;
       particle.y += particle.velocity.y;
       particle.alpha = 1 - frame / 8;
 
-      if (particle.alpha <= 0 && particle.parent) {
-        particle.parent.removeChild(particle);
+      if (particle.alpha <= 0) {
+        if (particle.parent) {
+          particle.parent.removeChild(particle);
+        }
         particle.destroy();
-        particles.splice(index, 1);
+        particles.splice(i, 1);
       }
-    });
+    }
 
-    if (frame >= 8) {
+    // Clear interval when animation is done
+    if (frame >= 8 || particles.length === 0) {
       clearInterval(interval);
+      // Clean up any remaining particles
+      particles.forEach((p) => {
+        if (p.parent) {
+          p.parent.removeChild(p);
+        }
+        p.destroy();
+      });
+      particles.length = 0;
     }
   }, 50);
 }
