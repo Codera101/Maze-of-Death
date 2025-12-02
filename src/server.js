@@ -106,7 +106,7 @@ io.on("connection", (socket) => {
   const refreshInterval = setInterval(() => {
     roomControler.refreshPlayerStats(socket.id);
     roomControler.refreshVisiblePlayers(socket.id);
-  }, 400);
+  }, 50);
 
   socket.on("disconnect", (reason) => {
     // console.log("Socket disconnected:", socket.id, reason);
