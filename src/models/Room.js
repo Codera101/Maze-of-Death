@@ -45,7 +45,11 @@ class Room {
 				"#6600FF", // Electric Purple
 				"#FFD700", // Bright Gold
 				"#00FF7F", // Spring Green
-				"#00BFFF"  // Deep Sky Blue
+				"#00BFFF",  // Deep Sky Blue
+				"#FF4500",  // Orange Red
+				"#8A2BE2",  // Blue Violet
+				"#FF69B4",  // Hot Pink
+				"#7FFF00",  // Chartreuse
 				];
 	}
 

@@ -40,6 +40,33 @@ if (typeof socket !== "undefined") {
 
     // console.log("Player joined and initialized:", myPlayer);
   });
+
+  socket.on("room_full", (data) => {
+    alert(data.message || "Room is full. Please try again later.");
+    // Redirect back to home page
+    window.location.href = "/";
+  });
+
+  // Show hit animation on any player (visible to all)
+  socket.on("player_hit_animation", ({ targetId, targetX, targetY }) => {
+    if (typeof app !== "undefined" && typeof showHitMarker === "function") {
+      showHitMarker(app, targetX, targetY, false);
+    }
+  });
+
+  // Show death animation on any player (visible to all)
+  socket.on(
+    "player_death_animation",
+    ({ targetId, targetX, targetY, targetName }) => {
+      console.log(
+        `Death animation for ${targetName} at (${targetX}, ${targetY})`
+      );
+      if (typeof app !== "undefined") {
+        // Use the visible death animation function
+        animateDeathAtPosition(app, targetX, targetY);
+      }
+    }
+  );
 }
 
 /**
@@ -372,6 +399,374 @@ function fireLaser(app, { xStart, yStart, xEnd, yEnd, lineWidth }) {
   }, 200);
 
   return laser;
+}
+
+/**
+ * Show hit marker at target location (visible to all players)
+ */
+function showHitMarker(app, targetX, targetY, isKill = false) {
+  if (!app) return;
+
+  const gridStep = cellSize + strokeWidth * 2;
+  const gridX = targetY * gridStep; // Note: x/y swap in grid coordinates
+  const gridY = targetX * gridStep;
+  const visualX = gridX + strokeWidth;
+  const visualY = gridY + strokeWidth;
+  const visualWidth = cellSize - strokeWidth;
+  const centerX = visualX + visualWidth / 2;
+  const centerY = visualY + visualWidth / 2;
+
+  // Create blood splatter effect
+  const particleCount = isKill ? 15 : 10;
+  const particles = [];
+
+  // Main impact flash
+  const flash = new PIXI.Graphics();
+  flash.circle(centerX, centerY, isKill ? 20 : 12);
+  flash.fill({ color: 0xff0000, alpha: 0.8 });
+  app.stage.addChild(flash);
+
+  // Blood particles
+  for (let i = 0; i < particleCount; i++) {
+    const angle =
+      (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.3;
+    const speed = (isKill ? 2 : 1.5) + Math.random() * 2;
+    const size = 2 + Math.random() * (isKill ? 4 : 3);
+
+    const particle = new PIXI.Graphics();
+    const red = 0xff0000 + Math.floor(Math.random() * 0x004400); // Slight color variation
+    particle.circle(0, 0, size);
+    particle.fill({ color: red });
+    particle.x = centerX;
+    particle.y = centerY;
+    particle.velocity = {
+      x: Math.cos(angle) * speed,
+      y: Math.sin(angle) * speed,
+    };
+    particle.drag = 0.95; // Slow down over time
+    app.stage.addChild(particle);
+    particles.push(particle);
+  }
+
+  // Damage number indicator
+  const damageText = new PIXI.Text(isKill ? "KILL!" : "-5", {
+    fontFamily: "Arial",
+    fontSize: isKill ? 24 : 18,
+    fill: isKill ? 0xffff00 : 0xff6666,
+    fontWeight: "bold",
+    stroke: 0x000000,
+    strokeThickness: 3,
+  });
+  damageText.anchor.set(0.5);
+  damageText.x = centerX;
+  damageText.y = centerY - 20;
+  app.stage.addChild(damageText);
+
+  // Animate everything
+  let frame = 0;
+  const interval = setInterval(() => {
+    frame++;
+
+    // Animate particles
+    particles.forEach((particle, index) => {
+      particle.x += particle.velocity.x;
+      particle.y += particle.velocity.y;
+      particle.velocity.x *= particle.drag;
+      particle.velocity.y *= particle.drag;
+      particle.alpha = 1 - frame / 12;
+
+      if (particle.alpha <= 0 && particle.parent) {
+        particle.parent.removeChild(particle);
+        particle.destroy();
+        particles.splice(index, 1);
+      }
+    });
+
+    // Fade flash
+    flash.alpha = Math.max(0, 0.8 - frame * 0.1);
+    if (flash.alpha <= 0 && flash.parent) {
+      flash.parent.removeChild(flash);
+      flash.destroy();
+    }
+
+    // Float damage text up and fade
+    damageText.y -= 2;
+    damageText.alpha = 1 - frame / 12;
+    if (damageText.alpha <= 0 && damageText.parent) {
+      damageText.parent.removeChild(damageText);
+      damageText.destroy();
+    }
+
+    if (frame >= 12 && particles.length === 0) {
+      clearInterval(interval);
+    }
+  }, 50);
+}
+
+/**
+ * Show wall impact effect when bullet hits wall
+ */
+function showWallImpact(app, shooterX, shooterY, direction) {
+  if (!app) return;
+
+  const gridStep = cellSize + strokeWidth * 2;
+  const gridX = shooterY * gridStep;
+  const gridY = shooterX * gridStep;
+  const visualX = gridX + strokeWidth;
+  const visualY = gridY + strokeWidth;
+  const visualWidth = cellSize - strokeWidth;
+  const centerX = visualX + visualWidth / 2;
+  const centerY = visualY + visualWidth / 2;
+
+  // Calculate impact position based on direction
+  let impactX = centerX;
+  let impactY = centerY;
+  const offset = visualWidth / 2 + 10;
+
+  const dir =
+    typeof direction === "string" ? direction.toUpperCase() : direction;
+  if (dir === "U") impactY -= offset;
+  else if (dir === "D") impactY += offset;
+  else if (dir === "L") impactX -= offset;
+  else if (dir === "R") impactX += offset;
+
+  // Create spark particles
+  const particleCount = 8;
+  const particles = [];
+
+  for (let i = 0; i < particleCount; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 2;
+    const particle = new PIXI.Graphics();
+    particle.circle(0, 0, 2);
+    particle.fill({ color: 0xffaa00 });
+    particle.x = impactX;
+    particle.y = impactY;
+    particle.velocity = {
+      x: Math.cos(angle) * speed,
+      y: Math.sin(angle) * speed,
+    };
+    app.stage.addChild(particle);
+    particles.push(particle);
+  }
+
+  // Animate particles
+  let frame = 0;
+  const interval = setInterval(() => {
+    frame++;
+    particles.forEach((particle, index) => {
+      particle.x += particle.velocity.x;
+      particle.y += particle.velocity.y;
+      particle.alpha = 1 - frame / 8;
+
+      if (particle.alpha <= 0 && particle.parent) {
+        particle.parent.removeChild(particle);
+        particle.destroy();
+        particles.splice(index, 1);
+      }
+    });
+
+    if (frame >= 8) {
+      clearInterval(interval);
+    }
+  }, 50);
+}
+
+/**
+ * Animate hit effect on player - red flash and shake
+ */
+function animateHit(app, playerId) {
+  if (!app || typeof myPlayer === "undefined") return;
+
+  const gridStep = cellSize + strokeWidth * 2;
+  const gridX = myPlayer.y * gridStep;
+  const gridY = myPlayer.x * gridStep;
+  const visualX = gridX + strokeWidth;
+  const visualY = gridY + strokeWidth;
+  const visualWidth = cellSize - strokeWidth;
+  const visualHeight = cellSize - strokeWidth;
+  const centerX = visualX + visualWidth / 2;
+  const centerY = visualY + visualHeight / 2;
+
+  // Create red damage flash overlay
+  const damageFlash = new PIXI.Graphics();
+  damageFlash.roundRect(
+    visualX - 5,
+    visualY - 5,
+    visualWidth + 10,
+    visualHeight + 10,
+    12
+  );
+  damageFlash.fill({ color: 0xff0000, alpha: 0.6 });
+  app.stage.addChild(damageFlash);
+
+  // Create blood particle effect
+  const particleCount = 8;
+  const particles = [];
+  for (let i = 0; i < particleCount; i++) {
+    const angle = (Math.PI * 2 * i) / particleCount;
+    const particle = new PIXI.Graphics();
+    particle.circle(0, 0, 3);
+    particle.fill({ color: 0xff0000 });
+    particle.x = centerX;
+    particle.y = centerY;
+    particle.velocity = {
+      x: Math.cos(angle) * 3,
+      y: Math.sin(angle) * 3,
+    };
+    app.stage.addChild(particle);
+    particles.push(particle);
+  }
+
+  // Animate particles
+  let particleFrame = 0;
+  const particleInterval = setInterval(() => {
+    particleFrame++;
+    particles.forEach((particle) => {
+      particle.x += particle.velocity.x;
+      particle.y += particle.velocity.y;
+      particle.alpha = 1 - particleFrame / 10;
+    });
+
+    if (particleFrame >= 10) {
+      clearInterval(particleInterval);
+      particles.forEach((particle) => {
+        if (particle.parent) {
+          particle.parent.removeChild(particle);
+          particle.destroy();
+        }
+      });
+    }
+  }, 30);
+
+  // Fade out damage flash
+  let flashAlpha = 0.6;
+  const flashInterval = setInterval(() => {
+    flashAlpha -= 0.1;
+    damageFlash.alpha = flashAlpha;
+    if (flashAlpha <= 0) {
+      clearInterval(flashInterval);
+      if (damageFlash.parent) {
+        damageFlash.parent.removeChild(damageFlash);
+        damageFlash.destroy();
+      }
+    }
+  }, 50);
+
+  // Screen shake effect
+  if (typeof mazeContent !== "undefined" && mazeContent) {
+    let shakeCount = 0;
+    const originalTransform = mazeContent.style.transform;
+    const shakeInterval = setInterval(() => {
+      const offsetX = (Math.random() - 0.5) * 10;
+      const offsetY = (Math.random() - 0.5) * 10;
+      mazeContent.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      shakeCount++;
+      if (shakeCount >= 6) {
+        clearInterval(shakeInterval);
+        mazeContent.style.transform = originalTransform || "";
+      }
+    }, 50);
+  }
+}
+
+/**
+ * Animate death effect - explosion and fade out
+ */
+function animateDeath(app, playerId) {
+  if (!app || typeof myPlayer === "undefined") return;
+
+  const gridStep = cellSize + strokeWidth * 2;
+  const gridX = myPlayer.y * gridStep;
+  const gridY = myPlayer.x * gridStep;
+  const visualX = gridX + strokeWidth;
+  const visualY = gridY + strokeWidth;
+  const visualWidth = cellSize - strokeWidth;
+  const visualHeight = cellSize - strokeWidth;
+  const centerX = visualX + visualWidth / 2;
+  const centerY = visualY + visualHeight / 2;
+
+  // Create explosion particles
+  const particleCount = 20;
+  const particles = [];
+
+  for (let i = 0; i < particleCount; i++) {
+    const angle =
+      (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5;
+    const speed = 2 + Math.random() * 4;
+    const size = 3 + Math.random() * 5;
+    const particle = new PIXI.Graphics();
+
+    // Mix of red and orange particles
+    const colors = [0xff0000, 0xff4400, 0xff6600, 0xff8800];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    particle.circle(0, 0, size);
+    particle.fill({ color });
+    particle.x = centerX;
+    particle.y = centerY;
+    particle.velocity = {
+      x: Math.cos(angle) * speed,
+      y: Math.sin(angle) * speed,
+    };
+    particle.life = 1;
+    app.stage.addChild(particle);
+    particles.push(particle);
+  }
+
+  // Explosion flash
+  const flash = new PIXI.Graphics();
+  flash.circle(centerX, centerY, visualWidth);
+  flash.fill({ color: 0xffffff, alpha: 0.8 });
+  app.stage.addChild(flash);
+
+  // Animate explosion
+  let frame = 0;
+  const animationInterval = setInterval(() => {
+    frame++;
+
+    // Update particles
+    particles.forEach((particle, index) => {
+      particle.x += particle.velocity.x;
+      particle.y += particle.velocity.y;
+      particle.velocity.y += 0.2; // Gravity
+      particle.life -= 0.05;
+      particle.alpha = Math.max(0, particle.life);
+
+      if (particle.life <= 0 && particle.parent) {
+        particle.parent.removeChild(particle);
+        particle.destroy();
+        particles.splice(index, 1);
+      }
+    });
+
+    // Fade flash
+    flash.alpha = Math.max(0, 0.8 - frame * 0.1);
+    if (flash.alpha <= 0 && flash.parent) {
+      flash.parent.removeChild(flash);
+      flash.destroy();
+    }
+
+    if (frame >= 20 && particles.length === 0) {
+      clearInterval(animationInterval);
+    }
+  }, 50);
+
+  // Heavy screen shake for death
+  if (typeof mazeContent !== "undefined" && mazeContent) {
+    let shakeCount = 0;
+    const originalTransform = mazeContent.style.transform;
+    const shakeInterval = setInterval(() => {
+      const offsetX = (Math.random() - 0.5) * 20;
+      const offsetY = (Math.random() - 0.5) * 20;
+      mazeContent.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      shakeCount++;
+      if (shakeCount >= 10) {
+        clearInterval(shakeInterval);
+        mazeContent.style.transform = originalTransform || "";
+      }
+    }, 50);
+  }
 }
 
 function updateMaze(app) {
