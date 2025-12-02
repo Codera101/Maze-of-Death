@@ -40,7 +40,7 @@ const Logger = require("./utils/Logger");
 // Initialize RoomService and get the global room
 const roomService = new RoomService();
 const GameRoom = roomService.getRoom("global");
-const MAX_TOTAL_PLAYERS = 8; // Maximum players + bots allowed
+const MAX_TOTAL_PLAYERS = 11; // Maximum players + bots allowed
 const INITIAL_BOT_COUNT = 8; // Number of bots to start with
 const MIN_BOT_COUNT = 0; // Minimum bots to maintain
 
