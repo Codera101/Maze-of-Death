@@ -140,7 +140,7 @@ input:-webkit-autofill {
 }
 
 .button_play:hover {
-  background: #ff3c57;
+  background: var(--color-neon-red-hover);
 }
 
 .button_play button,
@@ -240,7 +240,7 @@ input:-webkit-autofill {
   padding: 12px 35px;
   margin: 0;
   /* margin-bottom: 30px; */
-  background: linear-gradient(90deg, #1e3757, #214840);
+  background: linear-gradient(90deg, var(--color-gradient-teal-start), var(--color-gradient-teal-end));
   border-radius: 12px 12px 0px 0px;
 }
 
@@ -330,8 +330,8 @@ input:-webkit-autofill {
   width: 100%;
   padding: 15px 35px;
   margin: 0;
-  background-color: #13131f;
-  border-top: 1px solid #193252;
+  background-color: var(--color-footer-bg);
+  border-top: 1px solid var(--color-footer-border);
   border-radius: 0px 0px 12px 12px;
 }
 
@@ -348,7 +348,7 @@ input:-webkit-autofill {
 
 .btn_got_it:hover {
   cursor: pointer;
-  background-color: #39afff;
+  background-color: var(--color-neon-blue-hover);
   transform: scale(1.02);
 }
 

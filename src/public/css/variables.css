@@ -43,6 +43,16 @@
     --color-gray-dark: #777777;
     --color-gray-medium: #9595AE;
     --color-red: #FF0000;
+    
+    /* Hover states */
+    --color-neon-red-hover: #ff3c57;
+    --color-neon-blue-hover: #39afff;
+    
+    /* Gradients and special backgrounds */
+    --color-gradient-teal-start: #1e3757;
+    --color-gradient-teal-end: #214840;
+    --color-footer-bg: #13131f;
+    --color-footer-border: #193252;
 
     /* Border Radius */
     --border-radius: 8px;
