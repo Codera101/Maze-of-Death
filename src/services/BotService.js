@@ -222,12 +222,25 @@ class BotService {
     count,
     roomControler,
     difficulty = "mixed",
-    roomService = null
+    roomService = null,
+    maxTotalPlayers = null
   ) {
     const difficulties = ["easy", "medium", "hard"];
     const addedBots = [];
 
     for (let i = 0; i < count; i++) {
+      // Check total player limit if specified
+      if (maxTotalPlayers !== null) {
+        const humanPlayerCount = room.players.filter(p => !p.isBot).length;
+        const currentBotCount = this.getBotCount();
+        const totalPlayers = humanPlayerCount + currentBotCount;
+        
+        if (totalPlayers >= maxTotalPlayers) {
+          console.log(`Cannot add more bots: room at capacity (${totalPlayers}/${maxTotalPlayers})`);
+          break;
+        }
+      }
+      
       try {
         let botDifficulty;
         if (difficulty === "mixed") {
@@ -299,14 +312,24 @@ class BotService {
     minBots,
     roomControler,
     difficulty = "mixed",
-    roomService = null
+    roomService = null,
+    maxTotalPlayers = null
   ) {
+    const humanPlayerCount = room.players.filter(p => !p.isBot).length;
     const currentBotCount = this.getBotCount();
-    const botsToAdd = minBots - currentBotCount;
+    const totalPlayers = humanPlayerCount + currentBotCount;
+    
+    // Calculate how many bots we can add without exceeding the limit
+    let botsToAdd = minBots - currentBotCount;
+    
+    if (maxTotalPlayers !== null) {
+      const availableSlots = maxTotalPlayers - totalPlayers;
+      botsToAdd = Math.min(botsToAdd, availableSlots);
+    }
 
     if (botsToAdd > 0) {
       // console.log(`Maintaining bot count: adding ${botsToAdd} bots`);
-      this.addBots(room, botsToAdd, roomControler, difficulty, roomService);
+      this.addBots(room, botsToAdd, roomControler, difficulty, roomService, maxTotalPlayers);
     }
   }
 }

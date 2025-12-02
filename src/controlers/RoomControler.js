@@ -1,10 +1,12 @@
 /** @format */
 
 class RoomControler {
-  constructor(roomService, messenger, logger) {
+  constructor(roomService, messenger, logger, botService = null, maxTotalPlayers = 8) {
     this.roomService = roomService;
     this.messenger = messenger;
     this.logger = logger;
+    this.botService = botService;
+    this.maxTotalPlayers = maxTotalPlayers;
   }
 
   /**
@@ -14,6 +16,21 @@ class RoomControler {
    */
   handlePlayerJoin(playerId, data) {
     const { username } = data;
+    
+    // Check total player count limit
+    const room = this.roomService.getRoom("global");
+    const humanPlayerCount = room ? room.players.filter(p => !p.isBot).length : 0;
+    const botCount = this.botService ? this.botService.getBotCount() : 0;
+    const totalPlayers = humanPlayerCount + botCount;
+    
+    if (totalPlayers >= this.maxTotalPlayers) {
+      this.messenger.notifyCurrentUser("room_full", {
+        message: `Room is full (${this.maxTotalPlayers} players maximum)`,
+        maxPlayers: this.maxTotalPlayers
+      });
+      return;
+    }
+    
     const player = this.roomService.playerJoinRoom(username, playerId);
 
     if (player) {

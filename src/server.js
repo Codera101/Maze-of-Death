@@ -40,6 +40,9 @@ const Logger = require("./utils/Logger");
 // Initialize RoomService and get the global room
 const roomService = new RoomService();
 const GameRoom = roomService.getRoom("global");
+const MAX_TOTAL_PLAYERS = 8; // Maximum players + bots allowed
+const INITIAL_BOT_COUNT = 5; // Number of bots to start with
+const MIN_BOT_COUNT = 3; // Minimum bots to maintain
 
 // Initialize BotService
 const botService = new BotService();
@@ -52,13 +55,15 @@ const systemMessenger = new Messenger(io, null);
 const systemRoomControler = new RoomControler(
   roomService,
   systemMessenger,
-  logger
+  logger,
+  botService,
+  MAX_TOTAL_PLAYERS
 );
 
 io.on("connection", (socket) => {
   // Initialize Messenger and RoomControler for this socket
   const messenger = new Messenger(io, socket);
-  const roomControler = new RoomControler(roomService, messenger, logger);
+  const roomControler = new RoomControler(roomService, messenger, logger, botService, MAX_TOTAL_PLAYERS);
 
   // console.log("Socket connected:", socket.id);
   socket.emit("message", "Hello from server — welcome!");
@@ -117,8 +122,6 @@ setInterval(() => {
 }, 1000);
 
 // Add initial bots to the game
-const INITIAL_BOT_COUNT = 5; // Number of bots to start with
-const MIN_BOT_COUNT = 3; // Minimum bots to maintain
 
 // Start server when run directly
 const PORT = process.env.PORT || 3000;
@@ -133,7 +136,8 @@ server.listen(PORT, () => {
       INITIAL_BOT_COUNT,
       systemRoomControler,
       "mixed", // Use mixed difficulty
-      roomService // Pass room service for registration
+      roomService, // Pass room service for registration
+      MAX_TOTAL_PLAYERS
     );
   }, 1000);
 
@@ -144,7 +148,8 @@ server.listen(PORT, () => {
       MIN_BOT_COUNT,
       systemRoomControler,
       "mixed",
-      roomService // Pass room service for registration
+      roomService, // Pass room service for registration
+      MAX_TOTAL_PLAYERS
     );
   }, 30000);
 });

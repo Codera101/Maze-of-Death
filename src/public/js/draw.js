@@ -40,6 +40,12 @@ if (typeof socket !== "undefined") {
 
     // console.log("Player joined and initialized:", myPlayer);
   });
+
+  socket.on("room_full", (data) => {
+    alert(data.message || "Room is full. Please try again later.");
+    // Redirect back to home page
+    window.location.href = "/";
+  });
 }
 
 /**
