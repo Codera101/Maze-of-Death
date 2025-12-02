@@ -12,6 +12,14 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
   </head>
   <body>
     <!--! background_animation  -->
@@ -31,7 +39,8 @@
       <!--^  input_username  -->
 
       <div class="input_username">
-        <i class="fa-regular fa-user"></i>
+        <!-- <i class="fa-regular fa-user"></i> -->
+        <ion-icon name="person-outline" id="username_icon"></ion-icon>
         <input
           type="text"
           id="username"
@@ -44,17 +53,20 @@
       <!--^ buttons  -->
 
       <div class="button_play" id="play_btn_container">
-        <i class="fa-solid fa-play"></i>
+        <!-- <i class="fa-solid fa-play"></i> -->
+        <ion-icon name="play-outline"></ion-icon>
         <button id="play_btn" disabled>PLAY</button>
       </div>
 
       <div class="button_spectator" id="spectator_mode_btn_container">
-        <i class="fa-regular fa-eye"></i>
+        <!-- <i class="fa-regular fa-eye"></i> -->
+        <ion-icon name="eye-outline"></ion-icon>
         <button id="spectator_mode_btn">SPECTATOR MODE</button>
       </div>
 
       <div class="button_how_to_play" id="how_to_play_btn_container">
-        <i class="fa-solid fa-question"></i>
+        <!-- <i class="fa-solid fa-question"></i> -->
+        <ion-icon name="help-circle-outline"></ion-icon>
         <button id="how_to_play_btn">HOW TO PLAY</button>
       </div>
 
@@ -67,12 +79,19 @@
     <div class="popup_container">
       <div class="header">
         <h1>HOW TO PLAY ?</h1>
-        <i
+        <!-- <i
           id="close_btn"
           class="close_icon fa-solid fa-xmark close-icon"
           role="button"
           aria-label="Close"
-        ></i>
+        ></i> -->
+        <ion-icon
+          name="close-outline"
+          id="close_btn"
+          class="close_icon"
+          role="button"
+          aria-label="Close"
+        ></ion-icon>
       </div>
 
       <div class="content">
@@ -81,11 +100,13 @@
             <strong>CONTROLS</strong>
             <ul>
               <li>
-                <i class="fa-solid fa-arrows-alt"></i>
+                <!-- <i class="fa-solid fa-arrows-alt"></i> -->
+                <ion-icon name="move-outline" id="arrow_i"></ion-icon>
                 <p>Arrow Keys</p>
               </li>
               <li>
-                <i class="fa-solid fa-bullseye"></i>
+                <!-- <i class="fa-solid fa-bullseye"></i> -->
+                <i class="fa-solid fa-crosshairs"></i>
                 <p>Shoot: Spacebar</p>
               </li>
             </ul>
@@ -94,24 +115,29 @@
             <strong>GAME RULES</strong>
             <ul>
               <li>
-                <i class="fa-solid fa-heart"></i>
+                <!-- <i class="fa-solid fa-heart"></i> -->
+                <ion-icon name="heart-outline" class="heart_i"></ion-icon>
                 <p>Start with 3 health and 10 bullets</p>
               </li>
               <li>
-                <i class="fa-solid fa-bolt"></i>
+                <!-- <i class="fa-solid fa-bolt"></i> -->
+                <ion-icon name="flash-outline" id="flash_i"></ion-icon>
                 <p>
                   You can only see and shoot players directly in front of you
                 </p>
               </li>
               <li>
-                <i class="fa-solid fa-bullseye"></i>
+                <!-- <i class="fa-solid fa-bullseye"></i> -->
+                <i class="fa-solid fa-crosshairs"></i>
+
                 <p>
                   Each successful hit: +5 points for you, -5 points and -1
                   health for target
                 </p>
               </li>
               <li>
-                <i class="fa-solid fa-skull-crossbones"></i>
+                <!-- <i class="fa-solid fa-skull-crossbones"></i> -->
+                <ion-icon name="heart-outline" class="heart_i"></ion-icon>
                 <p>
                   When health reaches 0, you're eliminated and respawn after 3
                   seconds

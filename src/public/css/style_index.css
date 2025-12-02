@@ -92,6 +92,12 @@ body {
   padding: 12px 0;
 }
 
+/*! Fixing the browser's autofill overlay */
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px #1c1c2e inset !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
 /**--------------    counter_style    -------------------*/
 
 #counter {
@@ -290,7 +296,8 @@ body {
   padding-left: 28px;
 }
 
-.content ul li:has(i) {
+.content ul li:has(i),
+.content ul li:has(ion-icon) {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -373,14 +380,29 @@ body {
 
 /**------------    Icon_style    -------------------*/
 
-i {
+/* i {
   width: 22px;
   margin-right: 12px;
+} */
+
+.content i,
+ion-icon {
+  font-size: 20px;
 }
 
 .content i {
+  color: #fd2c2c;
+}
+#username_icon,
+#arrow_i {
   color: #2c9afd;
-  font-size: 20px;
+}
+.heart_i {
+  color: #2cfd33;
+}
+
+#flash_i {
+  color: #f2d12a;
 }
 
 /**---------------------------------------------------------------------  */
