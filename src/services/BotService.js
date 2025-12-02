@@ -300,6 +300,28 @@ class BotService {
   }
 
   /**
+   * @brief Remove one bot (random selection) from the room
+   * @param {Room} room - The room containing bots
+   * @returns {string|null} The name of the removed bot, or null if no bots available
+   */
+  removeOneBot(room) {
+    if (this._bots.size === 0) {
+      return null;
+    }
+
+    // Get a random bot to remove
+    const botIds = Array.from(this._bots.keys());
+    const randomBotId = botIds[Math.floor(Math.random() * botIds.length)];
+    const bot = this._bots.get(randomBotId);
+    const botName = bot ? bot.userName : null;
+
+    // Remove the bot
+    this.removeBot(randomBotId, room);
+
+    return botName;
+  }
+
+  /**
    * @brief Maintain a minimum number of bots in the room
    * @param {Room} room - The room to maintain bots in
    * @param {number} minBots - Minimum number of bots to maintain

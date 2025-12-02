@@ -41,8 +41,8 @@ const Logger = require("./utils/Logger");
 const roomService = new RoomService();
 const GameRoom = roomService.getRoom("global");
 const MAX_TOTAL_PLAYERS = 8; // Maximum players + bots allowed
-const INITIAL_BOT_COUNT = 5; // Number of bots to start with
-const MIN_BOT_COUNT = 3; // Minimum bots to maintain
+const INITIAL_BOT_COUNT = 8; // Number of bots to start with
+const MIN_BOT_COUNT = 0; // Minimum bots to maintain
 
 // Initialize BotService
 const botService = new BotService();
@@ -112,7 +112,7 @@ io.on("connection", (socket) => {
     // console.log("Socket disconnected:", socket.id, reason);
     // Clear the interval to prevent memory leak
     clearInterval(refreshInterval);
-    roomControler.handlePlayerDisconnect(socket.id);
+    roomControler.handlePlayerDisconnect(socket.id, roomService, MIN_BOT_COUNT);
   });
 });
 

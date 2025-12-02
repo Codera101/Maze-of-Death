@@ -23,7 +23,14 @@ class RoomControler {
     const botCount = this.botService ? this.botService.getBotCount() : 0;
     const totalPlayers = humanPlayerCount + botCount;
     
-    if (totalPlayers >= this.maxTotalPlayers) {
+    // If room is full, remove a bot to make space for human player
+    if (totalPlayers >= this.maxTotalPlayers && botCount > 0) {
+      const removedBot = this.botService.removeOneBot(room);
+      if (removedBot) {
+        console.log(`Removed bot ${removedBot} to make space for player ${username}`);
+      }
+    } else if (totalPlayers >= this.maxTotalPlayers && botCount === 0) {
+      // No bots to remove, room is full with only humans
       this.messenger.notifyCurrentUser("room_full", {
         message: `Room is full (${this.maxTotalPlayers} players maximum)`,
         maxPlayers: this.maxTotalPlayers
@@ -188,8 +195,35 @@ class RoomControler {
     }
   }
 
-  handlePlayerDisconnect(playerId) {
+  handlePlayerDisconnect(playerId, roomService = null, minBotCount = 3) {
+    // Check counts BEFORE removing the player
+    const room = this.roomService.getRoom("global");
+    const wasBot = room?.players?.find(p => p.id === playerId)?.isBot || false;
+    
+    // Remove the player
     this.roomService.playerLeaveRoom(playerId);
+    
+    // Only add bot back if a human player left (not if a bot left)
+    if (!wasBot && this.botService && room) {
+      const humanPlayerCount = room.players.filter(p => !p.isBot).length;
+      const botCount = this.botService.getBotCount();
+      const totalPlayers = humanPlayerCount + botCount;
+      
+      console.log(`Player left: ${totalPlayers}/${this.maxTotalPlayers} total, ${botCount} bots, ${humanPlayerCount} humans`);
+      
+      // If total is below max, add one bot to fill the space
+      if (totalPlayers < this.maxTotalPlayers) {
+        try {
+          const difficulties = ["easy", "medium", "hard"];
+          const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+          const bot = this.botService.createBot(room, difficulty, roomService);
+          this.botService.startBot(bot.id, this);
+          console.log(`✅ Added bot ${bot.userName} after player left (now ${totalPlayers + 1}/${this.maxTotalPlayers})`);
+        } catch (error) {
+          console.error(`❌ Failed to add bot after player disconnect:`, error.message);
+        }
+      }
+    }
   }
 
   /**
