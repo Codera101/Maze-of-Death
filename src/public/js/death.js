@@ -1,10 +1,8 @@
 import { app } from "./maze.js";
 
 socket.on("death", ({ killer_name, respawn_time }) => {
-  // Trigger death animation
-  if (typeof animateDeath === "function" && app) {
-    animateDeath(app, myPlayer.id);
-  }
+  // Death animation is handled by the broadcast event 'player_death_animation'
+  // which is sent to all players including the victim
 
   // Create death overlay screen
   const deathOverlay = document.createElement("div");

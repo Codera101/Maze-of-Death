@@ -1,7 +1,13 @@
 /** @format */
 
 class RoomControler {
-  constructor(roomService, messenger, logger, botService = null, maxTotalPlayers = 8) {
+  constructor(
+    roomService,
+    messenger,
+    logger,
+    botService = null,
+    maxTotalPlayers = 8
+  ) {
     this.roomService = roomService;
     this.messenger = messenger;
     this.logger = logger;
@@ -16,28 +22,32 @@ class RoomControler {
    */
   handlePlayerJoin(playerId, data) {
     const { username } = data;
-    
+
     // Check total player count limit
     const room = this.roomService.getRoom("global");
-    const humanPlayerCount = room ? room.players.filter(p => !p.isBot).length : 0;
+    const humanPlayerCount = room
+      ? room.players.filter((p) => !p.isBot).length
+      : 0;
     const botCount = this.botService ? this.botService.getBotCount() : 0;
     const totalPlayers = humanPlayerCount + botCount;
-    
+
     // If room is full, remove a bot to make space for human player
     if (totalPlayers >= this.maxTotalPlayers && botCount > 0) {
       const removedBot = this.botService.removeOneBot(room);
       if (removedBot) {
-        console.log(`Removed bot ${removedBot} to make space for player ${username}`);
+        console.log(
+          `Removed bot ${removedBot} to make space for player ${username}`
+        );
       }
     } else if (totalPlayers >= this.maxTotalPlayers && botCount === 0) {
       // No bots to remove, room is full with only humans
       this.messenger.notifyCurrentUser("room_full", {
         message: `Room is full (${this.maxTotalPlayers} players maximum)`,
-        maxPlayers: this.maxTotalPlayers
+        maxPlayers: this.maxTotalPlayers,
       });
       return;
     }
-    
+
     const player = this.roomService.playerJoinRoom(username, playerId);
 
     if (player) {
@@ -107,9 +117,30 @@ class RoomControler {
         // Get the room and shooter
         const room = this.roomService.getRoom("global");
         const shooter = room.getPlayerById(playerId);
-        // Only send socket message if not a bot
+
+        // Send detailed shot result to shooter
         if (shooter && !shooter.isBot) {
-          this.messenger.notifyGivenUser(playerId, "target_hit", { status });
+          const shotData = {
+            status,
+            resultType: actionMessage.type,
+            direction: actionMessage.actionDirection,
+          };
+
+          // Add target info if hit/kill
+          if (
+            actionMessage.type === ActionMessageTypes.HIT ||
+            actionMessage.type === ActionMessageTypes.KILL
+          ) {
+            const victim = room.getPlayerById(actionMessage.actionTarget);
+            if (victim) {
+              shotData.targetId = victim.id;
+              shotData.targetX = victim.x;
+              shotData.targetY = victim.y;
+              shotData.targetName = victim.userName;
+            }
+          }
+
+          this.messenger.notifyGivenUser(playerId, "target_hit", shotData);
         }
 
         // Handle HIT or KILL events
@@ -133,6 +164,15 @@ class RoomControler {
               });
             }
 
+            // Broadcast hit animation to all players for visual feedback
+            this.messenger.broadcastToAll("player_hit_animation", {
+              targetId: victim.id,
+              targetX: victim.x,
+              targetY: victim.y,
+              shooterId: shooterPlayer.id,
+              direction: actionMessage.actionDirection,
+            });
+
             // If it was a kill, send death notification and broadcast kill message
             if (actionMessage.type === ActionMessageTypes.KILL) {
               // console.log(
@@ -146,6 +186,16 @@ class RoomControler {
                   respawn_time: respawnTime,
                 });
               }
+
+              // Broadcast death animation to all players
+              this.messenger.broadcastToAll("player_death_animation", {
+                targetId: victim.id,
+                targetX: victim.x,
+                targetY: victim.y,
+                targetName: victim.userName,
+                killerId: shooterPlayer.id,
+                killerName: shooterPlayer.userName,
+              });
 
               // Broadcast kill message to all players in the room
               // console.log(
@@ -198,29 +248,40 @@ class RoomControler {
   handlePlayerDisconnect(playerId, roomService = null, minBotCount = 3) {
     // Check counts BEFORE removing the player
     const room = this.roomService.getRoom("global");
-    const wasBot = room?.players?.find(p => p.id === playerId)?.isBot || false;
-    
+    const wasBot =
+      room?.players?.find((p) => p.id === playerId)?.isBot || false;
+
     // Remove the player
     this.roomService.playerLeaveRoom(playerId);
-    
+
     // Only add bot back if a human player left (not if a bot left)
     if (!wasBot && this.botService && room) {
-      const humanPlayerCount = room.players.filter(p => !p.isBot).length;
+      const humanPlayerCount = room.players.filter((p) => !p.isBot).length;
       const botCount = this.botService.getBotCount();
       const totalPlayers = humanPlayerCount + botCount;
-      
-      console.log(`Player left: ${totalPlayers}/${this.maxTotalPlayers} total, ${botCount} bots, ${humanPlayerCount} humans`);
-      
+
+      console.log(
+        `Player left: ${totalPlayers}/${this.maxTotalPlayers} total, ${botCount} bots, ${humanPlayerCount} humans`
+      );
+
       // If total is below max, add one bot to fill the space
       if (totalPlayers < this.maxTotalPlayers) {
         try {
           const difficulties = ["easy", "medium", "hard"];
-          const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+          const difficulty =
+            difficulties[Math.floor(Math.random() * difficulties.length)];
           const bot = this.botService.createBot(room, difficulty, roomService);
           this.botService.startBot(bot.id, this);
-          console.log(`✅ Added bot ${bot.userName} after player left (now ${totalPlayers + 1}/${this.maxTotalPlayers})`);
+          console.log(
+            `✅ Added bot ${bot.userName} after player left (now ${
+              totalPlayers + 1
+            }/${this.maxTotalPlayers})`
+          );
         } catch (error) {
-          console.error(`❌ Failed to add bot after player disconnect:`, error.message);
+          console.error(
+            `❌ Failed to add bot after player disconnect:`,
+            error.message
+          );
         }
       }
     }
