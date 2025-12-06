@@ -1,5 +1,5 @@
 /** @format */
-
+const Viewer = require("../models/Viewer");
 class RoomControler {
   constructor(
     roomService,
@@ -435,6 +435,14 @@ class RoomControler {
     room.addViewer(newViewer);
     this.messenger.notifyGivenUser(viewerID, "viewer_joined", {status: true});
     this.drawMaze(viewerID);
+  }
+
+  /**
+   * @param {*} viewerID
+   */
+  handleViewerDisconnect(viewerID) {
+    const room = this.roomService.getRoom("global");
+    room.removeViewer(viewerID);
   }
 }
 

@@ -563,6 +563,10 @@ class Room {
 	addViewer(viewer) {
 		this._viewers.push(viewer);
 	}
+
+	removeViewer(viewerID) {
+		this._viewers = this._viewers.filter((v) => v.id !== viewerID);
+	}
 }
 
 module.exports = Room;

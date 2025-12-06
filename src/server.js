@@ -69,7 +69,7 @@ io.on("connection", (socket) => {
   // Initialize Messenger and RoomControler for this socket
   const messenger = new Messenger(io, socket);
   const roomControler = new RoomControler(roomService, messenger, logger, botService, MAX_TOTAL_PLAYERS);
-
+  socket.isPlayer = false;
   // console.log("Socket connected:", socket.id);
   socket.emit("message", "Hello from server — welcome!");
 
@@ -79,6 +79,7 @@ io.on("connection", (socket) => {
 
   socket.on("join_player", (username) => {
     // console.log("join_player listener:", username);
+    socket.isPlayer = true;
     roomControler.handlePlayerJoin(socket.id, username);
   });
 
@@ -122,7 +123,10 @@ io.on("connection", (socket) => {
     // console.log("Socket disconnected:", socket.id, reason);
     // Clear the interval to prevent memory leak
     clearInterval(refreshInterval);
-    roomControler.handlePlayerDisconnect(socket.id, roomService, MIN_BOT_COUNT);
+    if (socket.isPlayer)
+      roomControler.handlePlayerDisconnect(socket.id, roomService, MIN_BOT_COUNT);
+    else
+      roomControler.handleViewerDisconnect(socket.id);
   });
 });
 
