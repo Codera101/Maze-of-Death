@@ -393,6 +393,49 @@ class RoomControler {
       },
     });
   }
+
+  refreshVisiblePlayersForViewers() {
+    const room = this.roomService.getRoom("global");
+    if (!room.players) {
+      room._viewers.forEach((viewer) => {
+        this.messenger.notifyGivenUser(viewer.id, "refresh_players", {
+          visible_player_list: [],
+        });
+      });
+      return;
+    }
+
+    room._viewers.forEach((viewer) => {
+      const visiblePlayers = room.players.filter(
+        (p) => p.health > 0
+      );
+      const visibleData = visiblePlayers.map((p) => ({
+        id: p.id,
+        username: p.userName,
+        x: p.x,
+        y: p.y,
+        dir: p.direction,
+        color: p.color,
+      }));
+      // console.log(`Refreshing visible players for viewer ${viewer.id}:`, visibleData);
+      this.messenger.notifyGivenUser(viewer.id, "refresh_players", {
+        visible_player_list: visibleData,
+      });
+    });
+  }
+
+
+  /**
+   * @param {*} viewerID 
+   */
+
+  handleViewerJoin(viewerID) {
+    const room = this.roomService.getRoom("global");
+    const newViewer = new Viewer(viewerID);
+    room.addViewer(newViewer);
+    this.messenger.notifyGivenUser(viewerID, "viewer_joined", {status: true});
+    this.drawMaze(viewerID);
+  }
 }
 
 module.exports = RoomControler;

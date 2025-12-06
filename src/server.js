@@ -20,6 +20,11 @@ app.get("/game", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "main.html"));
 });
 
+// route serving the viewer page
+app.get("/view", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "viewer_main.html"));
+});
+
 // Test client route
 app.get("/test", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "test-client.html"));
@@ -77,6 +82,11 @@ io.on("connection", (socket) => {
     roomControler.handlePlayerJoin(socket.id, username);
   });
 
+  socket.on("join_viewer", () => {
+    // console.log("join_viewer listener");
+    roomControler.handleViewerJoin(socket.id);
+  });
+
   socket.on("player_move", (data) => {
     const dir = data.direction;
     // Normalize direction input (support both "up"/"U", "down"/"D", etc.)
@@ -115,6 +125,11 @@ io.on("connection", (socket) => {
     roomControler.handlePlayerDisconnect(socket.id, roomService, MIN_BOT_COUNT);
   });
 });
+
+// update rankings every 1 second
+setInterval(() => {
+  systemRoomControler.refreshVisiblePlayersForViewers();
+}, 50);
 
 // update rankings every 1 second
 setInterval(() => {
