@@ -83,6 +83,9 @@ play_btn_container.addEventListener("click", () => {
   window.location.href = `/game?username=${encodeURIComponent(username_value)}`;
 
 });
+spectator_btn_container.addEventListener("click", () => {
+  window.location.href = `/view`;
+});
 
 //& Broadcast for other players
 // socket.on("player_joined_broadcast", (player) => {
