@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/top_panel.css" />
+    <link rel="stylesheet" href="css/right_panel.css" />
+    <link rel="stylesheet" href="css/bottom_panel.css" />
+    <link rel="stylesheet" href="css/maze.css" />
+    <link rel="stylesheet" href="css/kill_message.css" />
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+    <title>Maze Of Death - Play</title>
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+        <div id="health">
+          <ion-icon name="heart" id="heart-icon"></ion-icon>
+          <div id="health-progress">&nbsp;</div>
+          <p id="health-value">999</p>
+        </div>
+
+        <div id="stats">
+          <div id="score" class="stats-box">
+            <!-- <span> -->
+            <ion-icon
+              name="trophy-outline"
+              class="stats-icon"
+              id="score-icon"
+            ></ion-icon>
+            <span id="score-value" class="stats-value">0</span>
+            <span class="stats-label" id="score-label">PTS</span>
+            <!-- </span> -->
+          </div>
+
+          <div id="kills" class="stats-box">
+            <!-- <span> -->
+            <ion-icon
+              name="skull-outline"
+              class="stats-icon"
+              id="kills-icon"
+            ></ion-icon>
+            <span id="kills-value" class="stats-value">0</span>
+            <span class="stats-label" id="kills-label">KILLS</span>
+            <!-- </span> -->
+          </div>
+        </div>
+
+        <button id="exit-menu">
+          <ion-icon name="home-outline" id="exit-icon"></ion-icon>
+          <span id="exit-label">Exit</span>
+        </button>
+      </div>
+
+      <div id="main-container">
+        <div id="maze-container">
+          <div id="kill-message"></div>
+          <div id="maze-content"></div>
+        </div>
+
+        <div id="right-panel">
+          &nbsp;
+          <div id="right-panel-title">
+            <ion-icon name="ribbon"></ion-icon>
+            <span>Leaderboard</span>
+          </div>
+
+          <ul id="right-panel-list">
+            <!-- <li id="player-row">
+                    <span id="player-rank">10</span>
+                    <span id="player-name">Abo_WahbaZ</span>
+                    <span id="player-score-kills">1999/30</span>
+                </li> -->
+          </ul>
+        </div>
+      </div>
+
+      <div id="footer">
+        <div id="reload">
+          <div class="app-footer">
+            <div class="hud-container">
+              <!-- AMMO CARD -->
+              <div class="ammo-card">
+                <!-- AMMO STATUS (ONE LINE ROW) -->
+                <div class="ammo-hud-row">
+                  <!-- Crosshair Icon (Static SVG from Lucide) -->
+                  <svg
+                    class="crosshair-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <line x1="12" y1="2" x2="12" y2="6"></line>
+                    <line x1="12" y1="18" x2="12" y2="22"></line>
+                    <line x1="2" y1="12" x2="6" y2="12"></line>
+                    <line x1="18" y1="12" x2="22" y2="12"></line>
+                    <circle cx="12" cy="12" r="7"></circle>
+                  </svg>
+
+                  <div class="ammo-display">
+                    <div id="bullet-indicators" class="bullet-indicators">
+                      <!-- Static placeholder for 3 active bullets -->
+                      <div
+                        class="bullet-bar"
+                        style="
+                          background-color: var(--color-ammo);
+                          box-shadow: 0 0 8px rgba(255, 184, 44, 0.5);
+                          transform: scaleY(1);
+                          transition-delay: 0s;
+                        "
+                      ></div>
+                      <div
+                        class="bullet-bar"
+                        style="
+                          background-color: var(--color-ammo);
+                          box-shadow: 0 0 8px rgba(255, 184, 44, 0.5);
+                          transform: scaleY(1);
+                          transition-delay: 0.05s;
+                        "
+                      ></div>
+                      <div
+                        class="bullet-bar"
+                        style="
+                          background-color: var(--color-ammo);
+                          box-shadow: 0 0 8px rgba(255, 184, 44, 0.5);
+                          transform: scaleY(1);
+                          transition-delay: 0.1s;
+                        "
+                      ></div>
+                      <!-- Static placeholder for 2 empty bullets -->
+                      <div
+                        class="bullet-bar"
+                        style="
+                          background-color: var(--bg-base);
+                          box-shadow: none;
+                          transform: scaleY(0.8);
+                          transition-delay: 0.15s;
+                        "
+                      ></div>
+                      <div
+                        class="bullet-bar"
+                        style="
+                          background-color: var(--bg-base);
+                          box-shadow: none;
+                          transform: scaleY(0.8);
+                          transition-delay: 0.2s;
+                        "
+                      ></div>
+                    </div>
+                    <div class="bullet-count">3/5</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="how-to-play">
+          <div id="wasd-move">
+            <span style="color: var(--color-blue)">WASD/Arrows</span> &nbsp;
+            Move
+          </div>
+
+          <div id="space-shoot">
+            <span style="color: var(--color-yellow)">Space/Mouse Left</span>
+            &nbsp; Shoot
+          </div>
+        </div>
+
+        <div id="reload-cost"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.14.3/dist/pixi.min.js"></script>
+    <!-- socket.io.js already loaded in head -->
+    <script src="js/variables_mainpage.js"></script>
+    <script src="js/viewer_draw.js"></script>
+    <script src="js/cleanup.js"></script>
+    <!-- <script type="module" src="js/top_panel.js"></script> -->
+    <script type="module" src="js/right_panel.js"></script>
+    <script type="module" src="js/maze.js"></script>
+    <script type="module" src="js/death.js"></script>
+    <!-- <script type="module" src="js/hit_recieved.js"></script> -->
+    <!-- <script src="js/reload_progress.js"></script> -->
+    <script type="module" src="js/init_maze.js"></script>
+    <script src="js/kill_message.js"></script>
+    <script type="module" src="js/refresh_ranking.js"></script>
+    <script type="module" src="js/refresh_visible_players.js"></script>
+  </body>
+</html>
