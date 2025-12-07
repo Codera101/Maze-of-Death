@@ -8,7 +8,8 @@ if(!isViewer){
 }
 
 exitButton.addEventListener("click", () => {
-  isViewer = false;
-  socket.emit("handle_exit");
+  isViewer = false; 
+  socket.disconnect();
   window.location.href = "/";
+  username.textContent = '';
 });
