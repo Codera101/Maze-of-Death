@@ -35,8 +35,8 @@ const socket = io("http://localhost:3000");
 // const socket = io("https://maze-of-death-production.up.railway.app");
 
 // Maze Variables
-let rows = 16;
-let cols = 16;
+let rows = 15.1;
+let cols = 15.1;
 let cellSize = 50;
 let strokeWidth = 2;
 let mazeLayout = [
