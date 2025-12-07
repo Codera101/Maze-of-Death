@@ -11,7 +11,7 @@ const score = document.querySelector("#score");
 const scoreValue = document.querySelector("#score-value");
 const kills = document.querySelector("#kills");
 const killsValue = document.querySelector("#kills-value");
-const pauseMenu = document.querySelector("#exit-menu");
+const exitButton = document.querySelector("#exit-menu");
 
 // Maze Container Elements
 const mazeContainer = document.querySelector("#maze-container");

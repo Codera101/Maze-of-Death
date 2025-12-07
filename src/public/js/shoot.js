@@ -11,17 +11,6 @@ window.addEventListener("click", (e) => {
   }
 });
 
-// window.addEventListener("keyup", (e) => {
-//     if (e.code === "Space") {
-//         shooting = false;
-//     }
-// });
-
-// function shoot() {
-//     if (shooting) {
-//     }
-// }
-
 socket.on("target_hit", (data) => {
   const {
     status,
