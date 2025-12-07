@@ -89,3 +89,5 @@ function displayKillMessage(victim_name, killer_name) {
   message.innerHTML = `<span style="color: red;">${killer_name}</span>&nbsp;&nbsp;killed&nbsp;&nbsp;<span style="color: blue;">${victim_name}</span>`;
   killMessage.appendChild(message);
 }
+
+let isViewer = true;
