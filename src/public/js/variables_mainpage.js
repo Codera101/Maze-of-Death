@@ -39,42 +39,30 @@ let rows = 15.1;
 let cols = 15.1;
 let cellSize = 50;
 let strokeWidth = 2;
-let mazeLayout = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-  [0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0],
-  [0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0],
-  [0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0],
-  [0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0],
-  [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
-  [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-  [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-];
+let mazeLayout = [];
+for (let i = 0; i < rows; i++) {
+  mazeLayout[i] = [];
+  for (let j = 0; j < cols; j++) {
+    mazeLayout[i][j] = 0;
+  }
+}
 let visiblePlayers = [];
 
 let myPlayer;
 // let shooting = false;
 
 myPlayer = {
-    id: null,
-    username: null,
-    x: 0,
-    y: 0,
-    dir: "U",
-    health: 10,  // Match backend's initPlayerHealth
-    score: 0,
-    kill_count: 0,  // Use consistent property name
-    bullets: 5,  // Match backend's initBulltesNumber
-    color: "#FF5733"
+  id: null,
+  username: null,
+  x: 0,
+  y: 0,
+  dir: "U",
+  health: 10, // Match backend's initPlayerHealth
+  score: 0,
+  kill_count: 0, // Use consistent property name
+  bullets: 5, // Match backend's initBulltesNumber
+  color: "#FF5733",
 };
-
 
 function displayKillMessage(victim_name, killer_name) {
   if (killMessage.children.length >= 3) {
