@@ -11,5 +11,5 @@ exitButton.addEventListener("click", () => {
   isViewer = false; 
   socket.disconnect();
   window.location.href = "/";
-  username.textContent = '';
+  usernameInput.textContent = '';
 });
