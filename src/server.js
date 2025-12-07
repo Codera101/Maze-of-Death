@@ -68,7 +68,13 @@ const systemRoomControler = new RoomControler(
 io.on("connection", (socket) => {
   // Initialize Messenger and RoomControler for this socket
   const messenger = new Messenger(io, socket);
-  const roomControler = new RoomControler(roomService, messenger, logger, botService, MAX_TOTAL_PLAYERS);
+  const roomControler = new RoomControler(
+    roomService,
+    messenger,
+    logger,
+    botService,
+    MAX_TOTAL_PLAYERS
+  );
   socket.isPlayer = false;
   // console.log("Socket connected:", socket.id);
   socket.emit("message", "Hello from server — welcome!");
@@ -114,19 +120,29 @@ io.on("connection", (socket) => {
   });
 
   // Store interval ID so we can clear it on disconnect
-  const refreshInterval = setInterval(() => {
-    roomControler.refreshPlayerStats(socket.id);
-    roomControler.refreshVisiblePlayers(socket.id);
-  }, 50);
+  let refreshInterval = null;
+  setTimeout(() => {
+    if (socket.isPlayer) {
+      refreshInterval = setInterval(() => {
+        roomControler.refreshPlayerStats(socket.id);
+        roomControler.refreshVisiblePlayers(socket.id);
+      }, 50);
+    }
+  }, 1000);
 
   socket.on("disconnect", (reason) => {
     // console.log("Socket disconnected:", socket.id, reason);
     // Clear the interval to prevent memory leak
-    clearInterval(refreshInterval);
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+    }
     if (socket.isPlayer)
-      roomControler.handlePlayerDisconnect(socket.id, roomService, MIN_BOT_COUNT);
-    else
-      roomControler.handleViewerDisconnect(socket.id);
+      roomControler.handlePlayerDisconnect(
+        socket.id,
+        roomService,
+        MIN_BOT_COUNT
+      );
+    else roomControler.handleViewerDisconnect(socket.id);
   });
 });
 
