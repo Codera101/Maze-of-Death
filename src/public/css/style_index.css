@@ -432,6 +432,7 @@ ion-icon {
 
 .heart_i {
   color: var(--color-icon-heart);
+  font-size: 20px;
 }
 
 #flash_i {

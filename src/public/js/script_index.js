@@ -79,11 +79,12 @@ play_btn_container.addEventListener("click", () => {
   const username_value = username.value.trim();
   // console.log(username_value);
   if (!username_value) return;
-  
+  isViewer = false;
   window.location.href = `/game?username=${encodeURIComponent(username_value)}`;
 
 });
 spectator_btn_container.addEventListener("click", () => {
+  isViewer = true;
   window.location.href = `/view`;
 });
 
