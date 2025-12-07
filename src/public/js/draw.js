@@ -1,9 +1,3 @@
-// import { app } from "./maze.js"
-// import { rows, cols, cellSize, strokeWidth, mazeLayout } from "./config.js"
-
-// Socket setup
-// const socket = io("http://localhost:3000");
-
 // Graphics cache to reuse objects and prevent memory leaks
 const graphicsCache = {
   maze: null,
@@ -37,8 +31,6 @@ if (typeof socket !== "undefined") {
     if (typeof updatePlayerInfo === "function") {
       updatePlayerInfo(player);
     }
-
-    // console.log("Player joined and initialized:", myPlayer);
   });
 
   socket.on("room_full", (data) => {
@@ -81,7 +73,7 @@ function drawRoundedRect(
     y,
     width = 100,
     height = 100,
-    radius = 0,
+    radius = 5,
     fillColor = 0xffffff,
     strokeColor = 0x000000,
     strokeWidth = 0,
