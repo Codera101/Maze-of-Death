@@ -1,6 +1,6 @@
 import { app } from "./maze.js";
 
-socket.on("death", ({ killer_name, respawn_time }) => {
+socket.on("died", ({ killer_name, respawn_time }) => {
   // Death animation is handled by the broadcast event 'player_death_animation'
   // which is sent to all players including the victim
 
