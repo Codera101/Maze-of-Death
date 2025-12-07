@@ -6,6 +6,7 @@ function initHealth() {
 
 initHealth();
 
-pauseMenu.addEventListener("click", () => {
-  window.location.href = "/";
+exitButton.addEventListener("click",()=>{
+    socket.emit("handle_exit");
+    window.location.href = '/';  
 });
