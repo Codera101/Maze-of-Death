@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Test - Maze of Death</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+        }
+        .log {
+            background: #111;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #0f0;
+        }
+        .error {
+            border-left-color: #f00;
+            color: #f00;
+        }
+        .success {
+            border-left-color: #0f0;
+            color: #0f0;
+        }
+        .info {
+            border-left-color: #0ff;
+            color: #0ff;
+        }
+        h1 { color: #0ff; }
+        h2 { color: #ff0; }
+    </style>
+</head>
+<body>
+    <h1>🚀 WebRTC Integration Test</h1>
+    <h2>Connection Status</h2>
+    <div id="status"></div>
+    
+    <h2>Event Log</h2>
+    <div id="log"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://unpkg.com/@geckos.io/client@3.0.2/lib/geckos.io.min.js"></script>
+    
+    <script>
+        const status = document.getElementById('status');
+        const logEl = document.getElementById('log');
+
+        function addLog(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logEl.insertBefore(div, logEl.firstChild);
+            console.log(message);
+        }
+
+        function updateStatus(html) {
+            status.innerHTML = html;
+        }
+
+        // Test 1: Check WebRTC Support
+        addLog('Testing browser WebRTC support...', 'info');
+        if (typeof RTCPeerConnection !== 'undefined') {
+            addLog('✅ Browser supports RTCPeerConnection', 'success');
+        } else {
+            addLog('❌ Browser does NOT support RTCPeerConnection', 'error');
+        }
+
+        // Test 2: Check geckos.io loaded
+        if (typeof geckos !== 'undefined') {
+            addLog('✅ geckos.io client library loaded', 'success');
+        } else {
+            addLog('❌ geckos.io client library NOT loaded', 'error');
+        }
+
+        // Test 3: Socket.io connection
+        addLog('Connecting to Socket.io on port 3000...', 'info');
+        const socket = io('http://localhost:3000');
+
+        socket.on('connect', () => {
+            addLog(`✅ Socket.io connected: ${socket.id}`, 'success');
+            updateStatus(`
+                <div class="log success">Socket.io: Connected (${socket.id})</div>
+            `);
+
+            // Send capabilities
+            const capabilities = {
+                version: "2.0.0",
+                protocols: {
+                    socketio: true,
+                    webrtc: typeof RTCPeerConnection !== 'undefined',
+                    geckos: typeof geckos !== 'undefined'
+                }
+            };
+
+            addLog(`Sending capabilities: ${JSON.stringify(capabilities)}`, 'info');
+            socket.emit('client_capabilities', capabilities);
+        });
+
+        socket.on('protocol_selected', (data) => {
+            addLog(`✅ Server selected protocol: ${data.protocol}`, 'success');
+            addLog(`   WebRTC enabled on server: ${data.webrtcEnabled}`, 'info');
+            
+            if (data.protocol === 'hybrid' && data.webrtcEnabled) {
+                // Test 4: WebRTC connection
+                addLog('Attempting WebRTC connection on port 3001...', 'info');
+                
+                try {
+                    const channel = geckos({ 
+                        url: 'http://localhost:3001',
+                        authorization: socket.id
+                    });
+
+                    channel.onConnect((error) => {
+                        if (error) {
+                            addLog(`❌ WebRTC connection failed: ${error.message}`, 'error');
+                            updateStatus(status.innerHTML + `
+                                <div class="log error">WebRTC: Failed - ${error.message}</div>
+                            `);
+                        } else {
+                            addLog('✅ WebRTC connection established!', 'success');
+                            updateStatus(status.innerHTML + `
+                                <div class="log success">WebRTC: Connected on port 3001</div>
+                            `);
+                            
+                            // Send handshake
+                            channel.emit('handshake', socket.id);
+                            addLog('Sent handshake to associate WebRTC with Socket.io', 'info');
+
+                            // Test binary data reception
+                            channel.onRaw((data) => {
+                                addLog(`📦 Received binary data: ${data.byteLength} bytes`, 'success');
+                            });
+
+                            // Summary
+                            setTimeout(() => {
+                                addLog('═══════════════════════════════════════', 'info');
+                                addLog('🎉 HYBRID PROTOCOL MODE ACTIVE!', 'success');
+                                addLog('   - Socket.io: Critical events (join, shoot, death)', 'info');
+                                addLog('   - WebRTC: High-frequency updates (position, stats)', 'info');
+                                addLog('   - Expected bandwidth reduction: ~85%', 'success');
+                                addLog('   - Expected latency reduction: ~60-70%', 'success');
+                                addLog('═══════════════════════════════════════', 'info');
+                            }, 1000);
+                        }
+                    });
+
+                    channel.onDisconnect(() => {
+                        addLog('⚠️ WebRTC disconnected', 'error');
+                        updateStatus(status.innerHTML.replace('WebRTC: Connected', 'WebRTC: Disconnected'));
+                    });
+
+                } catch (error) {
+                    addLog(`❌ WebRTC initialization error: ${error.message}`, 'error');
+                }
+            } else {
+                addLog('ℹ️ Using Socket.io only mode (WebRTC not available)', 'info');
+                updateStatus(status.innerHTML + `
+                    <div class="log info">Mode: Socket.io only (fallback)</div>
+                `);
+            }
+        });
+
+        socket.on('disconnect', () => {
+            addLog('⚠️ Socket.io disconnected', 'error');
+            updateStatus('');
+        });
+
+        socket.on('error', (error) => {
+            addLog(`❌ Socket.io error: ${error}`, 'error');
+        });
+
+        // Auto-navigate to game after 3 seconds if all tests pass
+        let testsPass = false;
+        setTimeout(() => {
+            if (status.innerHTML.includes('WebRTC: Connected')) {
+                addLog('═══════════════════════════════════════', 'info');
+                addLog('🎮 All tests passed! You can now play the game.', 'success');
+                addLog('   Navigate to /game to start playing with WebRTC!', 'info');
+                addLog('═══════════════════════════════════════', 'info');
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

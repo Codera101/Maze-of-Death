@@ -27,6 +27,14 @@ function updatePlayerInfo(playerData) {
   }
 }
 
+// Socket.io handler (JSON data - backward compatible)
 socket.on("refresh_player", (playerData) => {
   updatePlayerInfo(playerData);
+});
+
+// WebRTC handler (binary data decoded in variables_mainpage.js)
+window.addEventListener('webrtc_refresh_player', (event) => {
+  // Binary data already decoded, just need to update UI
+  // Note: colorHash needs to be converted back or we store original color separately
+  updatePlayerInfo(event.detail);
 });

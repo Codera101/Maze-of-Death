@@ -7,7 +7,12 @@ services:
       context: .
       target: development
     ports:
-      - "3000:3000"
+      - "3000:3000"  # HTTP + Socket.io
+      - "3001:3001"  # WebRTC (geckos.io)
     volumes:
       - ./src:/app/src:ro 
+    environment:
+      - ENABLE_WEBRTC=false  # Set to 'true' to enable WebRTC support
+      - PORT=3000
+      - WEBRTC_PORT=3001
     
