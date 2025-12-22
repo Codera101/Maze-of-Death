@@ -199,11 +199,11 @@ setInterval(() => {
 // Add initial bots to the game
 
 // Start server when run directly
-const PORT = process.env.PORT || 3000;
-const WEBRTC_PORT = process.env.WEBRTC_PORT || 3001;
-
-server.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
+const PORT = 3000;
+const WEBRTC_PORT = 3001;
+const HOST = '0.0.0.0';
+server.listen(PORT, HOST, () => {
+  console.log(`Server listening on http://${HOST}:${PORT}`);
   
   // Start geckos.io server if enabled
   if (geckosServer) {
