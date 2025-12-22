@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/top_panel.css" />
+    <link rel="stylesheet" href="css/right_panel.css" />
+    <link rel="stylesheet" href="css/bottom_panel.css" />
+    <link rel="stylesheet" href="css/maze.css" />
+    <link rel="stylesheet" href="css/kill_message.css" />
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+
+    <style>
+      #header{justify-content: flex-end; }
+    </style>
+
+      <link rel="icon" type="image/x-icon" href="favicon.png">
+
+     <title>Maze Of Death - Viewer</title>
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+       
+        <button id="exit-menu">
+          <ion-icon name="home-outline" id="exit-icon"></ion-icon>
+          <span id="exit-label">Exit</span>
+        </button>
+      </div>
+
+      <div id="main-container">
+        <div id="maze-container">
+          <div id="kill-message"></div>
+          <div id="maze-content"></div>
+        </div>
+
+        <div id="right-panel">
+          &nbsp;
+          <div id="right-panel-title">
+            <ion-icon name="ribbon"></ion-icon>
+            <span>Leaderboard</span>
+          </div>
+
+          <ul id="right-panel-list">
+           </ul>
+        </div>
+      </div>
+
+      <div id="footer">
+     
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.14.3/dist/pixi.min.js"></script>
+    <!-- socket.io.js already loaded in head -->
+    <script src="js/variables_mainpage.js"></script>
+    <script src="js/viewer_draw.js"></script>
+    <script src="js/cleanup.js"></script>
+    <script type="module" src="js/top_panel.js"></script>
+    <script type="module" src="js/maze.js"></script>
+    <script type="module" src="js/death.js"></script>
+    <script type="module" src="js/init_maze.js"></script>
+    <script src="js/kill_message.js"></script>
+    <script type="module" src="js/refresh_ranking.js"></script>
+    <script type="module" src="js/refresh_visible_players.js"></script>
+  </body>
+</html>

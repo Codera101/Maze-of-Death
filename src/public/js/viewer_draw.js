@@ -1,3 +1,9 @@
+// import { app } from "./maze.js"
+// import { rows, cols, cellSize, strokeWidth, mazeLayout } from "./config.js"
+
+// Socket setup
+// const socket = io("http://localhost:3000");
+
 // Graphics cache to reuse objects and prevent memory leaks
 const graphicsCache = {
   maze: null,
@@ -7,37 +13,18 @@ const graphicsCache = {
 
 if (typeof socket !== "undefined") {
   socket.on("connect", () => {
-    const params = new URLSearchParams(window.location.search);
-    const username_value = params.get("username");
-    socket.emit("join_player", { username: username_value });
+    socket.emit("join_viewer", {});
     // console.log("Joining as:", username_value);
   });
 
-  socket.on("player_joined", (data) => {
-    const player = data.current_player;
-    // Initialize myPlayer with all properties from server
-    myPlayer.id = player.id;
-    myPlayer.username = player.userName;
-    myPlayer.x = player.x;
-    myPlayer.y = player.y;
-    myPlayer.dir = player.dir;
-    myPlayer.health = player.health;
-    myPlayer.score = player.score;
-    myPlayer.kill_count = player.kill_count;
-    myPlayer.bullets = player.bullets;
-    myPlayer.color = player.color;
+  // socket.on("viewer_joined", (data) => {
+  // });
 
-    // Update UI with initial player state
-    if (typeof updatePlayerInfo === "function") {
-      updatePlayerInfo(player);
-    }
-  });
-
-  socket.on("room_full", (data) => {
-    alert(data.message || "Room is full. Please try again later.");
-    // Redirect back to home page
-    window.location.href = "/";
-  });
+  // socket.on("room_full", (data) => {
+  //   alert(data.message || "Room is full. Please try again later.");
+  //   // Redirect back to home page
+  //   window.location.href = "/";
+  // });
 
   // Show hit animation on any player (visible to all)
   socket.on("player_hit_animation", ({ targetId, targetX, targetY }) => {
@@ -73,7 +60,7 @@ function drawRoundedRect(
     y,
     width = 100,
     height = 100,
-    radius = 5,
+    radius = 0,
     fillColor = 0xffffff,
     strokeColor = 0x000000,
     strokeWidth = 0,

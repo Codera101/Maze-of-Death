@@ -1,4 +1,4 @@
-const username = document.getElementById("username");
+const usernameInput = document.getElementById("username");
 const counter = document.getElementById("counter");
 
 //?--------------    BUTTONS_CONTAINER    -----------------/
@@ -15,15 +15,15 @@ const play_btn = document.getElementById("play_btn");
 
 //?--------------    COUNTER    --------------------/
 
-username.addEventListener("input", () => {
-  counter.textContent = `${username.value.length}/20`;
+usernameInput.addEventListener("input", () => {
+  counter.textContent = `${usernameInput.value.length}/20`;
   //   play_btn_container.disabled = username.value.trim().length === 0;
 });
 
 //?--------------   PLAY_BUTTON   -----------------/
 
 function updatePlayButtonState() {
-  const isEmpty = username.value.trim().length === 0;
+  const isEmpty = usernameInput.value.trim().length === 0;
 
   play_btn.disabled = isEmpty;
 
@@ -35,7 +35,7 @@ function updatePlayButtonState() {
 }
 
 updatePlayButtonState();
-username.addEventListener("input", updatePlayButtonState);
+usernameInput.addEventListener("input", updatePlayButtonState);
 
 //?------------    POPUP_CONTROLLER    ---------------------------/
 
@@ -76,12 +76,16 @@ document.addEventListener("keydown", (e) => {
 
 //& Send join request
 play_btn_container.addEventListener("click", () => {
-  const username_value = username.value.trim();
+  const username_value = usernameInput.value.trim();
   // console.log(username_value);
   if (!username_value) return;
-  
+  isViewer = false;
   window.location.href = `/game?username=${encodeURIComponent(username_value)}`;
 
+});
+spectator_btn_container.addEventListener("click", () => {
+  isViewer = true;
+  window.location.href = `/view`;
 });
 
 //& Broadcast for other players
