@@ -34,7 +34,7 @@ const killMessage = document.querySelector("#kill-message");
 // ============================================================================
 
 // Socket.io Connection (always available - fallback)
-const socket = io("http://0.0.0.0:3000");
+const socket = io("https://maze-of-death.fly.dev:3000");
 // const socket = io("http://localhost:8080");
 // const socket = io("https://maze-of-death-production.up.railway.app");
 
