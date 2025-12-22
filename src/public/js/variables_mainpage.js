@@ -34,7 +34,7 @@ const killMessage = document.querySelector("#kill-message");
 // ============================================================================
 
 // Socket.io Connection (always available - fallback)
-const socket = io("https://maze-of-death.fly.dev:3000");
+const socket = io();
 // const socket = io("http://localhost:8080");
 // const socket = io("https://maze-of-death-production.up.railway.app");
 
@@ -63,8 +63,9 @@ function initializeGeckos() {
   console.log('[WebRTC] Initializing geckos.io...');
   try {
     geckosChannel = window.geckos({ 
-      url: 'https://maze-of-death.fly.dev:3001',
-      authorization: ''  // Will be set after socket connects
+      url: `${window.location.protocol}//${window.location.host}`, 
+      port: 3001, // This tells the WebRTC ICE candidate to look at 3001
+      authorization: ''
     });
     
     geckosChannel.onConnect((error) => {
