@@ -1,6 +1,7 @@
 /** @format */
 
 const Player = require("./Player");
+const Viewer = require("./Viewer");
 const { Directions, getNextPosition } = require("./Direction");
 const Maze = require("./Maze");
 const {
@@ -553,6 +554,18 @@ class Room {
 		player.direction = direction; // Update facing direction
 		player.updateTimeOfLastMove(); // Update movement cooldown
 		return true;
+	}
+
+	/**
+	 * @brief Add viewer to the room
+	 * @param {Viewer} viewer - The viewer to add
+	 */
+	addViewer(viewer) {
+		this._viewers.push(viewer);
+	}
+
+	removeViewer(viewerID) {
+		this._viewers = this._viewers.filter((v) => v.id !== viewerID);
 	}
 }
 

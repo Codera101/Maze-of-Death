@@ -20,6 +20,11 @@ app.get("/game", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "main.html"));
 });
 
+// route serving the viewer page
+app.get("/view", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "viewer_main.html"));
+});
+
 // Test client route
 app.get("/test", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "test-client.html"));
@@ -133,7 +138,7 @@ io.on("connection", (socket) => {
     botService, 
     MAX_TOTAL_PLAYERS
   );
-
+  socket.isPlayer = false;
   // console.log("Socket connected:", socket.id);
   socket.emit("message", "Hello from server — welcome!");
 
@@ -143,7 +148,13 @@ io.on("connection", (socket) => {
 
   socket.on("join_player", (username) => {
     // console.log("join_player listener:", username);
+    socket.isPlayer = true;
     roomControler.handlePlayerJoin(socket.id, username);
+  });
+
+  socket.on("join_viewer", () => {
+    // console.log("join_viewer listener");
+    roomControler.handleViewerJoin(socket.id);
   });
 
   socket.on("player_move", (data) => {
@@ -172,10 +183,15 @@ io.on("connection", (socket) => {
   });
 
   // Store interval ID so we can clear it on disconnect
-  const refreshInterval = setInterval(() => {
-    roomControler.refreshPlayerStats(socket.id);
-    roomControler.refreshVisiblePlayers(socket.id);
-  }, 50);
+  let refreshInterval = null;
+  setTimeout(() => {
+    if (socket.isPlayer) {
+      refreshInterval = setInterval(() => {
+        roomControler.refreshPlayerStats(socket.id);
+        roomControler.refreshVisiblePlayers(socket.id);
+      }, 50);
+    }
+  }, 1000);
 
   socket.on("disconnect", (reason) => {
     // console.log("Socket disconnected:", socket.id, reason);
@@ -188,8 +204,23 @@ io.on("connection", (socket) => {
     }
     
     roomControler.handlePlayerDisconnect(socket.id, roomService, MIN_BOT_COUNT);
+    if (refreshInterval) {
+      clearInterval(refreshInterval);
+    }
+    if (socket.isPlayer)
+      roomControler.handlePlayerDisconnect(
+        socket.id,
+        roomService,
+        MIN_BOT_COUNT
+      );
+    else roomControler.handleViewerDisconnect(socket.id);
   });
 });
+
+// update rankings every 1 second
+setInterval(() => {
+  systemRoomControler.refreshVisiblePlayersForViewers();
+}, 50);
 
 // update rankings every 1 second
 setInterval(() => {

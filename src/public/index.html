@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Maze of Death - Main Menu</title>
+
+    <link rel="icon" type="image/x-icon" href="favicon.png" />
+    <title>Maze of Death - Home</title>
     <link rel="stylesheet" href="css/style_index.css" />
     <link
       rel="stylesheet"
@@ -102,12 +104,12 @@
               <li>
                 <!-- <i class="fa-solid fa-arrows-alt"></i> -->
                 <ion-icon name="move-outline" id="arrow_i"></ion-icon>
-                <p>Arrow Keys</p>
+                <p>Arrow / WASD Keys</p>
               </li>
               <li>
                 <!-- <i class="fa-solid fa-bullseye"></i> -->
                 <i class="fa-solid fa-crosshairs"></i>
-                <p>Shoot: Spacebar</p>
+                <p>Shoot: Spacebar / Left Mouse Button</p>
               </li>
             </ul>
           </li>
@@ -115,46 +117,29 @@
             <strong>GAME RULES</strong>
             <ul>
               <li>
-                <!-- <i class="fa-solid fa-heart"></i> -->
                 <ion-icon name="heart-outline" class="heart_i"></ion-icon>
-                <p>Start with 3 health and 10 bullets</p>
+                <p>You start with 25 health points and refillable 5 bullets</p>
               </li>
               <li>
-                <!-- <i class="fa-solid fa-bolt"></i> -->
-                <ion-icon name="flash-outline" id="flash_i"></ion-icon>
-                <p>
-                  You can only see and shoot players directly in front of you
-                </p>
-              </li>
-              <li>
-                <!-- <i class="fa-solid fa-bullseye"></i> -->
-                <i class="fa-solid fa-crosshairs"></i>
-
-                <p>
-                  Each successful hit: +5 points for you, -5 points and -1
-                  health for target
-                </p>
-              </li>
-              <li>
-                <!-- <i class="fa-solid fa-skull-crossbones"></i> -->
                 <ion-icon name="heart-outline" class="heart_i"></ion-icon>
                 <p>
                   When health reaches 0, you're eliminated and respawn after 3
                   seconds
                 </p>
               </li>
-            </ul>
-          </li>
-          <li>
-            <strong>TIPS</strong>
-            <ul class="green_circle">
               <li>
-                Watch your ammo count - running out leaves you defenseless
+                <ion-icon name="flash-outline" id="flash_i"></ion-icon>
+                <p>
+                  You can only see and shoot players directly in front of you
+                </p>
               </li>
               <li>
-                Watch your ammo count - running out leaves you defenseless
+                <i class="fa-solid fa-crosshairs"></i>
+                <p>
+                  Each successful hit: +5 points for you, -5 points for the
+                  target
+                </p>
               </li>
-              <li>Corner shots are deadly - peek carefully!</li>
             </ul>
           </li>
         </ol>
