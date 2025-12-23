@@ -63,7 +63,8 @@ function initializeGeckos() {
   console.log('[WebRTC] Initializing geckos.io...');
   try {
     geckosChannel = window.geckos({ 
-      url: `${window.location.protocol}//${window.location.host}`, 
+      //url: `${window.location.hostname}`, // local testing
+      url: `${window.location.protocol}//${window.location.host}`, // production
       port: 3001, // This tells the WebRTC ICE candidate to look at 3001
       authorization: ''
     });

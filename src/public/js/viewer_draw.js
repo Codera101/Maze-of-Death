@@ -11,10 +11,58 @@ const graphicsCache = {
   lastMazeState: null,
 };
 
+let lastUpdateTime = 0;
+const UPDATE_THROTTLE = 100; // Minimum time between redraws in ms
+let pendingUpdate = false;
+
+/**
+ * Handle visible players update with throttling
+ * @param {Array} visible_player_list - List of visible players
+ * @param {boolean} isWebRTC - True if update came from WebRTC
+ */
+function handleVisiblePlayersUpdate(visible_player_list, isWebRTC = false) {
+  visiblePlayers = visible_player_list;
+
+  // WebRTC path: No throttling needed (UDP-like, no head-of-line blocking)
+  if (isWebRTC) {
+    if (typeof app !== "undefined") {
+      updateMaze(app);
+    }
+    return;
+  }
+
+  // Socket.io path: Keep throttling for backward compatibility
+  const now = Date.now();
+  if (now - lastUpdateTime >= UPDATE_THROTTLE) {
+    lastUpdateTime = now;
+    pendingUpdate = false;
+    if (typeof app !== "undefined") {
+      updateMaze(app);
+    }
+  } else if (!pendingUpdate) {
+    // Schedule an update for later if we're throttling
+    pendingUpdate = true;
+    setTimeout(() => {
+      if (pendingUpdate) {
+        lastUpdateTime = Date.now();
+        pendingUpdate = false;
+        if (typeof app !== "undefined") {
+          updateMaze(app);
+        }
+      }
+    }, UPDATE_THROTTLE - (now - lastUpdateTime));
+  }
+}
+
 if (typeof socket !== "undefined") {
   socket.on("connect", () => {
     socket.emit("join_viewer", {});
     // console.log("Joining as:", username_value);
+  });
+
+  // Socket.io handler for visible players (JSON data - backward compatible)
+  socket.on("refresh_players", ({ visible_player_list }) => {
+    handleVisiblePlayersUpdate(visible_player_list, false);
   });
 
   // socket.on("viewer_joined", (data) => {
@@ -47,6 +95,11 @@ if (typeof socket !== "undefined") {
     }
   );
 }
+
+// WebRTC handler for visible players (binary data decoded in variables_mainpage.js)
+window.addEventListener("webrtc_refresh_players", (event) => {
+  handleVisiblePlayersUpdate(event.detail.visible_player_list, true);
+});
 
 /**
  * Draws a rounded rectangle.

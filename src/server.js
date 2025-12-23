@@ -35,20 +35,20 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 // Feature flag for WebRTC support (backward compatible)
-const ENABLE_WEBRTC = process.env.ENABLE_WEBRTC === 'true';
+const ENABLE_WEBRTC = process.env.ENABLE_WEBRTC === "true";
 let geckosServer = null;
 
 // Initialize geckos.io if enabled
 if (ENABLE_WEBRTC) {
   try {
-    const geckos = require('@geckos.io/server').default;
+    const geckos = require("@geckos.io/server").default;
     geckosServer = geckos({
-      cors: { allowAuthorization: true }
+      cors: { allowAuthorization: true },
     });
-    console.log('WebRTC support enabled via geckos.io');
+    console.log("WebRTC support enabled via geckos.io");
   } catch (error) {
-    console.warn('Failed to initialize geckos.io:', error.message);
-    console.warn('Falling back to Socket.io only');
+    console.warn("Failed to initialize geckos.io:", error.message);
+    console.warn("Falling back to Socket.io only");
   }
 }
 
@@ -77,8 +77,27 @@ const logger = new Logger("SERVER");
 // Store geckos channels by socket ID for WebRTC support
 const geckosChannels = new Map();
 
+// Store transport managers by socket ID for viewer WebRTC support
+const transportManagers = new Map();
+
 // Create a system messenger and controller for global tasks (like rankings)
+// Note: This uses basic Messenger for broadcast operations. Individual user notifications
+// will still work via the stored transportManagers when available.
 const systemMessenger = new Messenger(io, null);
+
+// Enhance systemMessenger to route through TransportManagers when available
+const originalNotifyGivenUser =
+  systemMessenger.notifyGivenUser.bind(systemMessenger);
+systemMessenger.notifyGivenUser = function (userId, onEvent, payload) {
+  // If we have a TransportManager for this user, use it (enables WebRTC)
+  if (transportManagers.has(userId)) {
+    transportManagers.get(userId).notifyGivenUser(userId, onEvent, payload);
+  } else {
+    // Fallback to Socket.io
+    originalNotifyGivenUser(userId, onEvent, payload);
+  }
+};
+
 const systemRoomControler = new RoomControler(
   roomService,
   systemMessenger,
@@ -91,7 +110,7 @@ const systemRoomControler = new RoomControler(
 if (geckosServer) {
   geckosServer.onConnection((channel) => {
     // Associate geckos channel with socket ID once handshake completes
-    channel.on('handshake', (socketId) => {
+    channel.on("handshake", (socketId) => {
       geckosChannels.set(socketId, channel);
       console.log(`[WebRTC] Channel established for socket ${socketId}`);
     });
@@ -105,20 +124,25 @@ if (geckosServer) {
 io.on("connection", (socket) => {
   // Initialize client capabilities (default to Socket.io only)
   socket.capabilities = { socketio: true, webrtc: false };
-  
+
   // Protocol negotiation: Wait for client to send capabilities
-  socket.on('client_capabilities', (capabilities) => {
+  socket.on("client_capabilities", (capabilities) => {
     socket.capabilities = capabilities;
-    const supportsWebRTC = capabilities.protocols?.geckos || capabilities.protocols?.webrtc;
-    const protocol = (supportsWebRTC && geckosServer) ? 'hybrid' : 'socketio-only';
-    
-    console.log(`[Protocol] Client ${socket.id} capabilities:`, JSON.stringify(capabilities));
+    const supportsWebRTC =
+      capabilities.protocols?.geckos || capabilities.protocols?.webrtc;
+    const protocol =
+      supportsWebRTC && geckosServer ? "hybrid" : "socketio-only";
+
+    console.log(
+      `[Protocol] Client ${socket.id} capabilities:`,
+      JSON.stringify(capabilities)
+    );
     console.log(`[Protocol] Selected: ${protocol}`);
-    
+
     // Notify client which protocol will be used
-    socket.emit('protocol_selected', { 
-      protocol, 
-      webrtcEnabled: ENABLE_WEBRTC && geckosServer !== null 
+    socket.emit("protocol_selected", {
+      protocol,
+      webrtcEnabled: ENABLE_WEBRTC && geckosServer !== null,
     });
   });
 
@@ -127,15 +151,18 @@ io.on("connection", (socket) => {
 
   // Initialize TransportManager (backward compatible - works without geckos)
   const transportManager = new TransportManager(io, socket, getGeckosChannel());
-  
+
+  // Store TransportManager for system-level operations (like viewer updates)
+  transportManagers.set(socket.id, transportManager);
+
   // Also keep Messenger for compatibility
   const messenger = new Messenger(io, socket);
-  
+
   const roomControler = new RoomControler(
-    roomService, 
+    roomService,
     transportManager, // Use TransportManager instead of Messenger
-    logger, 
-    botService, 
+    logger,
+    botService,
     MAX_TOTAL_PLAYERS
   );
   socket.isPlayer = false;
@@ -197,12 +224,17 @@ io.on("connection", (socket) => {
     // console.log("Socket disconnected:", socket.id, reason);
     // Clear the interval to prevent memory leak
     clearInterval(refreshInterval);
-    
+
     // Cleanup geckos channel
     if (geckosChannels.has(socket.id)) {
       geckosChannels.delete(socket.id);
     }
-    
+
+    // Cleanup transport manager
+    if (transportManagers.has(socket.id)) {
+      transportManagers.delete(socket.id);
+    }
+
     roomControler.handlePlayerDisconnect(socket.id, roomService, MIN_BOT_COUNT);
     if (refreshInterval) {
       clearInterval(refreshInterval);
@@ -232,10 +264,10 @@ setInterval(() => {
 // Start server when run directly
 const PORT = 3000;
 const WEBRTC_PORT = 3001;
-const HOST = '0.0.0.0';
+const HOST = "0.0.0.0";
 server.listen(PORT, HOST, () => {
   console.log(`Server listening on http://${HOST}:${PORT}`);
-  
+
   // Start geckos.io server if enabled
   if (geckosServer) {
     geckosServer.listen(WEBRTC_PORT);

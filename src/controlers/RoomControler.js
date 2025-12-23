@@ -363,7 +363,8 @@ class RoomControler {
     const visiblePlayers = room.players.filter(
       (p) =>
         p.health > 0 &&
-        (room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false || this.isPlayerNearbyOnDiag(player.x, player.y, p.x, p.y))
+        (room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false ||
+          this.isPlayerNearbyOnDiag(player.x, player.y, p.x, p.y))
     );
     const visibleData = visiblePlayers.map((p) => ({
       id: p.id,
@@ -406,9 +407,7 @@ class RoomControler {
     }
 
     room._viewers.forEach((viewer) => {
-      const visiblePlayers = room.players.filter(
-        (p) => p.health > 0
-      );
+      const visiblePlayers = room.players.filter((p) => p.health > 0);
       const visibleData = visiblePlayers.map((p) => ({
         id: p.id,
         username: p.userName,
@@ -418,22 +417,24 @@ class RoomControler {
         color: p.color,
       }));
       // console.log(`Refreshing visible players for viewer ${viewer.id}:`, visibleData);
+
+      // If messenger is a basic Messenger (no TransportManager), use Socket.io
+      // Otherwise, TransportManager will automatically select the best protocol
       this.messenger.notifyGivenUser(viewer.id, "refresh_players", {
         visible_player_list: visibleData,
       });
     });
   }
 
-
   /**
-   * @param {*} viewerID 
+   * @param {*} viewerID
    */
 
   handleViewerJoin(viewerID) {
     const room = this.roomService.getRoom("global");
     const newViewer = new Viewer(viewerID);
     room.addViewer(newViewer);
-    this.messenger.notifyGivenUser(viewerID, "viewer_joined", {status: true});
+    this.messenger.notifyGivenUser(viewerID, "viewer_joined", { status: true });
     this.drawMaze(viewerID);
   }
 

@@ -67,6 +67,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.14.3/dist/pixi.min.js"></script>
     <!-- socket.io.js already loaded in head -->
+    <!-- Load geckos.io client for WebRTC support -->
+    <script type="module">
+      import geckos from '/js/geckos.io.js';
+      window.geckos = geckos;
+      window.dispatchEvent(new Event('geckos-loaded'));
+    </script>
+    <script src="js/binary_protocol_client.js"></script>
     <script src="js/variables_mainpage.js"></script>
     <script src="js/viewer_draw.js"></script>
     <script src="js/cleanup.js"></script>
