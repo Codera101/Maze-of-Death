@@ -27,13 +27,13 @@ class Room {
 		this._players = [];
 		this._viewers = [];
 		this._shootDamage = 5;
-		this._respawnTime = 3000; // in ms
+		this._respawnTime = 2000; // in ms (reduced for faster gameplay)
 		this._shootGainPoints = 5;
-		this._reloadTime = 1000; // in ms
+		this._reloadTime = 500; // in ms (reduced for faster gameplay)
 		this._initPlayerHealth = 25;
 		this._initBulltesNumber = 5;
-		this._shootSpeed = 400; // in ms;
-		this._moveSpeed = 250; // in ms;
+		this._shootSpeed = 150; // in ms (reduced for faster gameplay with UDP)
+		this._moveSpeed = 100; // in ms (reduced for faster gameplay with UDP)
 		this._colorsPalet = [
 				"#FF0000", // Electric Red
 				"#FF6600", // Safety Orange

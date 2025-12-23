@@ -3,7 +3,7 @@ import { app } from "./maze.js";
 let lastUpdateTime = 0;
 // Remove throttle for WebRTC since it doesn't have head-of-line blocking
 // Keep it for Socket.io path for backward compatibility
-const UPDATE_THROTTLE = 100; // Minimum time between redraws in ms (matches server interval/4)
+const UPDATE_THROTTLE = 16; // Minimum time between redraws in ms (~60 FPS)
 let pendingUpdate = false;
 
 function handleVisiblePlayersUpdate(visible_player_list, isWebRTC = false) {

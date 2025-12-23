@@ -216,7 +216,7 @@ io.on("connection", (socket) => {
       refreshInterval = setInterval(() => {
         roomControler.refreshPlayerStats(socket.id);
         roomControler.refreshVisiblePlayers(socket.id);
-      }, 50);
+      }, 16); // ~60 FPS for fast UDP gameplay
     }
   }, 1000);
 
@@ -249,10 +249,10 @@ io.on("connection", (socket) => {
   });
 });
 
-// update rankings every 1 second
+// update every 16ms (~60 FPS) - fast updates for UDP
 setInterval(() => {
   systemRoomControler.refreshVisiblePlayersForViewers();
-}, 50);
+}, 16);
 
 // update rankings every 1 second
 setInterval(() => {

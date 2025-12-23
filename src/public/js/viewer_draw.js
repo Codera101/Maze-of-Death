@@ -12,7 +12,7 @@ const graphicsCache = {
 };
 
 let lastUpdateTime = 0;
-const UPDATE_THROTTLE = 100; // Minimum time between redraws in ms
+const UPDATE_THROTTLE = 16; // Minimum time between redraws in ms (~60 FPS)
 let pendingUpdate = false;
 
 /**

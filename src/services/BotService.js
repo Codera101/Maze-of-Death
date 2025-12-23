@@ -159,7 +159,7 @@ class BotService {
         default:
           console.warn(`Unknown bot action: ${decision.action}`);
       }
-    }, 300); // Bot thinks every 100ms
+    }, 100); // Bot thinks every 100ms (fast gameplay with UDP)
 
     this._botUpdateIntervals.set(botId, intervalId);
     // console.log(`Bot AI started: ${bot.userName}`);
