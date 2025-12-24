@@ -7,8 +7,9 @@ services:
       context: .
       target: development
     ports:
-      - "3000:3000"  # HTTP + Socket.io
-      - "3001:3001"  # WebRTC (geckos.io)
+      - "3000:3000"      # HTTP + Socket.io (TCP)
+      - "3001:3001/tcp"  # WebRTC signaling (TCP)
+      - "3001:3001/udp"  # WebRTC data channel (UDP)
     volumes:
       - ./src:/app/src:ro 
     environment:
