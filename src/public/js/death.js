@@ -1,6 +1,8 @@
 import { app } from "./maze.js";
 
 let deadSound = new Audio("../sounds/dead.wav");
+let countdownSound = new Audio("../sounds/oneCountDown.m4a");
+let countAllDownSound = new Audio("../sounds/granTurismoCountdownSound.mp3");
 socket.on("died", ({ killer_name, respawn_time }) => {
   // Death animation is handled by the broadcast event 'player_death_animation'
   // which is sent to all players including the victim
@@ -63,7 +65,9 @@ socket.on("died", ({ killer_name, respawn_time }) => {
   // Countdown timer
   const timerElement = document.getElementById("respawn-timer");
   let remainingTime = respawn_time;
+  countAllDownSound.play();
   const countdown = setInterval(() => {
+    // countdownSound.play();
     remainingTime -= 100;
     if (timerElement) {
       timerElement.textContent = Math.ceil(remainingTime / 1000);
