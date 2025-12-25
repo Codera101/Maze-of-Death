@@ -1,9 +1,10 @@
 import { app } from "./maze.js";
 
+let deadSound = new Audio("../sounds/dead.wav");
 socket.on("died", ({ killer_name, respawn_time }) => {
   // Death animation is handled by the broadcast event 'player_death_animation'
   // which is sent to all players including the victim
-
+  deadSound.play();
   // Create death overlay screen
   const deathOverlay = document.createElement("div");
   deathOverlay.id = "death-overlay";
