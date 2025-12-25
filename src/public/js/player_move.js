@@ -5,6 +5,8 @@ let arrows = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 let wasd = ["w", "s", "a", "d"];
 let moveDir;
 
+let moveSound = new Audio("../sounds/move.mp3");
+
 window.addEventListener("keydown", (e) => {
   e.preventDefault();
   moveDir = null; // Reset moveDir at the start of each key press
@@ -20,6 +22,7 @@ window.addEventListener("keydown", (e) => {
 
 socket.on("player_moved", ({ status }) => {
   if (status === true) {
+    moveSound.play();
     // TODO 
   }
 });
