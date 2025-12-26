@@ -12,6 +12,9 @@ window.addEventListener("click", (e) => {
 });
 
 let laserSound = new Audio("../sounds/laserShoot.wav");
+let laserHitWallSound = new Audio("../sounds/laserHitWall.wav");
+let laserHitPlayerSound = new Audio("../sounds/laserHitPlayer.wav");
+let laserKillPlayerSound = new Audio("../sounds/KillPlayer.wav");
 console.log(laserSound);
 
 socket.on("target_hit", (data) => {
@@ -26,6 +29,20 @@ socket.on("target_hit", (data) => {
     targetId,
     targetName,
   } = data;
+
+  if (status === true) {
+    if (resultType === "kill") {
+      laserHitPlayerSound.play();
+      laserKillPlayerSound.play();
+      console.log(`You killed ${targetName} (ID: ${targetId})`);
+    } else if (resultType === "Hit") {
+      laserHitPlayerSound.play();
+      console.log(`You hit ${targetName} (ID: ${targetId})`);
+    } else {
+      laserHitWallSound.play();
+      console.log("You missed your shot.");
+    }
+  }
 
   if (
     status === true &&
