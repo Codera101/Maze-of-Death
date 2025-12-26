@@ -1,8 +1,8 @@
 import { app } from "./maze.js";
-
 window.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     socket.emit("shoot");
+    // laserSound.play();
   }
 });
 window.addEventListener("click", (e) => {
@@ -11,7 +11,12 @@ window.addEventListener("click", (e) => {
   }
 });
 
+let laserSound = new Audio("../sounds/laserShoot.wav");
+console.log(laserSound);
+
 socket.on("target_hit", (data) => {
+  laserSound.play();
+  // laserSound.play();
   const {
     status,
     resultType,

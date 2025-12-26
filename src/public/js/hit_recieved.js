@@ -1,7 +1,13 @@
 import { app } from "./maze.js";
 
+let hitSound = new Audio("../sounds/hitHurt.wav");
+console.log(hitSound);
+
 socket.on("got_hit", ({ dir, shooter_name }) => {
   // console.log(`Got hit from ${shooter_name} in direction ${dir}`);
+  hitSound.play();
+  console.log("Hit Me");
+  
 
   // Trigger hit animation
   if (typeof animateHit === "function" && app) {

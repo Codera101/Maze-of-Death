@@ -25,18 +25,13 @@
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
     ></script>
 
-    <style>
-      #header{justify-content: flex-end; }
-    </style>
+    <link rel="icon" type="image/x-icon" href="favicon.png" />
 
-      <link rel="icon" type="image/x-icon" href="favicon.png">
-
-     <title>Maze Of Death - Viewer</title>
+    <title>Maze Of Death - Viewer</title>
   </head>
   <body>
     <div id="container">
-      <div id="header">
-       
+      <div id="header" style="justify-content: flex-end">
         <button id="exit-menu">
           <ion-icon name="home-outline" id="exit-icon"></ion-icon>
           <span id="exit-label">Exit</span>
@@ -56,17 +51,14 @@
             <span>Leaderboard</span>
           </div>
 
-          <ul id="right-panel-list">
-           </ul>
+          <ul id="right-panel-list"></ul>
         </div>
       </div>
 
-      <div id="footer">
-     
+      <div id="footer"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.14.3/dist/pixi.min.js"></script>
-    <!-- socket.io.js already loaded in head -->
     <script src="js/variables_mainpage.js"></script>
     <script src="js/viewer_draw.js"></script>
     <script src="js/cleanup.js"></script>

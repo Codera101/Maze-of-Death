@@ -79,3 +79,6 @@ function displayKillMessage(victim_name, killer_name) {
 }
 
 let isViewer = true;
+
+// let laserSound = new Audio("../sounds/laserShoot.wav");
+// laserSound.play();
