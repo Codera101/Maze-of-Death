@@ -339,15 +339,14 @@ class Room {
 				let newY = emptyCells[cellInx][1] + changeP[1];
 				countBadPos += this.checkPlayerOnPosition({ x: newX, y: newY });
 			});
-			if (
-				!this.checkPlayerOnPosition({
-					x: emptyCells[cellInx][0],
-					y: emptyCells[cellInx][1],
-				})
-			) {
+			let cellStatus = this.checkPlayerOnPosition({
+				x: emptyCells[cellInx][0],
+				y: emptyCells[cellInx][1],
+			});
+			if (cellStatus === 0) {
 				cellsOf2ndLvlPriority.push(emptyCells[cellInx]);
 			}
-			if (countBadPos === 0) {
+			if (countBadPos === 0 && cellStatus === 0) {
 				cellsOf1stLvlPriority.push(emptyCells[cellInx]);
 			}
 		}
