@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/bottom_panel.css" />
     <link rel="stylesheet" href="css/maze.css" />
     <link rel="stylesheet" href="css/kill_message.css" />
+    <link rel="stylesheet" href="css/mobile_style.css" />
     <script
       type="module"
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
@@ -29,12 +30,13 @@
     <title>Maze Of Death - Play</title>
   </head>
   <body>
+    <div id="rotate-message">Please rotate your device to landscape mode.</div>
     <div id="container">
       <div id="header">
         <div id="health">
           <ion-icon name="heart" id="heart-icon"></ion-icon>
           <div id="health-progress">&nbsp;</div>
-          <p id="health-value">25</p>
+          <p id="health-value">999</p>
         </div>
 
         <div id="stats">
@@ -47,9 +49,11 @@
             ></ion-icon>
             <span id="score-value" class="stats-value">0</span>
             <span class="stats-label" id="score-label">PTS</span>
+            <!-- </span> -->
           </div>
 
           <div id="kills" class="stats-box">
+            <!-- <span> -->
             <ion-icon
               name="skull-outline"
               class="stats-icon"
@@ -57,6 +61,7 @@
             ></ion-icon>
             <span id="kills-value" class="stats-value">0</span>
             <span class="stats-label" id="kills-label">KILLS</span>
+            <!-- </span> -->
           </div>
         </div>
 
@@ -79,7 +84,36 @@
             <span>Leaderboard</span>
           </div>
 
-          <ul id="right-panel-list"></ul>
+          <ul id="right-panel-list">
+            <!-- <li id="player-row">
+                    <span id="player-rank">10</span>
+                    <span id="player-name">Abo_WahbaZ</span>
+                    <span id="player-score-kills">1999/30</span>
+                </li> -->
+          </ul>
+
+          <!-- Mobile Controls -->
+          <div id="mobile-controls">
+            <div id="dpad" class="control-group">
+              <div id="btn-up" class="dpad-btn">
+                <ion-icon name="caret-up-outline"></ion-icon>
+              </div>
+              <div id="btn-down" class="dpad-btn">
+                <ion-icon name="caret-down-outline"></ion-icon>
+              </div>
+              <div id="btn-left" class="dpad-btn">
+                <ion-icon name="caret-back-outline"></ion-icon>
+              </div>
+              <div id="btn-right" class="dpad-btn">
+                <ion-icon name="caret-forward-outline"></ion-icon>
+              </div>
+            </div>
+            <div id="action-btn-container" class="control-group">
+              <div id="btn-shoot">
+                <ion-icon name="radio-button-on-outline"></ion-icon>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

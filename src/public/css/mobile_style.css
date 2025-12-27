@@ -1,0 +1,429 @@
+#mobile-controls {
+  display: none;
+}
+
+@media screen and (orientation: landscape) and (max-width: 1024px) {
+  /* --- Global Layout --- */
+  body {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  #container {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /** ---  Top Panel  --- */
+  #header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    padding: 0 10px;
+    background-color: rgba(28, 28, 46, 0.85);
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+  }
+  #header > * {
+    pointer-events: auto;
+  }
+
+  /** --- Health Section --- */
+  #health {
+    width: auto;
+    height: 36px;
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--color-danger);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+  }
+
+  #health-progress {
+    width: 80px;
+    height: 6px;
+  }
+
+  #health-value {
+    font-size: 14px;
+  }
+
+  #heart-icon {
+    font-size: 18px;
+  }
+
+  /** --- Stats Section (Score & Kills) --- */
+  #stats {
+    display: flex;
+    gap: 10px;
+    margin-right: auto;
+  }
+
+  .stats-box {
+    height: 36px;
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stats-icon {
+    font-size: 18px;
+  }
+
+  .stats-value {
+    font-size: 14px;
+  }
+
+  .stats-label {
+    display: none;
+  }
+
+  /** --- Exit Button --- */
+  #exit-menu {
+    display: flex;
+    width: 40px;
+    height: 36px;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-danger);
+    border-radius: 6px;
+    margin-left: 10px;
+  }
+
+  #exit-label {
+    display: none;
+  }
+
+  #exit-icon {
+    font-size: 20px;
+    margin: 0;
+  }
+
+  /** --- Bottom Panel (Footer) - Merged into Top --- */
+  #footer {
+    position: absolute;
+    top: 0;
+    right: 60px;
+    width: auto;
+    height: 50px;
+    background: none;
+    border: none;
+    padding: 0;
+    z-index: 51;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  /** --- Ammo Section --- */
+  #reload {
+    display: flex;
+    pointer-events: auto;
+  }
+
+  .ammo-card {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 184, 44, 0.5);
+    padding: 4px 10px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+  }
+
+  .ammo-hud-row {
+    gap: 8px;
+  }
+
+  .crosshair-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .bullet-indicators {
+    height: 16px;
+  }
+
+  .bullet-bar {
+    width: 5px;
+    height: 12px;
+  }
+
+  .bullet-count {
+    font-size: 14px;
+  }
+
+  /*? Hide other footer elements */
+  #how-to-play,
+  #reload-cost {
+    display: none;
+  }
+
+  /** --- Main Container & Maze --- */
+  #main-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  #maze-container {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #maze-content {
+    width: 100%;
+    height: 100%;
+  }
+
+  /** --- Right Panel (Leaderboard) --- */
+  #right-panel {
+    position: absolute;
+    top: 55px;
+    right: 10px;
+    left: auto;
+    width: auto;
+    min-width: 130px;
+    max-width: 220px;
+    max-height: 110px;
+    overflow-y: auto;
+    background-color: rgba(28, 28, 46, 0.6);
+    border: 1px solid rgba(44, 155, 255, 0.3);
+    border-radius: 6px;
+    z-index: 40;
+    padding: 4px;
+    pointer-events: auto;
+    display: block;
+  }
+
+  /** --- Kill Messages --- */
+  #kill-message {
+    top: 60px;
+    left: 10px;
+    right: auto;
+    align-items: flex-start;
+    pointer-events: none;
+  }
+
+  #kill-message div {
+    animation: slideInLeft 0.3s ease-out;
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+    gap: 4px !important;
+    border-radius: 4px !important;
+    border-width: 1px !important;
+  }
+
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  #right-panel-title {
+    font-size: 10px;
+    padding-bottom: 2px;
+    margin-top: 0;
+    text-align: left;
+    display: flex;
+    gap: 4px;
+  }
+
+  #right-panel-list {
+    margin-top: 2px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  #player-row {
+    height: 20px;
+    font-size: 9px;
+    margin: 0;
+    background-color: rgba(20, 20, 31, 0.6);
+    border: none;
+    width: 100%;
+    grid-template-columns: 12px auto 25px;
+    gap: 4px;
+  }
+
+  #player-rank {
+    width: 12px;
+    height: 12px;
+    font-size: 8px;
+    margin: 0 2px;
+  }
+
+  #player-name {
+    font-size: 9px;
+    white-space: nowrap;
+  }
+
+  #player-score-kills {
+    font-size: 9px;
+  }
+
+  /** --- Mobile Controls --- */
+  #mobile-controls {
+    display: block !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .control-group {
+    pointer-events: auto;
+    position: absolute;
+    bottom: 20px;
+  }
+
+  /*! D-Pad on LEFT side */
+  #dpad {
+    left: 30px;
+    width: 150px;
+    height: 150px;
+  }
+
+  .dpad-btn {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  .dpad-btn:active {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+  }
+
+  #btn-up {
+    top: 0;
+    left: 51px;
+  }
+  #btn-down {
+    bottom: 0;
+    left: 51px;
+  }
+  #btn-left {
+    top: 51px;
+    left: 0;
+  }
+  #btn-right {
+    top: 51px;
+    right: 0;
+  }
+
+  /*! Shoot Button on RIGHT side */
+  #action-btn-container {
+    right: 30px;
+    bottom: 40px;
+  }
+
+  #btn-shoot {
+    width: 75px;
+    height: 75px;
+    background-color: rgba(255, 44, 71, 0.2);
+    border: 2px solid rgba(255, 44, 71, 0.4);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  #btn-shoot:active {
+    background-color: rgba(255, 44, 71, 0.5);
+    transform: scale(0.95);
+  }
+}
+
+/* Maze sizing for smaller mobile screens */
+@media screen and (max-width: 844px) {
+  #maze-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding-top: 50px;
+    box-sizing: border-box;
+  }
+
+  #maze-content canvas {
+    max-width: 95% !important;
+    max-height: 85% !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  #rotate-message {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    text-align: center;
+    z-index: 999;
+  }
+}
+@media screen and (orientation: landscape) {
+  #rotate-message {
+    display: none;
+  }
+}
