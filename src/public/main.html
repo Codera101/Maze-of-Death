@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="css/bottom_panel.css" />
     <link rel="stylesheet" href="css/maze.css" />
     <link rel="stylesheet" href="css/kill_message.css" />
-    <link rel="stylesheet" href="css/mobile_style.css" />
+    <link rel="stylesheet" href="css/mobile-style.css" />
     <script
       type="module"
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
@@ -219,6 +219,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.14.3/dist/pixi.min.js"></script>
     <!-- socket.io.js already loaded in head -->
+     <!--  -->
+    <script src="js/binary_protocol_client.js"></script>
+
+    <!-- Load geckos.io as ES module and expose globally -->
+    <script type="module">
+      import geckos from "https://cdn.jsdelivr.net/npm/@geckos.io/client@3.0.2/+esm";
+      window.geckos = geckos.default || geckos;
+      window.geckosLoaded = true;
+      console.log("[WebRTC] geckos.io loaded successfully");
+      // Trigger custom event so variables_mainpage.js knows geckos is ready
+      window.dispatchEvent(new Event("geckos-loaded"));
+    </script>
+<!--  -->
     <script src="js/variables_mainpage.js"></script>
     <script src="js/draw.js"></script>
     <script src="js/cleanup.js"></script>
