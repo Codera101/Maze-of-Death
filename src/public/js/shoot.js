@@ -17,6 +17,27 @@ let laserHitPlayerSound = new Audio("../sounds/laserHitPlayer.wav");
 let laserKillPlayerSound = new Audio("../sounds/KillPlayer.wav");
 console.log(laserSound);
 
+// Mobile Shoot Control
+const setupMobileShoot = () => {
+  const btnShoot = document.getElementById("btn-shoot");
+  if (btnShoot) {
+    const handleShoot = (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // Prevent bubbling to window click listener
+      socket.emit("shoot");
+    };
+
+    btnShoot.addEventListener("touchstart", handleShoot, { passive: false });
+    btnShoot.addEventListener("click", handleShoot);
+  }
+};
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupMobileShoot);
+} else {
+  setupMobileShoot();
+}
+
 socket.on("target_hit", (data) => {
   laserSound.play();
   // laserSound.play();

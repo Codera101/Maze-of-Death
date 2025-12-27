@@ -20,9 +20,40 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
+// Mobile Controls
+const setupMobileControls = () => {
+  const directions = {
+    "btn-up": "U",
+    "btn-down": "D",
+    "btn-left": "L",
+    "btn-right": "R",
+  };
+
+  Object.entries(directions).forEach(([btnId, dir]) => {
+    const btn = document.getElementById(btnId);
+    if (btn) {
+      const handleMove = (e) => {
+        e.preventDefault(); // Prevent default touch behavior
+        e.stopPropagation(); // Prevent event bubbling (stops shooting)
+        socket.emit("player_move", { direction: dir });
+      };
+
+      btn.addEventListener("touchstart", handleMove, { passive: false });
+      btn.addEventListener("click", handleMove);
+    }
+  });
+};
+
+// Initialize mobile controls
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupMobileControls);
+} else {
+  setupMobileControls();
+}
+
 socket.on("player_moved", ({ status }) => {
   if (status === true) {
     moveSound.play();
-    // TODO 
+    // TODO
   }
 });
