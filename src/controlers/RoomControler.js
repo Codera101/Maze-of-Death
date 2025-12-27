@@ -1,3 +1,5 @@
+// Lines edited by Yousef --> (40,65,181,228,265)
+
 /** @format */
 const Viewer = require("../models/Viewer");
 class RoomControler {
@@ -35,6 +37,7 @@ class RoomControler {
     if (totalPlayers >= this.maxTotalPlayers && botCount > 0) {
       const removedBot = this.botService.removeOneBot(room);
       if (removedBot) {
+        this.refreshRankings();
         console.log(
           `Removed bot ${removedBot} to make space for player ${username}`
         );
@@ -58,6 +61,8 @@ class RoomControler {
 
       // Draw the maze for the new player
       this.drawMaze(playerId);
+
+      this.refreshRankings();
     }
   }
 
@@ -173,6 +178,8 @@ class RoomControler {
               direction: actionMessage.actionDirection,
             });
 
+            this.refreshRankings();
+
             // If it was a kill, send death notification and broadcast kill message
             if (actionMessage.type === ActionMessageTypes.KILL) {
               // console.log(
@@ -218,6 +225,7 @@ class RoomControler {
                     stats
                   );
                 }
+                this.refreshRankings();
               }, respawnTime);
             }
           }
@@ -253,6 +261,8 @@ class RoomControler {
 
     // Remove the player
     this.roomService.playerLeaveRoom(playerId);
+
+    this.refreshRankings();
 
     // Only add bot back if a human player left (not if a bot left)
     if (!wasBot && this.botService && room) {
@@ -363,7 +373,8 @@ class RoomControler {
     const visiblePlayers = room.players.filter(
       (p) =>
         p.health > 0 &&
-        (room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false || this.isPlayerNearbyOnDiag(player.x, player.y, p.x, p.y))
+        (room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false ||
+          this.isPlayerNearbyOnDiag(player.x, player.y, p.x, p.y))
     );
     const visibleData = visiblePlayers.map((p) => ({
       id: p.id,
@@ -406,9 +417,7 @@ class RoomControler {
     }
 
     room._viewers.forEach((viewer) => {
-      const visiblePlayers = room.players.filter(
-        (p) => p.health > 0
-      );
+      const visiblePlayers = room.players.filter((p) => p.health > 0);
       const visibleData = visiblePlayers.map((p) => ({
         id: p.id,
         username: p.userName,
@@ -424,16 +433,15 @@ class RoomControler {
     });
   }
 
-
   /**
-   * @param {*} viewerID 
+   * @param {*} viewerID
    */
 
   handleViewerJoin(viewerID) {
     const room = this.roomService.getRoom("global");
     const newViewer = new Viewer(viewerID);
     room.addViewer(newViewer);
-    this.messenger.notifyGivenUser(viewerID, "viewer_joined", {status: true});
+    this.messenger.notifyGivenUser(viewerID, "viewer_joined", { status: true });
     this.drawMaze(viewerID);
   }
 
