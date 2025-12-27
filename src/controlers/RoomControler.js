@@ -23,8 +23,20 @@ class RoomControler {
   handlePlayerJoin(playerId, data) {
     const { username } = data;
 
-    // Check total player count limit
+    // Check for duplicate username
     const room = this.roomService.getRoom("global");
+    const existingPlayer = room?.players?.find(
+      (p) => p.userName.toLowerCase() === username.toLowerCase()
+    );
+    if (existingPlayer) {
+      this.messenger.notifyCurrentUser("username_taken", {
+        message: `Username "${username}" is already in use. Please choose a different name.`,
+        username: username,
+      });
+      return;
+    }
+
+    // Check total player count limit
     const humanPlayerCount = room
       ? room.players.filter((p) => !p.isBot).length
       : 0;
