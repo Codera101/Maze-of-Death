@@ -1,8 +1,8 @@
 import { app } from "./maze.js";
-
 window.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     socket.emit("shoot");
+    // laserSound.play();
   }
 });
 window.addEventListener("click", (e) => {
@@ -11,13 +11,19 @@ window.addEventListener("click", (e) => {
   }
 });
 
+let laserSound = new Audio("../sounds/laserShoot.wav");
+let laserHitWallSound = new Audio("../sounds/laserHitWall.wav");
+let laserHitPlayerSound = new Audio("../sounds/laserHitPlayer.wav");
+let laserKillPlayerSound = new Audio("../sounds/KillPlayer.wav");
+console.log(laserSound);
+
 // Mobile Shoot Control
 const setupMobileShoot = () => {
   const btnShoot = document.getElementById("btn-shoot");
   if (btnShoot) {
     const handleShoot = (e) => {
       e.preventDefault();
-      e.stopPropagation();
+      e.stopPropagation(); // Prevent bubbling to window click listener
       socket.emit("shoot");
     };
 
@@ -33,6 +39,8 @@ if (document.readyState === "loading") {
 }
 
 socket.on("target_hit", (data) => {
+  laserSound.play();
+  // laserSound.play();
   const {
     status,
     resultType,
@@ -42,6 +50,20 @@ socket.on("target_hit", (data) => {
     targetId,
     targetName,
   } = data;
+
+  if (status === true) {
+    if (resultType === "kill") {
+      laserHitPlayerSound.play();
+      laserKillPlayerSound.play();
+      console.log(`You killed ${targetName} (ID: ${targetId})`);
+    } else if (resultType === "Hit") {
+      laserHitPlayerSound.play();
+      console.log(`You hit ${targetName} (ID: ${targetId})`);
+    } else {
+      laserHitWallSound.play();
+      console.log("You missed your shot.");
+    }
+  }
 
   if (
     status === true &&

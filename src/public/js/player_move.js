@@ -5,6 +5,8 @@ let arrows = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 let wasd = ["w", "s", "a", "d"];
 let moveDir;
 
+let moveSound = new Audio("../sounds/move.mp3");
+
 window.addEventListener("keydown", (e) => {
   e.preventDefault();
   moveDir = null; // Reset moveDir at the start of each key press
@@ -31,8 +33,8 @@ const setupMobileControls = () => {
     const btn = document.getElementById(btnId);
     if (btn) {
       const handleMove = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); // Prevent default touch behavior
+        e.stopPropagation(); // Prevent event bubbling (stops shooting)
         socket.emit("player_move", { direction: dir });
       };
 
@@ -51,6 +53,7 @@ if (document.readyState === "loading") {
 
 socket.on("player_moved", ({ status }) => {
   if (status === true) {
+    moveSound.play();
     // TODO
   }
 });
