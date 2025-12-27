@@ -47,9 +47,9 @@
 .ammo-card {
     background-color: rgba(13, 13, 0.08); 
     border-radius: 0.75rem;
-    padding: 0.75rem 1rem;
+    padding: 5px 10px;
     border: 1px solid rgba(255, 184, 44, 0.3);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); 
+    /* box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);  */
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
 }
@@ -103,7 +103,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px   ;
+    gap: 10px   ;
     font-size: 16px;
     color: var(--color-text-secondary);
 }

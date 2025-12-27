@@ -37,7 +37,7 @@ const socket = io();
 // Maze Variables
 let rows = 15.1;
 let cols = 15.1;
-let cellSize = 50;
+let cellSize = 32;
 let strokeWidth = 2;
 let mazeLayout = [];
 for (let i = 0; i < rows; i++) {

@@ -1,6 +1,7 @@
 // Create app (constructor only)
 export const app = new PIXI.Application();
 
+
 // Must await init()
 await app.init({
     width: cols * cellSize + (cols - 1) * strokeWidth * 2,
@@ -10,4 +11,7 @@ await app.init({
     autoDensity:true,
     resolution: window.devicePixelRatio || 1,
 });
+
+// console.log("app width = ", );
+
 mazeContent.appendChild(app.canvas);
