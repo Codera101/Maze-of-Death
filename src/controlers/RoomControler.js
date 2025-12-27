@@ -205,7 +205,8 @@ class RoomControler {
                 victim_name: victim.userName,
                 killer_name: shooterPlayer.userName,
               });
-
+							victim.x = -1;
+							victim.y = -1;
               setTimeout(() => {
                 let newPosition = room.generateValidPosition();
                 victim.resetPlayerDataForRespawn(newPosition.x, newPosition.y);
@@ -362,6 +363,7 @@ class RoomControler {
     }
     const visiblePlayers = room.players.filter(
       (p) =>
+        p.id !== playerID &&
         p.health > 0 &&
         (room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false || this.isPlayerNearbyOnDiag(player.x, player.y, p.x, p.y))
     );

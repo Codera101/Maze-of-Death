@@ -8,8 +8,13 @@ describe('Room', () => {
 	let room;
 
 	beforeEach(() => {
+		jest.useFakeTimers();
 		room = new Room();
 		room.maze.setEmptyMaze();
+	});
+
+	afterEach(() => {
+		jest.useRealTimers();
 	});
 
 	describe('handlePlayerMove', () => {
@@ -48,16 +53,22 @@ describe('Room', () => {
 			room.handlePlayerMove(player, Directions.U);
 			expect(player.getPosition()).toEqual({ x: 4, y: 5 });
 			
-			player.direction = Directions.R;
-			room.handlePlayerMove(player, Directions.R);
+			jest.advanceTimersByTime(room.getMoveSpeed()); // Wait for cooldown
+			room.handlePlayerMove(player, Directions.R); // Change direction to R
+			jest.advanceTimersByTime(room.getMoveSpeed()); // Wait for cooldown
+			room.handlePlayerMove(player, Directions.R); // Move right
 			expect(player.getPosition()).toEqual({ x: 4, y: 6 });
 			
-			player.direction = Directions.D;
-			room.handlePlayerMove(player, Directions.D);
+			jest.advanceTimersByTime(room.getMoveSpeed()); // Wait for cooldown
+			room.handlePlayerMove(player, Directions.D); // Change direction to D
+			jest.advanceTimersByTime(room.getMoveSpeed()); // Wait for cooldown
+			room.handlePlayerMove(player, Directions.D); // Move down
 			expect(player.getPosition()).toEqual({ x: 5, y: 6 });
 			
-			player.direction = Directions.L;
-			room.handlePlayerMove(player, Directions.L);
+			jest.advanceTimersByTime(room.getMoveSpeed()); // Wait for cooldown
+			room.handlePlayerMove(player, Directions.L); // Change direction to L
+			jest.advanceTimersByTime(room.getMoveSpeed()); // Wait for cooldown
+			room.handlePlayerMove(player, Directions.L); // Move left
 			expect(player.getPosition()).toEqual({ x: 5, y: 5 });
 		});
 	});

@@ -62,6 +62,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player2",
@@ -70,6 +71,7 @@ describe("refreshVisiblePlayers", () => {
           y: 3,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -88,8 +90,8 @@ describe("refreshVisiblePlayers", () => {
 
       const emittedData = mockToEmit.mock.calls[0][1];
       expect(emittedData).toHaveProperty("visible_player_list");
-      expect(emittedData.visible_player_list).toHaveLength(2);
-      //expect(emittedData.visible_player_list[0].id).toBe("player2");
+      expect(emittedData.visible_player_list).toHaveLength(1);
+      expect(emittedData.visible_player_list[0].id).toBe("player2");
     });
 
     test("should not emit current player in visible list", () => {
@@ -102,6 +104,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player2",
@@ -110,6 +113,7 @@ describe("refreshVisiblePlayers", () => {
           y: 3,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -121,7 +125,7 @@ describe("refreshVisiblePlayers", () => {
       const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = mockToEmit.mock.calls[0][1];
       const visibleIds = emittedData.visible_player_list.map((p) => p.id);
-      //expect(visibleIds).not.toContain("player1");
+      expect(visibleIds).not.toContain("player1");
     });
 
     test("should emit empty list when player is not found", () => {
@@ -134,6 +138,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -197,6 +202,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player2",
@@ -205,6 +211,7 @@ describe("refreshVisiblePlayers", () => {
           y: 5,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
         {
           id: "player3",
@@ -213,6 +220,7 @@ describe("refreshVisiblePlayers", () => {
           y: 7,
           direction: "E",
           color: "#0000FF",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -233,8 +241,8 @@ describe("refreshVisiblePlayers", () => {
       // Assert
       const mockToEmit = io.to.mock.results[0].value.emit;
       const emittedData = mockToEmit.mock.calls[0][1];
-      expect(emittedData.visible_player_list).toHaveLength(2);
-      //expect(emittedData.visible_player_list[0].id).toBe("player3");
+      expect(emittedData.visible_player_list).toHaveLength(1);
+      expect(emittedData.visible_player_list[0].id).toBe("player3");
     });
 
     test("should include all players when no obstacles exist", () => {
@@ -247,6 +255,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player2",
@@ -255,6 +264,7 @@ describe("refreshVisiblePlayers", () => {
           y: 3,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
         {
           id: "player3",
@@ -263,6 +273,7 @@ describe("refreshVisiblePlayers", () => {
           y: 5,
           direction: "E",
           color: "#0000FF",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -290,6 +301,7 @@ describe("refreshVisiblePlayers", () => {
           y: 3,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player2",
@@ -298,6 +310,7 @@ describe("refreshVisiblePlayers", () => {
           y: 7,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -321,6 +334,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player2",
@@ -329,6 +343,7 @@ describe("refreshVisiblePlayers", () => {
           y: 3,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -359,6 +374,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
           extraProp: "should not appear",
         },
         {
@@ -368,6 +384,7 @@ describe("refreshVisiblePlayers", () => {
           y: 3,
           direction: "S",
           color: "#00FF00",
+          health: 100,
           anotherExtraProp: "also should not appear",
         },
       ];
@@ -396,6 +413,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player2",
@@ -404,6 +422,7 @@ describe("refreshVisiblePlayers", () => {
           y: 3,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
         {
           id: "player3",
@@ -412,6 +431,7 @@ describe("refreshVisiblePlayers", () => {
           y: 5,
           direction: "E",
           color: "#0000FF",
+          health: 100,
         },
         {
           id: "player4",
@@ -420,6 +440,7 @@ describe("refreshVisiblePlayers", () => {
           y: 7,
           direction: "W",
           color: "#FFFF00",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -454,6 +475,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -482,6 +504,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -509,6 +532,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -532,6 +556,7 @@ describe("refreshVisiblePlayers", () => {
           y: 0,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player2",
@@ -540,6 +565,7 @@ describe("refreshVisiblePlayers", () => {
           y: 2,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -565,6 +591,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1000,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player2",
@@ -573,6 +600,7 @@ describe("refreshVisiblePlayers", () => {
           y: 2000,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -598,6 +626,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player-2_test@456",
@@ -606,6 +635,7 @@ describe("refreshVisiblePlayers", () => {
           y: 3,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -630,6 +660,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player2",
@@ -638,6 +669,7 @@ describe("refreshVisiblePlayers", () => {
           y: 5,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
         {
           id: "player3",
@@ -646,6 +678,7 @@ describe("refreshVisiblePlayers", () => {
           y: 7,
           direction: "E",
           color: "#0000FF",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;
@@ -670,6 +703,7 @@ describe("refreshVisiblePlayers", () => {
           y: 1,
           direction: "N",
           color: "#FF0000",
+          health: 100,
         },
         {
           id: "player2",
@@ -678,6 +712,7 @@ describe("refreshVisiblePlayers", () => {
           y: 3,
           direction: "S",
           color: "#00FF00",
+          health: 100,
         },
         {
           id: "player3",
@@ -686,6 +721,7 @@ describe("refreshVisiblePlayers", () => {
           y: 5,
           direction: "E",
           color: "#0000FF",
+          health: 100,
         },
         {
           id: "player4",
@@ -694,6 +730,7 @@ describe("refreshVisiblePlayers", () => {
           y: 7,
           direction: "W",
           color: "#FFFF00",
+          health: 100,
         },
       ];
       GameRoom.players = mockPlayers;

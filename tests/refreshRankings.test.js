@@ -58,7 +58,7 @@ describe("refreshRankings", () => {
 
       // Assert: Verify io.emit was called with correctly sorted rankings
       expect(io.emit).toHaveBeenCalledTimes(1);
-      expect(io.emit).toHaveBeenCalledWith("refresh_rank", expect.any(Object));
+      expect(io.emit).toHaveBeenCalledWith("refresh_ranking", expect.any(Object));
 
       // Parse the emitted data to verify sorting
       const emittedData = io.emit.mock.calls[0][1];
@@ -278,7 +278,7 @@ describe("refreshRankings", () => {
 
       // Assert
       expect(io.emit).toHaveBeenCalledTimes(1);
-      expect(io.emit).toHaveBeenCalledWith("refresh_rank", expect.any(Object));
+      expect(io.emit).toHaveBeenCalledWith("refresh_ranking", expect.any(Object));
     });
 
       // Test removed as it expects string but receives object

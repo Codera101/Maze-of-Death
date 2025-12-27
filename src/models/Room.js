@@ -5,9 +5,9 @@ const Viewer = require("./Viewer");
 const { Directions, getNextPosition } = require("./Direction");
 const Maze = require("./Maze");
 const {
-  ActionMessage,
-  ActionMessageTypes,
-  createActionMessage,
+	ActionMessage,
+	ActionMessageTypes,
+	createActionMessage,
 } = require("./Messages");
 
 /**
@@ -35,23 +35,23 @@ class Room {
 		this._shootSpeed = 400; // in ms;
 		this._moveSpeed = 250; // in ms;
 		this._colorsPalet = [
-				"#FF0000", // Electric Red
-				"#FF6600", // Safety Orange
-				"#FFFF00", // Sun Yellow
-				"#00FF00", // Lime Green
-				"#007FFF", // Cerulean Blue
-				"#FF00FF", // Fuchsia/Magenta
-				"#FF1493", // Hot Pink
-				"#00FFFF", // Aqua/Cyan
-				"#6600FF", // Electric Purple
-				"#FFD700", // Bright Gold
-				"#00FF7F", // Spring Green
-				"#00BFFF",  // Deep Sky Blue
-				"#FF4500",  // Orange Red
-				"#8A2BE2",  // Blue Violet
-				"#FF69B4",  // Hot Pink
-				"#7FFF00",  // Chartreuse
-				];
+			"#FF0000", // Electric Red
+			"#FF6600", // Safety Orange
+			"#FFFF00", // Sun Yellow
+			"#00FF00", // Lime Green
+			"#007FFF", // Cerulean Blue
+			"#FF00FF", // Fuchsia/Magenta
+			"#FF1493", // Hot Pink
+			"#00FFFF", // Aqua/Cyan
+			"#6600FF", // Electric Purple
+			"#FFD700", // Bright Gold
+			"#00FF7F", // Spring Green
+			"#00BFFF", // Deep Sky Blue
+			"#FF4500", // Orange Red
+			"#8A2BE2", // Blue Violet
+			"#FF69B4", // Hot Pink
+			"#7FFF00", // Chartreuse
+		];
 	}
 
 	// ------------------ Getters / Setters ------------------
@@ -339,15 +339,14 @@ class Room {
 				let newY = emptyCells[cellInx][1] + changeP[1];
 				countBadPos += this.checkPlayerOnPosition({ x: newX, y: newY });
 			});
-			if (
-				!this.checkPlayerOnPosition({
-					x: emptyCells[cellInx][0],
-					y: emptyCells[cellInx][1],
-				})
-			) {
+			const occupied = this.checkPlayerOnPosition({
+				x: emptyCells[cellInx][0],
+				y: emptyCells[cellInx][1],
+			});
+			if (occupied === 0) {
 				cellsOf2ndLvlPriority.push(emptyCells[cellInx]);
 			}
-			if (countBadPos === 0) {
+			if (countBadPos === 0 && occupied === 0) {
 				cellsOf1stLvlPriority.push(emptyCells[cellInx]);
 			}
 		}
@@ -367,7 +366,7 @@ class Room {
 			return { x: -1, y: -1 };
 		}
 	}
-	getNewColor(){
+	getNewColor() {
 		let color = this._colorsPalet[0];
 		this._colorsPalet.shift();
 		this._colorsPalet.push(color);
@@ -438,7 +437,11 @@ class Room {
 	checkPlayerOnPosition(position) {
 		for (let player_inx = 0; player_inx < this.players.length; player_inx++) {
 			const playerPos = this._players[player_inx].getPosition();
-			if (playerPos.x === position.x && playerPos.y === position.y && this._players[player_inx].health > 0) {
+			if (
+				playerPos.x === position.x &&
+				playerPos.y === position.y &&
+				this._players[player_inx].health > 0
+			) {
 				return 1;
 			}
 		}
@@ -531,15 +534,15 @@ class Room {
 			player.direction = direction;
 			return true;
 		}
-		
+
 		if (!player.canMove()) {
 			// console.log("Player cannot move yet (cooldown)");
 			return false;
 		}
-		
+
 		let pos = player.getPosition();
 		let nextPos = getNextPosition(pos, direction);
-		
+
 		if (!this.maze.isValidForPlayer(nextPos.x, nextPos.y)) {
 			// console.log("Invalid move: position not valid for player");
 			return false;
