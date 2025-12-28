@@ -267,11 +267,9 @@ input:-webkit-autofill {
   flex-shrink: 0;
   padding: 12px 35px;
   margin: 0;
-  background: linear-gradient(
-    90deg,
-    var(--color-header-gradient-start),
-    var(--color-header-gradient-end)
-  );
+  background: linear-gradient(90deg,
+      var(--color-header-gradient-start),
+      var(--color-header-gradient-end));
   border-radius: 12px 12px 0px 0px;
 }
 
@@ -453,15 +451,11 @@ ion-icon {
 .grid_bg {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(
-      rgba(var(--color-grid-line-primary), 0.35) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
+  background-image: linear-gradient(rgba(var(--color-grid-line-primary), 0.35) 1px,
+      transparent 1px),
+    linear-gradient(90deg,
       rgba(var(--color-grid-line-secondary), 0.35) 1px,
-      transparent 1px
-    );
+      transparent 1px);
   background-size: 50px 50px;
   animation: move_grid 25s linear infinite;
   opacity: 0.48;
@@ -471,6 +465,7 @@ ion-icon {
   0% {
     background-position: 0 0, 0 0;
   }
+
   100% {
     background-position: 200px 200px, 200px 200px;
   }
@@ -479,10 +474,8 @@ ion-icon {
 .color_bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom right,
-    rgba(var(--color-gradient-red), 0.22),
-    rgba(var(--color-body-bg-rgb), 0),
-    rgba(var(--color-gradient-blue), 0.2)
-  );
+  background: linear-gradient(to bottom right,
+      rgba(var(--color-gradient-red), 0.22),
+      rgba(var(--color-body-bg-rgb), 0),
+      rgba(var(--color-gradient-blue), 0.2));
 }

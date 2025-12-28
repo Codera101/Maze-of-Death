@@ -1,12 +1,13 @@
 /** @format */
 const Viewer = require("../models/Viewer");
+
 class RoomControler {
   constructor(
     roomService,
     messenger,
     logger,
     botService = null,
-    maxTotalPlayers = 8
+    maxTotalPlayers = 10
   ) {
     this.roomService = roomService;
     this.messenger = messenger;
@@ -16,71 +17,81 @@ class RoomControler {
   }
 
   /**
-   * @brief Handle player join room - complete flow including maze drawing
-   * @param {string} username - Player username
+   * @brief Handle player join room - complete flow with multi-room support
    * @param {string} playerId - Socket ID of the player
+   * @param {object} data - Join data containing username
    */
   handlePlayerJoin(playerId, data) {
     const { username } = data;
 
-    // Check total player count limit
-    const room = this.roomService.getRoom("global");
-    const humanPlayerCount = room
-      ? room.players.filter((p) => !p.isBot).length
-      : 0;
-    const botCount = this.botService ? this.botService.getBotCount() : 0;
-    const totalPlayers = humanPlayerCount + botCount;
-
-    // If room is full, remove a bot to make space for human player
-    if (totalPlayers >= this.maxTotalPlayers && botCount > 0) {
-      const removedBot = this.botService.removeOneBot(room);
-      if (removedBot) {
-        console.log(
-          `Removed bot ${removedBot} to make space for player ${username}`
-        );
+    // Check for duplicate username across ALL rooms
+    const allRooms = this.roomService.getAllRooms();
+    for (const existingRoom of allRooms) {
+      const existingPlayer = existingRoom.players.find(
+        (p) => p.userName.toLowerCase() === username.toLowerCase()
+      );
+      if (existingPlayer) {
+        this.messenger.notifyCurrentUser("username_taken", {
+          message: `Username "${username}" is already in use. Please choose a different name.`,
+          username: username,
+        });
+        return;
       }
-    } else if (totalPlayers >= this.maxTotalPlayers && botCount === 0) {
-      // No bots to remove, room is full with only humans
-      this.messenger.notifyCurrentUser("room_full", {
-        message: `Room is full (${this.maxTotalPlayers} players maximum)`,
-        maxPlayers: this.maxTotalPlayers,
-      });
-      return;
     }
 
-    const player = this.roomService.playerJoinRoom(username, playerId);
+    // Get or create an available room
+    let room = this.roomService.getAvailableRoom();
 
-    if (player) {
+    // If room has bots and is at capacity, remove one bot to make space
+    const botCount = room.getBotCount();
+    if (room.getPlayerCount() >= this.maxTotalPlayers && botCount > 0) {
+      const removedBot = this.botService.removeOneBot(room);
+      if (removedBot) {
+        console.log(`🤖 Removed bot ${removedBot} to make space for player ${username}`);
+      }
+    } else if (room.getPlayerCount() >= this.maxTotalPlayers && botCount === 0) {
+      // All humans, need new room
+      room = this.roomService.createRoom();
+    }
+
+    // Join the player to the room
+    const result = this.roomService.playerJoinRoom(username, playerId, room.roomId);
+
+    if (result) {
+      const { player, roomId } = result;
+      
+      // If this is a new room or room has few players, fill with bots
+      if (this.botService && room.getPlayerCount() < this.maxTotalPlayers) {
+        this.botService.fillRoomWithBots(room, this, this.roomService, this.maxTotalPlayers);
+      }
+
       const stats = player.serialize();
       this.messenger.notifyCurrentUser("player_joined", {
         current_player: stats,
+        roomId: roomId,
       });
 
       // Draw the maze for the new player
-      this.drawMaze(playerId);
+      this.drawMazeForPlayer(playerId, roomId);
+      
+      console.log(`👤 Player ${username} joined room ${roomId} (${room.getPlayerCount()}/${this.maxTotalPlayers})`);
     }
   }
 
+  /**
+   * @brief Handle player movement with multi-room support
+   */
   handlePlayerMove(playerId, data) {
     const { dir } = data;
-    const room = this.roomService.getRoom("global");
+    const roomId = this.roomService.getPlayerRoom(playerId);
+    if (!roomId) return;
+    
+    const room = this.roomService.getRoom(roomId);
     const player = room?.players?.find((p) => p.id === playerId);
 
     if (player) {
-      const oldPos = player.getPosition();
-      // Disabled for performance - too frequent
-      // console.log(
-      // 	`🎯 [MOVE] Player ${playerId} at (${oldPos.x},${oldPos.y}) wants to move ${dir}`
-      // );
-
       try {
         const result = this.roomService.playerMove(playerId, dir);
-        const newPos = player.getPosition();
-        // Disabled for performance - too frequent
-        // console.log(
-        // 	`✅ [MOVE] Result: ${result}, old (${oldPos.x},${oldPos.y}) now at (${newPos.x},${newPos.y}), facing: ${player.direction}`
-        // );
-        // Only send socket message if not a bot
         if (!player.isBot) {
           this.messenger.notifyGivenUser(playerId, "player_moved", {
             status: result,
@@ -95,13 +106,15 @@ class RoomControler {
         }
       }
     } else {
-      // console.log(`⚠️ [MOVE] Player ${playerId} not found`);
       this.messenger.notifyGivenUser(playerId, "player_moved", {
         status: false,
       });
     }
   }
 
+  /**
+   * @brief Handle player shooting with multi-room support
+   */
   handlePlayerShoot(playerId) {
     try {
       const actionMessage = this.roomService.playerShoot(playerId);
@@ -223,107 +236,119 @@ class RoomControler {
     }
   }
 
-  handlePlayerDisconnect(playerId, roomService = null, minBotCount = 3) {
-    // Check counts BEFORE removing the player
-    const room = this.roomService.getRoom("global");
-    const wasBot =
-      room?.players?.find((p) => p.id === playerId)?.isBot || false;
+  /**
+   * @brief Handle player disconnect with multi-room support
+   */
+  handlePlayerDisconnect(playerId) {
+    // Get room info BEFORE removing the player
+    const roomId = this.roomService.getPlayerRoom(playerId);
+    if (!roomId) return;
+
+    const room = this.roomService.getRoom(roomId);
+    if (!room) return;
+
+    const wasBot = room.players.find((p) => p.id === playerId)?.isBot || false;
 
     // Remove the player
     this.roomService.playerLeaveRoom(playerId);
 
-    // Only add bot back if a human player left (not if a bot left)
-    if (!wasBot && this.botService && room) {
-      const humanPlayerCount = room.players.filter((p) => !p.isBot).length;
-      const botCount = this.botService.getBotCount();
-      const totalPlayers = humanPlayerCount + botCount;
+    // If a human player left, add a bot to replace them
+    if (!wasBot && this.botService && room.getPlayerCount() < this.maxTotalPlayers) {
+      this.botService.addOneBot(room, this, this.roomService, this.maxTotalPlayers);
+    }
 
-      console.log(
-        `Player left: ${totalPlayers}/${this.maxTotalPlayers} total, ${botCount} bots, ${humanPlayerCount} humans`
-      );
-
-      // If total is below max, add one bot to fill the space
-      if (totalPlayers < this.maxTotalPlayers) {
-        try {
-          const difficulties = ["easy", "medium", "hard"];
-          const difficulty =
-            difficulties[Math.floor(Math.random() * difficulties.length)];
-          const bot = this.botService.createBot(room, difficulty, roomService);
-          this.botService.startBot(bot.id, this);
-          console.log(
-            `✅ Added bot ${bot.userName} after player left (now ${
-              totalPlayers + 1
-            }/${this.maxTotalPlayers})`
-          );
-        } catch (error) {
-          console.error(
-            `❌ Failed to add bot after player disconnect:`,
-            error.message
-          );
-        }
-      }
+    // Check if room should be deleted (only bots remain)
+    if (room.isOnlyBots()) {
+      console.log(`🗑️ Room ${roomId} has only bots, deleting...`);
+      // Remove all bots from this room
+      this.botService.removeAllBotsFromRoom(room);
+      // Delete the room
+      this.roomService.deleteRoom(roomId);
+    } else {
+      console.log(`👋 Player left room ${roomId} (${room.getHumanCount()} humans, ${room.getBotCount()} bots)`);
     }
   }
 
   /**
-   * @brief Refresh panel rankings
+   * @brief Broadcast a message to all players and viewers in a specific room
+   */
+  broadcastToRoom(room, event, data) {
+    // Send to all human players in the room
+    room.players.forEach((player) => {
+      if (!player.isBot) {
+        this.messenger.notifyGivenUser(player.id, event, data);
+      }
+    });
+    // Send to all viewers in the room
+    room._viewers.forEach((viewer) => {
+      this.messenger.notifyGivenUser(viewer.id, event, data);
+    });
+  }
+
+  /**
+   * @brief Refresh rankings for all rooms
    */
   refreshRankings() {
-    const room = this.roomService.getRoom("global");
-    let rankings = room.players ?? [];
-    // console.log(`📊 [RANKINGS] Found ${rankings.length} players`);
-    rankings = rankings
-      .sort((a, b) => {
-        if (a.score === b.score) return b.killCount - a.killCount;
-        return b.score - a.score;
-      })
-      .map((player) => ({
-        username: player.userName,
-        score: player.score,
-        kill_count: player.killCount,
-        color: player.color,
-      }));
-    // console.log(`📢 [RANKINGS] Broadcasting to all:`, rankings);
-    this.messenger.broadcastToAll("refresh_ranking", { all_players: rankings });
+    const allRooms = this.roomService.getAllRooms();
+    
+    allRooms.forEach((room) => {
+      let rankings = room.players ?? [];
+      rankings = rankings
+        .sort((a, b) => {
+          if (a.score === b.score) return b.killCount - a.killCount;
+          return b.score - a.score;
+        })
+        .map((player) => ({
+          username: player.userName,
+          score: player.score,
+          kill_count: player.killCount,
+          color: player.color,
+        }));
+
+      this.broadcastToRoom(room, "refresh_ranking", { all_players: rankings });
+    });
   }
 
   /**
-   * @brief Refresh player stats
-   * @param {string} playerID - Socket ID of the player
+   * @brief Refresh player stats for a specific player
    */
   refreshPlayerStats(playerID) {
-    const room = this.roomService.getRoom("global");
-    if (!room.players) {
-      return;
-    }
+    const roomId = this.roomService.getPlayerRoom(playerID);
+    if (!roomId) return;
+
+    const room = this.roomService.getRoom(roomId);
+    if (!room || !room.players) return;
+
     const player = room.players.find((p) => p.id === playerID);
     if (!player) return;
+
     const stats = player.serialize();
-    // console.log(`Refreshing stats for player ${playerID}:`, stats);
     this.messenger.notifyGivenUser(playerID, "refresh_player", stats);
   }
 
   /**
-   * @breif Check if a player is nearby on diag
-   * @param {number} currentPlayerX - Current player's X position
-   * @param {number} currentPlayerY - Current player's Y position
-   * @param {number} checkX - X position to check
-   * @param {number} checkY - Y position to check
-   * @return {boolean} - True if a player is nearby diagonally, false otherwise
+   * @brief Check if a player is nearby on diagonal
    */
   isPlayerNearbyOnDiag(currentPlayerX, currentPlayerY, checkX, checkY) {
     const deltaX = Math.abs(currentPlayerX - checkX);
     const deltaY = Math.abs(currentPlayerY - checkY);
     return deltaX + deltaY <= 3;
   }
+
   /**
-   * @brief Refresh visible players for each player
-   * @param {string} playerID - Socket ID of the player
-   * @return {void}
+   * @brief Refresh visible players for a specific player
    */
   refreshVisiblePlayers(playerID) {
-    const room = this.roomService.getRoom("global");
-    if (!room.players) {
+    const roomId = this.roomService.getPlayerRoom(playerID);
+    if (!roomId) {
+      this.messenger.notifyGivenUser(playerID, "refresh_players", {
+        visible_player_list: [],
+      });
+      return;
+    }
+
+    const room = this.roomService.getRoom(roomId);
+    if (!room || !room.players) {
       this.messenger.notifyGivenUser(playerID, "refresh_players", {
         visible_player_list: [],
       });
@@ -338,12 +363,14 @@ class RoomControler {
       });
       return;
     }
+
     const visiblePlayers = room.players.filter(
       (p) =>
         p.health > 0 &&
         (room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false ||
           this.isPlayerNearbyOnDiag(player.x, player.y, p.x, p.y))
     );
+
     const visibleData = visiblePlayers.map((p) => ({
       id: p.id,
       username: p.userName,
@@ -352,33 +379,51 @@ class RoomControler {
       dir: p.direction,
       color: p.color,
     }));
-    // console.log(`Refreshing visible players for ${playerID}:`, visibleData);
+
     this.messenger.notifyGivenUser(playerID, "refresh_players", {
       visible_player_list: visibleData,
     });
   }
 
   /**
-   * @brief Send the maze layout to the player at joining time.
-   * @param {string} playerID - Socket ID of the player
+   * @brief Send the maze layout to a player
    */
-  drawMaze(playerID) {
-    const room = this.roomService.getRoom("global");
+  drawMazeForPlayer(playerID, roomId) {
+    const room = this.roomService.getRoom(roomId);
+    if (!room) return;
+
     this.messenger.notifyGivenUser(playerID, "draw_maze", {
       maze: {
         row: room.height,
         col: room.width,
-        layout: room.maze.maze, // room.maze is the Maze object, room.maze.maze is the 2D array
+        layout: room.maze.maze,
       },
+      roomId: roomId,
     });
   }
 
+  /**
+   * @brief Refresh visible players for all viewers in all rooms
+   */
   refreshVisiblePlayersForViewers() {
-    const room = this.roomService.getRoom("global");
-    if (!room.players) {
+    const allRooms = this.roomService.getAllRooms();
+
+    allRooms.forEach((room) => {
+      if (!room.players) return;
+
       room._viewers.forEach((viewer) => {
+        const visiblePlayers = room.players.filter((p) => p.health > 0);
+        const visibleData = visiblePlayers.map((p) => ({
+          id: p.id,
+          username: p.userName,
+          x: p.x,
+          y: p.y,
+          dir: p.direction,
+          color: p.color,
+        }));
+
         this.messenger.notifyGivenUser(viewer.id, "refresh_players", {
-          visible_player_list: [],
+          visible_player_list: visibleData,
         });
       });
       return;
@@ -404,21 +449,40 @@ class RoomControler {
   /**
    * @param {*} viewerID
    */
-
   handleViewerJoin(viewerID) {
-    const room = this.roomService.getRoom("global");
+    // Get a random room for the viewer
+    let room = this.roomService.getRandomRoom();
+    
+    // If no rooms exist, create one
+    if (!room) {
+      room = this.roomService.createRoom();
+      // Fill with bots
+      if (this.botService) {
+        this.botService.fillRoomWithBots(room, this, this.roomService, this.maxTotalPlayers);
+      }
+    }
+
     const newViewer = new Viewer(viewerID);
+    newViewer.roomId = room.roomId; // Track which room viewer is watching
     room.addViewer(newViewer);
     this.messenger.notifyGivenUser(viewerID, "viewer_joined", { status: true });
     this.drawMaze(viewerID);
   }
 
   /**
-   * @param {*} viewerID
+   * @brief Handle viewer disconnect
    */
   handleViewerDisconnect(viewerID) {
-    const room = this.roomService.getRoom("global");
-    room.removeViewer(viewerID);
+    // Find which room the viewer is in
+    const allRooms = this.roomService.getAllRooms();
+    for (const room of allRooms) {
+      const viewerIndex = room._viewers.findIndex((v) => v.id === viewerID);
+      if (viewerIndex !== -1) {
+        room.removeViewer(viewerID);
+        console.log(`👁️ Viewer left room ${room.roomId}`);
+        break;
+      }
+    }
   }
 }
 
