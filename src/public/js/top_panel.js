@@ -3,13 +3,13 @@ function initHealth() {
   const percentage = (25 / 25) * 100;
   healthProgress.style.setProperty("--health-percent", `${percentage}%`);
 }
-if(!isViewer){
+if (!isViewer) {
   initHealth();
 }
 
 exitButton.addEventListener("click", () => {
-  isViewer = false; 
+  isViewer = false;
   socket.disconnect();
   window.location.href = "/";
-  usernameInput.textContent = '';
+  usernameInput.textContent = "";
 });

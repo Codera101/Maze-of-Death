@@ -1,5 +1,6 @@
-
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -9,14 +10,10 @@
     height: 100vh;
     background-color: blue;
     display: grid;
-    grid-template-columns: 1fr; 
-    grid-template-rows: 1fr 10fr 1fr; 
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 10fr 1fr;
     gap: 0px;
 }
-
-#header, #footer, #right-panel {
-    /* border: 0.4px solid #0f2a42; */
-} 
 
 #header {
     grid-column: 1/1;
@@ -29,9 +26,6 @@
     grid-column: 1/1;
     grid-row: 2/2;
     overflow: hidden;
-    /* display: grid;
-    grid-template-columns: 11fr 1fr;
-    grid-template-rows: 1fr; */
 }
 
 #maze-container {
@@ -48,13 +42,8 @@
     overflow-x: hidden;
 }
 
-#right-panel-list {
-    /* overflow-y: auto;    */
-}
-
 #footer {
     grid-column: 1/1;
     grid-row: 3/3;
     overflow: hidden;
 }
-

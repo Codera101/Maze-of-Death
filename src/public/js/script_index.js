@@ -72,8 +72,6 @@ document.addEventListener("keydown", (e) => {
 
 //?--------------  socket.io(join_player)  -----------------/
 
-
-
 //& Send join request
 play_btn_container.addEventListener("click", () => {
   const username_value = usernameInput.value.trim();
@@ -81,7 +79,6 @@ play_btn_container.addEventListener("click", () => {
   if (!username_value) return;
   isViewer = false;
   window.location.href = `/game?username=${encodeURIComponent(username_value)}`;
-
 });
 spectator_btn_container.addEventListener("click", () => {
   isViewer = true;
@@ -92,6 +89,8 @@ spectator_btn_container.addEventListener("click", () => {
 // socket.on("player_joined_broadcast", (player) => {
 //   console.log("Someone joined:", player);
 // });
+
+
 
 //?--------------     TEST      -----------------/
 
