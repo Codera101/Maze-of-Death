@@ -39,12 +39,12 @@ socket.on("refresh_ranking", ({ all_players }) => {
   let selfAdded = false;
   for (let i = 0; i < limit; i++) {
     addPlayer(all_players[i], i + 1);
-    if (all_players[i].username == myPlayer.username) {
+    if (all_players[i].username == myPlayer.userName) {
       selfAdded = true;
     }
   }
   for (let i = 0; i < all_players.length && !selfAdded; i++) {
-    if (all_players[i].username == myPlayer.username) {
+    if (all_players[i].username == myPlayer.userName) {
       if (i >= limit) {
         addPlayer(all_players[i], i + 1);
         selfAdded = true;

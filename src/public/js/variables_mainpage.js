@@ -48,10 +48,9 @@ for (let i = 0; i < rows; i++) {
 }
 let visiblePlayers = [];
 
-// let shooting = false;
 let myPlayer = {
   id: null,
-  username: null,
+  userName: null,
   roomId: null, // Track which room the player is in
   x: 0,
   y: 0,
@@ -97,7 +96,10 @@ document.addEventListener("DOMContentLoaded", () => {
       bgMusic.pause();
     }
   }
-  musicBtn.addEventListener("click", toggleMusic);
+  musicBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMusic();
+  });
   // M for music toggle
   document.addEventListener("keydown", (e) => {
     if (e.key === "m" || e.key === "M") {
