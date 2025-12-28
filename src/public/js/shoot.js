@@ -1,4 +1,4 @@
-// import { app } from "./maze.js"; // global app
+import { app } from "./maze.js";
 window.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     socket.emit("shoot");
