@@ -248,10 +248,10 @@ setInterval(() => {
   systemRoomControler.refreshRankings();
 }, 1000);
 
-// Refresh visible players for all viewers every 50ms
+// Refresh visible players for all viewers every 25ms (~40 FPS)
 setInterval(() => {
   systemRoomControler.refreshVisiblePlayersForViewers();
-}, 50);
+}, 25);
 
 // Log room stats every 30 seconds
 setInterval(() => {
