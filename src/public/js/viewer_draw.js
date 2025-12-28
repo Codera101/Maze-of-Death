@@ -57,7 +57,6 @@ function handleVisiblePlayersUpdate(visible_player_list, isWebRTC = false) {
 if (typeof socket !== "undefined") {
   socket.on("connect", () => {
     socket.emit("join_viewer", {});
-    // console.log("Joining as:", username_value);
   });
 
   // Socket.io handler for visible players (JSON data - backward compatible)
@@ -80,20 +79,6 @@ if (typeof socket !== "undefined") {
       showHitMarker(app, targetX, targetY, false);
     }
   });
-
-  // Show death animation on any player (visible to all)
-  socket.on(
-    "player_death_animation",
-    ({ targetId, targetX, targetY, targetName }) => {
-      console.log(
-        `Death animation for ${targetName} at (${targetX}, ${targetY})`
-      );
-      if (typeof app !== "undefined") {
-        // Use the visible death animation function
-        animateDeathAtPosition(app, targetX, targetY);
-      }
-    }
-  );
 }
 
 // WebRTC handler for visible players (binary data decoded in variables_mainpage.js)
@@ -294,13 +279,11 @@ function drawPlayer(
   const padding = 3;
   const maxOffset = visualBodyW / 2 - radius - padding;
 
-  // Safety: ensure offset is positive, otherwise fallback to 25% of width
   const offsetDistance = maxOffset > 0 ? maxOffset : visualBodyW / 4;
 
   let dotX = centerX;
   let dotY = centerY;
 
-  // console.log(typeof(dirUpper));
   const dirUpper = typeof dir == "string" ? dir.toUpperCase() : dir;
 
   if (dirUpper == "U") {
@@ -831,8 +814,52 @@ function animateDeath(app, playerId) {
 }
 
 function updateMaze(app) {
-  // Only update what changed - maze is cached, players are pooled
-  drawMaze(app); // Will skip if maze unchanged
-  drawPlayers(app); // Will reuse/update player graphics
-  // updateAmmoDisplay(myPlayer.bullets, 5);
+  drawMaze(app);
+  drawPlayers(app);
+}
+
+function showHitMarker(app, targetX, targetY, isKill = false) {
+  if (!app || !app.stage) return;
+
+  const gridStep = cellSize + strokeWidth * 2;
+  const centerX = targetY * gridStep + strokeWidth + cellSize / 2;
+  const centerY = targetX * gridStep + strokeWidth + cellSize / 2;
+
+  const particles = [];
+  const particleCount = isKill ? 15 : 10;
+
+  for (let i = 0; i < particleCount; i++) {
+    const p = new PIXI.Graphics();
+    p.circle(0, 0, 2 + Math.random() * 3);
+    p.fill({ color: 0xff0000 });
+    p.x = centerX;
+    p.y = centerY;
+    p.velocity = { x: (Math.random() - 0.5) * 5, y: (Math.random() - 0.5) * 5 };
+    app.stage.addChild(p);
+    particles.push(p);
+  }
+
+  let frame = 0;
+  const interval = setInterval(() => {
+    frame++;
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+
+      if (p && !p.destroyed && p.parent) {
+        p.x += p.velocity.x;
+        p.y += p.velocity.y;
+        p.alpha = 1 - frame / 20;
+        if (p.alpha <= 0) {
+          p.destroy();
+          particles.splice(i, 1);
+        }
+      } else {
+        particles.splice(i, 1);
+      }
+    }
+
+    if (frame >= 20 || particles.length === 0) {
+      clearInterval(interval);
+    }
+  }, 30);
 }

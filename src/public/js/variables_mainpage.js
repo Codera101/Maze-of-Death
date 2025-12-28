@@ -35,7 +35,7 @@ const killMessage = document.querySelector("#kill-message");
 
 // Socket.io Connection (always available - fallback)
 const socket = io();
-// const socket = io("http://localhost:8080");
+// const socket = io("http://localhost:3000");
 // const socket = io("https://maze-of-death-production.up.railway.app");
 
 // Client capabilities and protocol state (will be updated when geckos loads)
@@ -169,7 +169,7 @@ socket.on('protocol_selected', (data) => {
 // Maze Variables
 let rows = 15.1;
 let cols = 15.1;
-let cellSize = 50;
+let cellSize = 32;
 let strokeWidth = 2;
 let mazeLayout = [];
 for (let i = 0; i < rows; i++) {
@@ -180,12 +180,11 @@ for (let i = 0; i < rows; i++) {
 }
 let visiblePlayers = [];
 
-let myPlayer;
 // let shooting = false;
-
-myPlayer = {
+let myPlayer = {
   id: null,
   username: null,
+  roomId: null, // Track which room the player is in
   x: 0,
   y: 0,
   dir: "U",
@@ -211,3 +210,30 @@ function displayKillMessage(victim_name, killer_name) {
 }
 
 let isViewer = true;
+
+// let laserSound = n
+
+// BG Music Logic
+document.addEventListener("DOMContentLoaded", () => {
+  let musicBtn = document.getElementById("music-btn");
+  let bgMusic = new Audio("../sounds/MFCC_Retro_Arcade.mp3");
+  (bgMusic.volume = 0.1), (bgMusic.loop = true);
+  bgMusic.play();
+  let musicEnabled = true;
+
+  function toggleMusic() {
+    musicEnabled = !musicEnabled;
+    if (musicEnabled) {
+      bgMusic.play();
+    } else {
+      bgMusic.pause();
+    }
+  }
+  musicBtn.addEventListener("click", toggleMusic);
+  // M for music toggle
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "m" || e.key === "M") {
+      toggleMusic();
+    }
+  });
+});

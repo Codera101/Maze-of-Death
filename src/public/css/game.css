@@ -1,0 +1,49 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#container {
+    height: 100vh;
+    background-color: blue;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 10fr 1fr;
+    gap: 0px;
+}
+
+#header {
+    grid-column: 1/1;
+    grid-row: 1/1;
+    overflow: hidden;
+    border-top: none;
+}
+
+#main-container {
+    grid-column: 1/1;
+    grid-row: 2/2;
+    overflow: hidden;
+}
+
+#maze-container {
+    grid-column: 1/1;
+    grid-row: 1/1;
+    overflow: hidden;
+}
+
+#right-panel {
+    grid-column: 2/2;
+    grid-row: 1/1;
+    /* overflow: hidden; */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#footer {
+    grid-column: 1/1;
+    grid-row: 3/3;
+    overflow: hidden;
+}

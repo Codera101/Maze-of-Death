@@ -1,0 +1,111 @@
+:root {
+  --color-panel-bg: #1c1c2e;
+  --color-popup-border: #2c9afd;
+  --color-popup-shadow-rgb: 44, 155, 255;
+  --color-body-text: #ffffff;
+  --color-backdrop: #1c1c2e;
+}
+
+
+#kill-message {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: white;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+  font-family: "DM Mono", monospace;
+}
+
+#kill-message div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: rgba(20, 20, 35, 0.95);
+  border: 2px solid rgba(100, 100, 120, 0.5);
+  font-size: 16px;
+  animation: slideIn 0.3s ease-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/********************* errors popup ******************/
+
+#error-popup {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: min(600px, 90vw);
+  max-width: 600px;
+  height: auto;
+  max-height: 40vh;
+  background-color: var(--color-panel-bg);
+  border: 2px solid var(--color-popup-border);
+  border-radius: 12px;
+  box-shadow: 0 10px 50px rgba(var(--color-popup-shadow-rgb), 0.18);
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  overflow: hidden;
+  transform: scale(0.7);
+  transition: 0.25s;
+  z-index: 999999999;
+}
+
+#error-popup.active {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#error-popup p,
+#alert-icon {
+  font-size: 32px;
+  color: var(--color-body-text);
+  text-align: center;
+}
+
+#alert-icon {
+  font-size: 50px;
+}
+
+#error-popup div {
+  font-weight: bold;
+  letter-spacing: 1px;
+
+}
+
+#popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--color-backdrop);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.25s ease;
+  z-index: 999999998;
+}
+
+#popup-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}

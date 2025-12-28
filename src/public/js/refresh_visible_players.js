@@ -1,4 +1,4 @@
-import { app } from "./maze.js";
+// import { app } from "./maze.js";
 
 let lastUpdateTime = 0;
 // Remove throttle for WebRTC since it doesn't have head-of-line blocking

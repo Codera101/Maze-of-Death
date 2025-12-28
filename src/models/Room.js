@@ -17,10 +17,12 @@ const {
 class Room {
 	/**
 	 * @brief Constructor for the Room class
-	 * @details Initializes a room with default dimensions (16x16), creates a maze,
+	 * @param {string} roomId - Unique identifier for this room
+	 * @details Initializes a room with default dimensions (15x15), creates a maze,
 	 * and sets up game parameters like damage, speed, and respawn settings
 	 */
-	constructor() {
+	constructor(roomId = "global") {
+		this._roomId = roomId;
 		this._height = 15;
 		this._width = 15;
 		this._maze = new Maze(this._height, this._width);
@@ -55,6 +57,22 @@ class Room {
 	}
 
 	// ------------------ Getters / Setters ------------------
+
+	/**
+	 * @brief Get the room ID
+	 * @returns {string} The unique identifier for this room
+	 */
+	get roomId() {
+		return this._roomId;
+	}
+
+	/**
+	 * @brief Set the room ID
+	 * @param {string} id - The new room ID
+	 */
+	set roomId(id) {
+		this._roomId = id;
+	}
 
 	/**
 	 * @brief Get the height of the room
@@ -566,6 +584,48 @@ class Room {
 
 	removeViewer(viewerID) {
 		this._viewers = this._viewers.filter((v) => v.id !== viewerID);
+	}
+
+	// ------------------ Multi-Room Helper Methods ------------------
+
+	/**
+	 * @brief Check if room has any human players
+	 * @returns {boolean} True if at least one non-bot player exists
+	 */
+	hasHumanPlayers() {
+		return this._players.some((p) => !p.isBot);
+	}
+
+	/**
+	 * @brief Check if room contains only bots (no human players)
+	 * @returns {boolean} True if all players are bots or room is empty
+	 */
+	isOnlyBots() {
+		return this._players.length === 0 || this._players.every((p) => p.isBot);
+	}
+
+	/**
+	 * @brief Get total player count (humans + bots)
+	 * @returns {number} Total number of players in the room
+	 */
+	getPlayerCount() {
+		return this._players.length;
+	}
+
+	/**
+	 * @brief Get human player count
+	 * @returns {number} Number of non-bot players
+	 */
+	getHumanCount() {
+		return this._players.filter((p) => !p.isBot).length;
+	}
+
+	/**
+	 * @brief Get bot count
+	 * @returns {number} Number of bot players
+	 */
+	getBotCount() {
+		return this._players.filter((p) => p.isBot).length;
 	}
 }
 

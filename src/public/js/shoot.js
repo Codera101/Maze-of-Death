@@ -1,17 +1,45 @@
-import { app } from "./maze.js";
-
+// import { app } from "./maze.js";
 window.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     socket.emit("shoot");
+    // laserSound.play();
   }
 });
-window.addEventListener("click", (e) => {
-  if (e.button === 0) {
-    socket.emit("shoot");
+// window.addEventListener("click", (e) => {
+//   if (e.button === 0) {
+//     socket.emit("shoot");
+//   }
+// });
+
+let laserSound = new Audio("../sounds/laserShoot.wav");
+let laserHitWallSound = new Audio("../sounds/laserHitWall.wav");
+let laserHitPlayerSound = new Audio("../sounds/laserHitPlayer.wav");
+let laserKillPlayerSound = new Audio("../sounds/killPlayer.wav");
+
+// Mobile Shoot Control
+const setupMobileShoot = () => {
+  const btnShoot = document.getElementById("btn-shoot");
+  if (btnShoot) {
+    const handleShoot = (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // Prevent bubbling to window click listener
+      socket.emit("shoot");
+    };
+
+    btnShoot.addEventListener("touchstart", handleShoot, { passive: false });
+    btnShoot.addEventListener("click", handleShoot);
   }
-});
+};
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupMobileShoot);
+} else {
+  setupMobileShoot();
+}
 
 socket.on("target_hit", (data) => {
+  laserSound.play();
+  // laserSound.play();
   const {
     status,
     resultType,
@@ -22,13 +50,22 @@ socket.on("target_hit", (data) => {
     targetName,
   } = data;
 
+  if (status === true) {
+    if (resultType === "kill") {
+      laserHitPlayerSound.play();
+      laserKillPlayerSound.play();
+    } else if (resultType === "Hit") {
+      laserHitPlayerSound.play();
+    } else {
+      laserHitWallSound.play();
+    }
+  }
+
   if (
     status === true &&
     typeof app !== "undefined" &&
     typeof myPlayer !== "undefined"
   ) {
-    // console.log("Target hit!", data);
-
     // Calculate laser beam coordinates
     const gridStep = cellSize + strokeWidth * 2;
     const shooterGridX = myPlayer.y * gridStep;
