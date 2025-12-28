@@ -1,50 +1,50 @@
+let compare = (a, b) => {
+  if (b.score === a.score) {
+    return b.kill_count - a.kill_count;
+  }
+  return b.score - a.score;
+};
+
 socket.on("refresh_ranking", ({ all_players }) => {
+  all_players.sort(compare);
   rightPanelList.innerHTML = "";
-
-  all_players.sort((a, b) => {
-    if (b.score === a.score) {
-      return b.kill_count - a.kill_count;
-    }
-    return b.score - a.score;
-  });
-
-  let limit = Math.min(all_players.length, 10);
-
+  let limit = Math.min(all_players.length, 5);
   const fragment = document.createDocumentFragment();
 
-  for (let i = 0; i < limit; i++) {
-    const player = all_players[i];
-
+  let addPlayer = (player, order) => {
     const rank = document.createElement("span");
     rank.id = "player-rank";
-    rank.textContent = `${i + 1}`;
-
-    // added
-    rank.style.backgroundColor = player.color; 
+    rank.textContent = `${order}`;
+    rank.style.backgroundColor = player.color;
     rank.style.color = "#000000ff";
     rank.style.fontWeight = "bold";
 
     const name = document.createElement("span");
     name.id = "player-name";
     name.textContent = `${player.username}`;
-
     const scoreKills = document.createElement("span");
     scoreKills.id = "player-score-kills";
     scoreKills.textContent = `+${player.score}/${player.kill_count}`;
 
     const newPlayer = document.createElement("li");
     newPlayer.id = "player-row";
-
-    newPlayer.appendChild(rank);
-    newPlayer.appendChild(name);
-    newPlayer.appendChild(scoreKills);
-
-    // added
-    newPlayer.style.borderColor = player.color;
+    newPlayer.style.borderColor = player.colorz;
     newPlayer.style.boxShadow = `-1px 1px 6px 0px ${player.color}`;
 
-
+    for (let e of [rank, name, scoreKills]) {
+      newPlayer.appendChild(e);
+    }
     fragment.appendChild(newPlayer);
+  };
+  for (let i = 0; i < limit; i++) {
+    addPlayer(all_players[i], i + 1);
+  }
+  for (let i = 0; i < all_players.length; i++) {
+    if (all_players[i].username == myPlayer.username) {
+      if (i >= limit) {
+        addPlayer(all_players[i], i + 1);
+      }
+    }
   }
 
   rightPanelList.appendChild(fragment);

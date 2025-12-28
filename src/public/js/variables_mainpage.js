@@ -48,10 +48,8 @@ for (let i = 0; i < rows; i++) {
 }
 let visiblePlayers = [];
 
-let myPlayer;
 // let shooting = false;
-
-myPlayer = {
+let myPlayer = {
   id: null,
   username: null,
   x: 0,
