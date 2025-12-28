@@ -103,30 +103,24 @@ class RoomControler {
   }
 
   handlePlayerShoot(playerId) {
-    // console.log(`🔫 [SHOOT] Player ${playerId} attempting to shoot`);
     try {
       const actionMessage = this.roomService.playerShoot(playerId);
 
       if (actionMessage) {
         const { ActionMessageTypes } = require("../models/Messages");
-
-        // console.log(`📩 [SHOOT] Action message:`, actionMessage);
-
-        // Determine status based on action message type
         const status = actionMessage.type !== ActionMessageTypes.INVALID;
-        // Get the room and shooter
         const room = this.roomService.getRoom("global");
-        const shooter = room.getPlayerById(playerId);
 
-        // Send detailed shot result to shooter
-        if (shooter && !shooter.isBot) {
+        const shooterPlayer = room.getPlayerById(playerId);
+        if (!shooterPlayer) return;
+
+        if (!shooterPlayer.isBot) {
           const shotData = {
             status,
             resultType: actionMessage.type,
             direction: actionMessage.actionDirection,
           };
 
-          // Add target info if hit/kill
           if (
             actionMessage.type === ActionMessageTypes.HIT ||
             actionMessage.type === ActionMessageTypes.KILL
@@ -139,102 +133,86 @@ class RoomControler {
               shotData.targetName = victim.userName;
             }
           }
-
           this.messenger.notifyGivenUser(playerId, "target_hit", shotData);
         }
 
-        // Handle HIT or KILL events
-        if (
-          actionMessage.type === ActionMessageTypes.HIT ||
-          actionMessage.type === ActionMessageTypes.KILL
-        ) {
-          // Get the victim (room and shooter already retrieved above)
-          const victim = room.getPlayerById(actionMessage.actionTarget);
-          const shooterPlayer = room.getPlayerById(actionMessage.actionSource);
+        const victim = actionMessage.actionTarget
+          ? room.getPlayerById(actionMessage.actionTarget)
+          : null;
 
-          if (victim && shooterPlayer) {
-            // console.log(
-            //   `💥 [HIT] ${shooterPlayer.userName} hit ${victim.userName}`
-            // );
-            // Notify the victim they got hit (only if not a bot)
+        this.messenger.broadcastToAll("spectator:shot", {
+          shooterId: shooterPlayer.id,
+          shooterName: shooterPlayer.userName,
+          targetId: victim ? victim.id : null,
+          targetName: victim ? victim.userName : "Wall",
+          from: { x: shooterPlayer.x, y: shooterPlayer.y },
+          to: victim
+            ? { x: victim.x, y: victim.y }
+            : actionMessage.wallHitCoords || {
+                x: shooterPlayer.x,
+                y: shooterPlayer.y,
+              },
+          isKill: actionMessage.type === ActionMessageTypes.KILL,
+          type: victim ? "player" : "wall",
+        });
+
+        if (victim) {
+          if (!victim.isBot) {
+            this.messenger.notifyGivenUser(victim.id, "got_hit", {
+              dir: actionMessage.actionDirection,
+              shooter_name: shooterPlayer.userName,
+            });
+          }
+
+          this.messenger.broadcastToAll("player_hit_animation", {
+            targetId: victim.id,
+            targetX: victim.x,
+            targetY: victim.y,
+            shooterId: shooterPlayer.id,
+            direction: actionMessage.actionDirection,
+          });
+
+          if (actionMessage.type === ActionMessageTypes.KILL) {
+            const respawnTime = room.respawnTime || 3000;
+
             if (!victim.isBot) {
-              this.messenger.notifyGivenUser(victim.id, "got_hit", {
-                dir: actionMessage.actionDirection,
-                shooter_name: shooterPlayer.userName,
+              this.messenger.notifyGivenUser(victim.id, "died", {
+                killer_name: shooterPlayer.userName,
+                respawn_time: respawnTime,
               });
             }
 
-            // Broadcast hit animation to all players for visual feedback
-            this.messenger.broadcastToAll("player_hit_animation", {
+            this.messenger.broadcastToAll("player_death_animation", {
               targetId: victim.id,
               targetX: victim.x,
               targetY: victim.y,
-              shooterId: shooterPlayer.id,
-              direction: actionMessage.actionDirection,
+              targetName: victim.userName,
+              killerId: shooterPlayer.id,
+              killerName: shooterPlayer.userName,
             });
 
-            // If it was a kill, send death notification and broadcast kill message
-            if (actionMessage.type === ActionMessageTypes.KILL) {
-              // console.log(
-              //   `☠️ [KILL] ${shooterPlayer.userName} killed ${victim.userName}`
-              // );
-              const respawnTime = room ? room.respawnTime : 3000;
+            this.messenger.broadcastToAll("kill_message", {
+              victim_name: victim.userName,
+              killer_name: shooterPlayer.userName,
+            });
 
+            setTimeout(() => {
+              let newPosition = room.generateValidPosition();
+              victim.resetPlayerDataForRespawn(newPosition.x, newPosition.y);
               if (!victim.isBot) {
-                this.messenger.notifyGivenUser(victim.id, "died", {
-                  killer_name: shooterPlayer.userName,
-                  respawn_time: respawnTime,
-                });
+                const stats = victim.serialize();
+                this.messenger.notifyGivenUser(
+                  victim.id,
+                  "respawn_done",
+                  stats
+                );
               }
-
-              // Broadcast death animation to all players
-              this.messenger.broadcastToAll("player_death_animation", {
-                targetId: victim.id,
-                targetX: victim.x,
-                targetY: victim.y,
-                targetName: victim.userName,
-                killerId: shooterPlayer.id,
-                killerName: shooterPlayer.userName,
-              });
-
-              // Broadcast kill message to all players in the room
-              // console.log(
-              //   `📢 [KILL_MESSAGE] Broadcasting: ${shooterPlayer.userName} killed ${victim.userName}`
-              // );
-              this.messenger.broadcastToAll("kill_message", {
-                victim_name: victim.userName,
-                killer_name: shooterPlayer.userName,
-              });
-
-              setTimeout(() => {
-                let newPosition = room.generateValidPosition();
-                victim.resetPlayerDataForRespawn(newPosition.x, newPosition.y);
-                // Send respawn_done event to the player with all their data (only if not a bot)
-                if (!victim.isBot) {
-                  const stats = victim.serialize();
-                  this.messenger.notifyGivenUser(
-                    victim.id,
-                    "respawn_done",
-                    stats
-                  );
-                }
-              }, respawnTime);
-            }
+            }, respawnTime);
           }
-        }
-      } else {
-        // console.log(`⚠️ [SHOOT] No action message returned for ${playerId}`);
-        const room = this.roomService.getRoom("global");
-        const shooter = room?.getPlayerById(playerId);
-        if (shooter && !shooter.isBot) {
-          this.messenger.notifyGivenUser(playerId, "target_hit", {
-            status: false,
-          });
         }
       }
     } catch (error) {
       console.error(`❌ [SHOOT ERROR] Player ${playerId}:`, error.message);
-      console.error(error.stack);
       const room = this.roomService.getRoom("global");
       const shooter = room?.getPlayerById(playerId);
       if (shooter && !shooter.isBot) {
@@ -363,7 +341,8 @@ class RoomControler {
     const visiblePlayers = room.players.filter(
       (p) =>
         p.health > 0 &&
-        (room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false || this.isPlayerNearbyOnDiag(player.x, player.y, p.x, p.y))
+        (room.maze.isThereObstacle(player.x, player.y, p.x, p.y) === false ||
+          this.isPlayerNearbyOnDiag(player.x, player.y, p.x, p.y))
     );
     const visibleData = visiblePlayers.map((p) => ({
       id: p.id,
@@ -406,9 +385,7 @@ class RoomControler {
     }
 
     room._viewers.forEach((viewer) => {
-      const visiblePlayers = room.players.filter(
-        (p) => p.health > 0
-      );
+      const visiblePlayers = room.players.filter((p) => p.health > 0);
       const visibleData = visiblePlayers.map((p) => ({
         id: p.id,
         username: p.userName,
@@ -424,16 +401,15 @@ class RoomControler {
     });
   }
 
-
   /**
-   * @param {*} viewerID 
+   * @param {*} viewerID
    */
 
   handleViewerJoin(viewerID) {
     const room = this.roomService.getRoom("global");
     const newViewer = new Viewer(viewerID);
     room.addViewer(newViewer);
-    this.messenger.notifyGivenUser(viewerID, "viewer_joined", {status: true});
+    this.messenger.notifyGivenUser(viewerID, "viewer_joined", { status: true });
     this.drawMaze(viewerID);
   }
 
