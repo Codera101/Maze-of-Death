@@ -21,3 +21,5 @@ function updatePlayerInfo(playerData) {
 socket.on("refresh_player", (playerData) => {
   updatePlayerInfo(playerData);
 });
+
+socket.on("respawn", (player) => updatePlayerInfo(player));
