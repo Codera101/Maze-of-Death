@@ -26,7 +26,7 @@ socket.on("refresh_player", (playerData) => {
 socket.on("respawn", (player) => updatePlayerInfo(player));
 
 // Hit Received Handler
-let hitSound = new Audio("../sounds/hitHurt.wav");
+let hitSound = new Audio("../audio/hitHurt.wav");
 
 socket.on("got_hit", ({ dir, shooter_name }) => {
   hitSound.play();
@@ -43,8 +43,8 @@ socket.on("got_hit", ({ dir, shooter_name }) => {
 
 // Death handler
 
-const deadSound = new Audio("../sounds/gameover.mp3");
-const countAllDownSound = new Audio("../sounds/countdown.mp3");
+const deadSound = new Audio("../audio/gameover.mp3");
+const countAllDownSound = new Audio("../audio/countdown.mp3");
 
 socket.on("died", ({ killer_name, respawn_time }) => {
   deadSound.play();
@@ -84,7 +84,7 @@ let arrows = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 let wasd = ["w", "s", "a", "d"];
 let moveDir;
 
-let moveSound = new Audio("../sounds/move.mp3");
+let moveSound = new Audio("../audio/move.mp3");
 
 window.addEventListener("keydown", (e) => {
   e.preventDefault(), (moveDir = null); // Reset moveDir at the start of each key press

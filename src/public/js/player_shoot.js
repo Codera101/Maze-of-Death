@@ -4,11 +4,11 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-let laserSound = new Audio("../sounds/laserShoot.wav");
+let laserSound = new Audio("../audio/laserShoot.wav");
 laserSound.volume = 0.1;
-let laserHitWallSound = new Audio("../sounds/laserHitWall.wav");
-let laserHitPlayerSound = new Audio("../sounds/laserHitPlayer.wav");
-let laserKillPlayerSound = new Audio("../sounds/killPlayer.wav");
+let laserHitWallSound = new Audio("../audio/laserHitWall.wav");
+let laserHitPlayerSound = new Audio("../audio/laserHitPlayer.wav");
+let laserKillPlayerSound = new Audio("../audio/killPlayer.wav");
 
 // Mobile Shoot Control
 const setupMobileShoot = () => {
