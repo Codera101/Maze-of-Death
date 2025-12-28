@@ -9,10 +9,12 @@ function updateHealth(newHealth) {
 }
 
 function updatePlayerInfo(playerData) {
-  myPlayer = { ...myPlayer, ...playerData };
+  myPlayer = { ...playerData };
   updateHealth(playerData.health);
   scoreValue.textContent = playerData.score;
   killsValue.textContent = playerData.kill_count;
+
+  // Update ammo display if the function exists
   if (typeof updateAmmoDisplay === "function") {
     updateAmmoDisplay(playerData.bullets, 5);
   }

@@ -3,12 +3,16 @@ window.addEventListener("keydown", (e) => {
     socket.emit("shoot");
   }
 });
+window.addEventListener("click", (e) => {
+  if (e.button === 0) {
+    socket.emit("shoot");
+  }
+});
 
-let laserSound = new Audio("../audio/laserShoot.wav");
-laserSound.volume = 0.1;
-let laserHitWallSound = new Audio("../audio/laserHitWall.wav");
-let laserHitPlayerSound = new Audio("../audio/laserHitPlayer.wav");
-let laserKillPlayerSound = new Audio("../audio/killPlayer.wav");
+let laserSound = new Audio("../sounds/laserShoot.wav");
+let laserHitWallSound = new Audio("../sounds/laserHitWall.wav");
+let laserHitPlayerSound = new Audio("../sounds/laserHitPlayer.wav");
+let laserKillPlayerSound = new Audio("../sounds/killPlayer.wav");
 
 // Mobile Shoot Control
 const setupMobileShoot = () => {
@@ -33,6 +37,7 @@ if (document.readyState === "loading") {
 
 socket.on("target_hit", (data) => {
   laserSound.play();
+  // laserSound.play();
   const {
     status,
     resultType,

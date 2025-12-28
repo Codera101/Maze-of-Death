@@ -17,6 +17,7 @@ exitButton.addEventListener("click", () => {
 });
 
 // RANKING
+
 let compare = (a, b) => {
   if (b.score === a.score) {
     return b.kill_count - a.kill_count;
@@ -58,23 +59,18 @@ socket.on("refresh_ranking", ({ all_players }) => {
   let selfAdded = false;
   for (let i = 0; i < limit; i++) {
     addPlayer(all_players[i], i + 1);
-    if (!window.isViewer && all_players[i].username == myPlayer.username) {
+    if (all_players[i].username == myPlayer.userName) {
       selfAdded = true;
     }
   }
-  for (
-    let i = 0;
-    i < all_players.length && !selfAdded && !window.isViewer;
-    i++
-  ) {
-    if (all_players[i].username == myPlayer.username) {
+  for (let i = 0; i < all_players.length && !selfAdded; i++) {
+    if (all_players[i].username == myPlayer.userName) {
       if (i >= limit) {
         addPlayer(all_players[i], i + 1);
         selfAdded = true;
       }
     }
   }
-
   rightPanelList.appendChild(fragment);
 });
 
