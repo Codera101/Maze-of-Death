@@ -82,24 +82,28 @@ let isViewer = true;
 // let laserSound = n
 
 // BG Music Logic
-let musicBtn = document.getElementById("music-btn");
-let bgMusic = new Audio("../sounds/MFCC_Retro_Arcade.mp3");
-(bgMusic.volume = 0.2), (bgMusic.loop = true);
-bgMusic.play();
-let musicEnabled = true;
+document.addEventListener("DOMContentLoaded", () => {
+  // put code here
 
-function toggleMusic() {
-  musicEnabled = !musicEnabled;
-  if (musicEnabled) {
-    bgMusic.play();
-  } else {
-    bgMusic.pause();
+  let musicBtn = document.getElementById("music-btn");
+  let bgMusic = new Audio("../sounds/MFCC_Retro_Arcade.mp3");
+  (bgMusic.volume = 0.2), (bgMusic.loop = true);
+  bgMusic.play();
+  let musicEnabled = true;
+
+  function toggleMusic() {
+    musicEnabled = !musicEnabled;
+    if (musicEnabled) {
+      bgMusic.play();
+    } else {
+      bgMusic.pause();
+    }
   }
-}
-musicBtn.addEventListener("click", toggleMusic);
-// M for music toggle
-document.addEventListener("keydown", (e) => {
-  if (e.key === "m" || e.key === "M") {
-    toggleMusic();
-  }
+  musicBtn.addEventListener("click", toggleMusic);
+  // M for music toggle
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "m" || e.key === "M") {
+      toggleMusic();
+    }
+  });
 });
