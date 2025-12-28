@@ -11,6 +11,14 @@
       rel="stylesheet"
     />
 
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-..."
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
     <link rel="stylesheet" href="css/top_panel.css" />
     <link rel="stylesheet" href="css/right_panel.css" />
     <link rel="stylesheet" href="css/bottom_panel.css" />
@@ -71,6 +79,9 @@
             <span class="stats-label" id="kills-label">KILLS</span>
             <!-- </span> -->
           </div>
+          <button id="music-btn">
+            <ion-icon name="musical-notes-outline" id="music-icon"></ion-icon>
+          </button>
         </div>
 
         <button id="exit-menu">
@@ -133,24 +144,7 @@
               <div class="ammo-card">
                 <!-- AMMO STATUS (ONE LINE ROW) -->
                 <div class="ammo-hud-row">
-                  <!-- Crosshair Icon (Static SVG from Lucide) -->
-                  <svg
-                    class="crosshair-icon"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <line x1="12" y1="2" x2="12" y2="6"></line>
-                    <line x1="12" y1="18" x2="12" y2="22"></line>
-                    <line x1="2" y1="12" x2="6" y2="12"></line>
-                    <line x1="18" y1="12" x2="22" y2="12"></line>
-                    <circle cx="12" cy="12" r="7"></circle>
-                  </svg>
-
+                  <i class="fa-solid fa-crosshairs crosshair-icon"></i>
                   <div class="ammo-display">
                     <div id="bullet-indicators" class="bullet-indicators">
                       <!-- Static placeholder for 3 active bullets -->
@@ -236,7 +230,6 @@
       window.geckos = geckos.default || geckos;
       window.geckosLoaded = true;
       console.log("[WebRTC] geckos.io loaded successfully");
-      // Trigger custom event so variables_mainpage.js knows geckos is ready
       window.dispatchEvent(new Event("geckos-loaded"));
     </script>
     <!--  -->
