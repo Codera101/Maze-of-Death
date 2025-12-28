@@ -47,9 +47,7 @@ class RoomControler {
     if (room.getPlayerCount() >= this.maxTotalPlayers && botCount > 0) {
       const removedBot = this.botService.removeOneBot(room);
       if (removedBot) {
-        console.log(
-          `🤖 Removed bot ${removedBot} to make space for player ${username}`
-        );
+        // Bot removed to make space for player quietly
       }
     } else if (
       room.getPlayerCount() >= this.maxTotalPlayers &&
@@ -88,11 +86,7 @@ class RoomControler {
       // Draw the maze for the new player
       this.drawMazeForPlayer(playerId, roomId);
 
-      console.log(
-        `👤 Player ${username} joined room ${roomId} (${room.getPlayerCount()}/${
-          this.maxTotalPlayers
-        })`
-      );
+      // Player joined room successfully
     }
   }
 
@@ -303,15 +297,13 @@ class RoomControler {
 
     // Check if room should be deleted (only bots remain)
     if (room.isOnlyBots()) {
-      console.log(`🗑️ Room ${roomId} has only bots, deleting...`);
+      // Room has only bots, deleting...
       // Remove all bots from this room
       this.botService.removeAllBotsFromRoom(room);
       // Delete the room
       this.roomService.deleteRoom(roomId);
     } else {
-      console.log(
-        `👋 Player left room ${roomId} (${room.getHumanCount()} humans, ${room.getBotCount()} bots)`
-      );
+      // Player left room quietly
     }
   }
 
@@ -507,7 +499,7 @@ class RoomControler {
     });
 
     this.drawMazeForPlayer(viewerID, room.roomId);
-    console.log(`👁️ Viewer joined room ${room.roomId}`);
+    // Viewer joined room quietly
   }
 
   /**
@@ -520,7 +512,7 @@ class RoomControler {
       const viewerIndex = room._viewers.findIndex((v) => v.id === viewerID);
       if (viewerIndex !== -1) {
         room.removeViewer(viewerID);
-        console.log(`👁️ Viewer left room ${room.roomId}`);
+        // Viewer left room quietly
         break;
       }
     }

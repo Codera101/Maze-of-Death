@@ -56,11 +56,11 @@ let capabilitiesSent = false;
 // Function to initialize geckos.io
 function initializeGeckos() {
   if (typeof window.geckos === 'undefined') {
-    console.log('[WebRTC] geckos.io not available');
+    // geckos.io not available
     return;
   }
 
-  console.log('[WebRTC] Initializing geckos.io...');
+  // Initializing geckos.io...
   try {
     geckosChannel = window.geckos({ 
       //url: `${window.location.hostname}`, // local testing
@@ -75,7 +75,7 @@ function initializeGeckos() {
         console.warn('Falling back to Socket.io only');
         geckosChannel = null;
       } else {
-        console.log('WebRTC connection established via geckos.io');
+        // WebRTC connection established
         // Send handshake to associate with socket ID
         geckosChannel.emit('handshake', socket.id);
       }
@@ -113,7 +113,7 @@ function initializeGeckos() {
 
 // Listen for geckos-loaded event (fired when ES module loads)
 window.addEventListener('geckos-loaded', () => {
-  console.log('[WebRTC] geckos-loaded event received');
+  // geckos-loaded event received
   clientCapabilities.protocols.geckos = true;
   initializeGeckos();
   
@@ -126,7 +126,7 @@ window.addEventListener('geckos-loaded', () => {
 
 // Send capabilities to server on connect
 socket.on('connect', () => {
-  console.log('Socket.io connected:', socket.id);
+  // Socket.io connected
   
   // Wait a bit for geckos to load if not loaded yet
   setTimeout(() => {
@@ -138,7 +138,7 @@ socket.on('connect', () => {
         initializeGeckos();
       }
       
-      console.log('[Protocol] Sending capabilities:', clientCapabilities);
+      // Sending capabilities to server
       socket.emit('client_capabilities', clientCapabilities);
       capabilitiesSent = true;
       
@@ -154,7 +154,7 @@ socket.on('connect', () => {
 socket.on('protocol_selected', (data) => {
   protocolMode = data.protocol;
   useWebRTC = (protocolMode === 'hybrid' && geckosChannel !== null);
-  console.log(`Protocol mode: ${protocolMode}, WebRTC enabled: ${useWebRTC}`);
+  // Protocol mode set
   
   // Update geckos authorization if needed
   if (geckosChannel && !geckosChannel.id) {

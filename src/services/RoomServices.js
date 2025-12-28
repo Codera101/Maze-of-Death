@@ -30,7 +30,7 @@ class RoomService {
 		const roomId = randomUUID();
 		const room = new Room(roomId);
 		this.rooms.set(roomId, room);
-		console.log(`🏠 Created new room: ${roomId}`);
+		// Room created quietly
 		return room;
 	}
 
@@ -52,7 +52,7 @@ class RoomService {
 
 		// Delete the room
 		this.rooms.delete(roomId);
-		console.log(`🗑️ Deleted room: ${roomId}`);
+		// Room deleted quietly
 		return true;
 	}
 
@@ -145,7 +145,7 @@ class RoomService {
 		const player = room.addNewPlayer(userName, playerId);
 		this.userRoomMap.set(playerId, room.roomId);
 		
-		console.log(`👤 Player ${userName} joined room ${room.roomId} (${room.getPlayerCount()}/${this.maxPlayersPerRoom} players)`);
+		// Player joined room quietly
 		
 		return { player, roomId: room.roomId };
 	}
@@ -171,7 +171,7 @@ class RoomService {
 		// Remove from userRoomMap
 		this.userRoomMap.delete(playerId);
 
-		console.log(`👋 Player left room ${roomId} (${room ? room.getPlayerCount() : 0} players remaining)`);
+		// Player left room quietly
 
 		return { removed: true, roomId, roomDeleted: false };
 	}

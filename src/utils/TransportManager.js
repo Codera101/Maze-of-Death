@@ -30,8 +30,7 @@ class TransportManager {
 		this.capabilities = socket.capabilities || { socketio: true };
 		this.protocol = this.capabilities.webrtc && geckosChannel ? 'hybrid' : 'socketio-only';
 		
-		// Note: Logger is a class, not an instance - we'll just use console.log for now
-		console.log(`[TransportManager] Initialized for ${socket.id} - Protocol: ${this.protocol}`);
+		// TransportManager initialized quietly
 	}
 
 	/**
@@ -135,7 +134,7 @@ class TransportManager {
 	 */
 	_sendViaWebRTC(eventName, payload) {
 		if (!this.geckosChannel) {
-			console.log(`[TransportManager] WebRTC channel not available for ${this.socket.id}, falling back to Socket.io`);
+			// WebRTC fallback to Socket.io quietly
 			this.socket.emit(eventName, payload);
 			return;
 		}

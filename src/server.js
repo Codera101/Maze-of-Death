@@ -111,7 +111,7 @@ if (geckosServer) {
     // Associate geckos channel with socket ID once handshake completes
     channel.on("handshake", (socketId) => {
       geckosChannels.set(socketId, channel);
-      console.log(`[WebRTC] Channel established for socket ${socketId}`);
+      // WebRTC channel established quietly
     });
 
     channel.onDisconnect(() => {
@@ -132,11 +132,9 @@ io.on("connection", (socket) => {
     const protocol =
       supportsWebRTC && geckosServer ? "hybrid" : "socketio-only";
 
-    console.log(
-      `[Protocol] Client ${socket.id} capabilities:`,
-      JSON.stringify(capabilities)
-    );
-    console.log(`[Protocol] Selected: ${protocol}`);
+    // Protocol negotiation complete
+    // console.log(`[Protocol] Client ${socket.id} capabilities:`, JSON.stringify(capabilities));
+    // console.log(`[Protocol] Selected: ${protocol}`);
 
     // Notify client which protocol will be used
     socket.emit("protocol_selected", {

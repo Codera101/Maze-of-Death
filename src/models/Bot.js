@@ -61,12 +61,12 @@ class Bot extends Player {
   _getDecisionCooldown() {
     switch (this._difficulty) {
       case "easy":
-        return 800; // Slower reaction
+        return 1500; // Very slow reaction (more beatable)
       case "hard":
-        return 200; // Fast reaction
+        return 400; // Moderate reaction
       case "medium":
       default:
-        return 400; // Moderate reaction
+        return 800; // Slower reaction
     }
   }
 

@@ -162,7 +162,7 @@ class BotService {
         default:
           console.warn(`Unknown bot action: ${decision.action}`);
       }
-    }, 100); // Bot thinks every 100ms (fast gameplay with UDP)
+    }, 200); // Bot thinks every 200ms (balanced for fair gameplay)
 
     this._botUpdateIntervals.set(botId, intervalId);
   }
@@ -242,7 +242,7 @@ class BotService {
         const currentCount = room.getPlayerCount();
         
         if (currentCount >= maxTotalPlayers) {
-          console.log(`Cannot add more bots: room ${room.roomId} at capacity (${currentCount}/${maxTotalPlayers})`);
+          // Room at capacity, stop adding bots
           break;
         }
       }
@@ -265,7 +265,7 @@ class BotService {
       }
     }
 
-    console.log(`🤖 Added ${addedBots.length} bots to room ${room.roomId}`);
+    // Bots added to room quietly
     return addedBots;
   }
 
@@ -279,7 +279,7 @@ class BotService {
 
     const botIds = Array.from(roomBots);
     botIds.forEach((botId) => this.removeBot(botId, room));
-    console.log(`🤖 Removed all bots from room ${room.roomId}`);
+    // All bots removed from room quietly
   }
 
   /**
@@ -359,7 +359,7 @@ class BotService {
     try {
       const bot = this.createBot(room, difficulty, roomService);
       this.startBot(bot.id, roomControler);
-      console.log(`🤖 Added bot ${bot.userName} to room ${room.roomId}`);
+      // Bot added to room quietly
       return bot;
     } catch (error) {
       console.error(`Failed to add bot:`, error.message);

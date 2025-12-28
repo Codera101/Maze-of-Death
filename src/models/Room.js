@@ -34,8 +34,8 @@ class Room {
 		this._reloadTime = 500; // in ms (reduced for faster gameplay)
 		this._initPlayerHealth = 25;
 		this._initBulltesNumber = 5;
-		this._shootSpeed = 150; // in ms (reduced for faster gameplay with UDP)
-		this._moveSpeed = 100; // in ms (reduced for faster gameplay with UDP)
+		this._shootSpeed = 250; // in ms (balanced for fair gameplay)
+		this._moveSpeed = 200; // in ms (balanced for fair gameplay)
 		this._colorsPalet = [
 				"#FF0000", // Electric Red
 				"#FF6600", // Safety Orange
