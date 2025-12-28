@@ -7,16 +7,7 @@ function updateHealth(newHealth) {
 }
 
 function updatePlayerInfo(playerData) {
-  // Update myPlayer state
-  myPlayer.x = playerData.x;
-  myPlayer.y = playerData.y;
-  myPlayer.dir = playerData.dir;
-  myPlayer.health = playerData.health;
-  myPlayer.score = playerData.score;
-  myPlayer.kill_count = playerData.kill_count;
-  myPlayer.bullets = playerData.bullets;
-
-  // Update UI elements
+  myPlayer = { ...myPlayer, ...playerData };
   updateHealth(playerData.health);
   scoreValue.textContent = playerData.score;
   killsValue.textContent = playerData.kill_count;

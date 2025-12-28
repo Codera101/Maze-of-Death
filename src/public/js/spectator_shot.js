@@ -130,8 +130,6 @@ if (typeof socket !== "undefined") {
     const xEnd = data.to.y * step + step / 2;
     const yEnd = data.to.x * step + step / 2;
 
-    // showSpectatorText(`${data.shooterName} ➜ ${data.targetName}`, data.isKill);
-
     console.log(`📍 Drawing from [${xStart},${yStart}] to [${xEnd},${yEnd}]`);
 
     drawSpectatorLaser(currentApp, xStart, yStart, xEnd, yEnd, data.isKill);

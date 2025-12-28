@@ -220,10 +220,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@8.14.3/dist/pixi.min.js"></script>
-    <!-- socket.io.js already loaded in head -->
-    <!--  -->
-    <script src="js/binary_protocol_client.js"></script>
-
     <!-- Load geckos.io as ES module and expose globally -->
     <script type="module">
       import geckos from "https://cdn.jsdelivr.net/npm/@geckos.io/client@3.0.2/+esm";
@@ -232,7 +228,6 @@
       console.log("[WebRTC] geckos.io loaded successfully");
       window.dispatchEvent(new Event("geckos-loaded"));
     </script>
-    <!--  -->
     <script src="js/variables_mainpage.js"></script>
     <script src="js/draw.js"></script>
     <script src="js/cleanup.js"></script>
@@ -241,8 +236,8 @@
     <script type="module" src="js/death.js"></script>
     <script type="module" src="js/hit_recieved.js"></script>
     <script src="js/reload_progress.js"></script>
+    <script src="./js/messages.js"></script>
     <script type="module" src="js/init_maze.js"></script>
-    <script src="js/messages.js"></script>
     <script type="module" src="js/player_move.js"></script>
     <script type="module" src="js/refresh_player.js"></script>
     <script type="module" src="js/refresh_ranking.js"></script>

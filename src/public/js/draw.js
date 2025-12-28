@@ -10,65 +10,14 @@ if (typeof socket !== "undefined") {
     const params = new URLSearchParams(window.location.search);
     const username_value = params.get("username");
     socket.emit("join_player", { username: username_value });
-    // console.log("Joining as:", username_value);
   });
 
   socket.on("player_joined", (data) => {
     const player = data.current_player;
-    // Initialize myPlayer with all properties from server
-    myPlayer.id = player.id;
-    myPlayer.username = player.userName;
-    myPlayer.roomId = data.roomId;
-    myPlayer.x = player.x;
-    myPlayer.y = player.y;
-    myPlayer.dir = player.dir;
-    myPlayer.health = player.health;
-    myPlayer.score = player.score;
-    myPlayer.kill_count = player.kill_count;
-    myPlayer.bullets = player.bullets;
-    myPlayer.color = player.color;
-
-    // Update UI with initial player state
     if (typeof updatePlayerInfo === "function") {
       updatePlayerInfo(player);
     }
-    
-    console.log(`Joined room: ${data.roomId}`);
   });
-
-  // socket.on("room_full", (data) => {
-  //   alert(data.message || "Room is full. Please try again later.");
-  //   // Redirect back to home page
-  //   window.location.href = "/";
-  // });
-
-  // socket.on("username_taken", (data) => {
-  //   alert(data.message || "Username is already taken. Please choose a different name.");
-  //   // Redirect back to home page
-  //   window.location.href = "/";
-  // });
-
-
-  // Show hit animation on any player (visible to all)
-  socket.on("player_hit_animation", ({ targetId, targetX, targetY }) => {
-    if (typeof app !== "undefined" && typeof showHitMarker === "function") {
-      showHitMarker(app, targetX, targetY, false);
-    }
-  });
-
-  // Show death animation on any player (visible to all)
-  socket.on(
-    "player_death_animation",
-    ({ targetId, targetX, targetY, targetName }) => {
-      console.log(
-        `Death animation for ${targetName} at (${targetX}, ${targetY})`
-      );
-      if (typeof app !== "undefined") {
-        // Use the visible death animation function
-        animateDeathAtPosition(app, targetX, targetY);
-      }
-    }
-  );
 }
 
 /**
@@ -269,10 +218,7 @@ function drawPlayer(
 
   let dotX = centerX;
   let dotY = centerY;
-
-  // console.log(typeof(dirUpper));
   const dirUpper = typeof dir == "string" ? dir.toUpperCase() : dir;
-
   if (dirUpper == "U") {
     dotY = centerY - offsetDistance;
   } else if (dirUpper == "D") {
@@ -329,7 +275,12 @@ function drawPlayers(app) {
     }
 
     // Clear and redraw player
-    playerContainer.removeChildren().forEach((child) => child.destroy());
+    // playerContainer.removeChildren().forEach((child) => child.destroy());
+    playerContainer
+      .removeChildren(0, playerContainer.children.length)
+      .forEach((child) => {
+        child.destroy({ children: true, texture: false, baseTexture: false });
+      });
 
     const gridX = player.y * gridStep;
     const gridY = player.x * gridStep;
@@ -508,7 +459,7 @@ function showHitMarker(app, targetX, targetY, isKill = false) {
     }
 
     // Float damage text up and fade
-    damageText.y -= 2;
+    // damageText.y -= 2;
     damageText.alpha = 1 - frame / 12;
     if (damageText.alpha <= 0 && damageText.parent) {
       damageText.parent.removeChild(damageText);
@@ -801,8 +752,6 @@ function animateDeath(app, playerId) {
 }
 
 function updateMaze(app) {
-  // Only update what changed - maze is cached, players are pooled
   drawMaze(app); // Will skip if maze unchanged
-  drawPlayers(app); // Will reuse/update player graphics
-  // updateAmmoDisplay(myPlayer.bullets, 5);
+  drawPlayers(app); 
 }

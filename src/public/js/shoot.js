@@ -15,7 +15,6 @@ let laserSound = new Audio("../sounds/laserShoot.wav");
 let laserHitWallSound = new Audio("../sounds/laserHitWall.wav");
 let laserHitPlayerSound = new Audio("../sounds/laserHitPlayer.wav");
 let laserKillPlayerSound = new Audio("../sounds/killPlayer.wav");
-console.log(laserSound);
 
 // Mobile Shoot Control
 const setupMobileShoot = () => {
@@ -55,13 +54,10 @@ socket.on("target_hit", (data) => {
     if (resultType === "kill") {
       laserHitPlayerSound.play();
       laserKillPlayerSound.play();
-      console.log(`You killed ${targetName} (ID: ${targetId})`);
     } else if (resultType === "Hit") {
       laserHitPlayerSound.play();
-      console.log(`You hit ${targetName} (ID: ${targetId})`);
     } else {
       laserHitWallSound.play();
-      console.log("You missed your shot.");
     }
   }
 
@@ -70,8 +66,6 @@ socket.on("target_hit", (data) => {
     typeof app !== "undefined" &&
     typeof myPlayer !== "undefined"
   ) {
-    // console.log("Target hit!", data);
-
     // Calculate laser beam coordinates
     const gridStep = cellSize + strokeWidth * 2;
     const shooterGridX = myPlayer.y * gridStep;

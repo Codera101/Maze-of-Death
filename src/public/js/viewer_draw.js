@@ -14,17 +14,7 @@ const graphicsCache = {
 if (typeof socket !== "undefined") {
   socket.on("connect", () => {
     socket.emit("join_viewer", {});
-    // console.log("Joining as:", username_value);
   });
-
-  // socket.on("viewer_joined", (data) => {
-  // });
-
-  // socket.on("room_full", (data) => {
-  //   alert(data.message || "Room is full. Please try again later.");
-  //   // Redirect back to home page
-  //   window.location.href = "/";
-  // });
 
   // Show hit animation on any player (visible to all)
   socket.on("player_hit_animation", ({ targetId, targetX, targetY }) => {
@@ -32,20 +22,6 @@ if (typeof socket !== "undefined") {
       showHitMarker(app, targetX, targetY, false);
     }
   });
-
-  // Show death animation on any player (visible to all)
-  socket.on(
-    "player_death_animation",
-    ({ targetId, targetX, targetY, targetName }) => {
-      console.log(
-        `Death animation for ${targetName} at (${targetX}, ${targetY})`
-      );
-      if (typeof app !== "undefined") {
-        // Use the visible death animation function
-        animateDeathAtPosition(app, targetX, targetY);
-      }
-    }
-  );
 }
 
 /**
@@ -241,13 +217,11 @@ function drawPlayer(
   const padding = 3;
   const maxOffset = visualBodyW / 2 - radius - padding;
 
-  // Safety: ensure offset is positive, otherwise fallback to 25% of width
   const offsetDistance = maxOffset > 0 ? maxOffset : visualBodyW / 4;
 
   let dotX = centerX;
   let dotY = centerY;
 
-  // console.log(typeof(dirUpper));
   const dirUpper = typeof dir == "string" ? dir.toUpperCase() : dir;
 
   if (dirUpper == "U") {
@@ -778,16 +752,8 @@ function animateDeath(app, playerId) {
 }
 
 function updateMaze(app) {
-  // Only update what changed - maze is cached, players are pooled
-  drawMaze(app); // Will skip if maze unchanged
-  drawPlayers(app); // Will reuse/update player graphics
-  // updateAmmoDisplay(myPlayer.bullets, 5);
-}
-
-function animateDeathAtPosition(app, targetX, targetY) {
-  if (typeof animateDeath === "function") {
-    console.log("Executing death at:", targetX, targetY);
-  }
+  drawMaze(app);
+  drawPlayers(app);
 }
 
 function showHitMarker(app, targetX, targetY, isKill = false) {

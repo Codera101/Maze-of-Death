@@ -4,8 +4,6 @@ function displayKillMessage(victim_name, killer_name) {
     return;
   }
 
-  // console.log("Displaying kill message:", killer_name, "killed", victim_name);
-
   // Keep max 3 messages - properly remove old ones
   while (killMessage.children.length >= 3) {
     const oldMessage = killMessage.firstChild;
@@ -31,34 +29,20 @@ function displayKillMessage(victim_name, killer_name) {
   message.innerHTML = `<span style="color: #ff4444; font-weight: bold;">${killer_name}</span> <span style="color: #ccc;">killed</span> <span style="color: #4444ff; font-weight: bold;">${victim_name}</span>`;
   killMessage.appendChild(message);
 
-  // console.log("Message appended. Total messages:", killMessage.children.length);
-
   // Auto-remove this specific message after 5 seconds
   // Store timeout ID to allow cleanup if needed
   message._removeTimeout = setTimeout(() => {
     if (message.parentNode === killMessage) {
       killMessage.removeChild(message);
       message._removeTimeout = null;
-      // console.log(
-      //   "Message removed. Remaining messages:",
-      //   killMessage.children.length
-      // );
     }
   }, 5000);
 }
 
 if (typeof socket !== "undefined") {
-  // console.log("[KILL_MESSAGE] Registering kill_message event listener");
   socket.on("kill_message", ({ victim_name, killer_name }) => {
-    // console.log(
-    //   "[KILL_MESSAGE] ✅ Received kill_message event:",
-    //   killer_name,
-    //   "killed",
-    //   victim_name
-    // );
     displayKillMessage(victim_name, killer_name);
   });
-  // console.log("[KILL_MESSAGE] Event listener registered successfully");
 } else {
   console.error(
     "[KILL_MESSAGE] ❌ Socket is undefined! Cannot register event listener."
@@ -93,7 +77,6 @@ socket.on("room_full", (data) => {
 
 socket.on("username_taken", (data) => {
   let userName = data.username || "This username";
-  console.log(data);
   handleErrorMessage(
     `"${userName}" is already taken.<br>Please choose a different name.`
   );

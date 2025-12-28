@@ -83,11 +83,9 @@ let isViewer = true;
 
 // BG Music Logic
 document.addEventListener("DOMContentLoaded", () => {
-  // put code here
-
   let musicBtn = document.getElementById("music-btn");
   let bgMusic = new Audio("../sounds/MFCC_Retro_Arcade.mp3");
-  (bgMusic.volume = 0.2), (bgMusic.loop = true);
+  (bgMusic.volume = 0.1), (bgMusic.loop = true);
   bgMusic.play();
   let musicEnabled = true;
 
