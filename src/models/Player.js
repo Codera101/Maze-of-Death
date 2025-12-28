@@ -165,7 +165,8 @@ class Player {
 	canShoot() {
 		return (
 			Date.now() - this.timeOfLastShoot >= this.room.getShootSpeed() &&
-			this.bullets > 0
+			this.bullets > 0 &&
+			this.health > 0
 		);
 	}
 
@@ -174,7 +175,7 @@ class Player {
 		@returns {bool} 1 - if can, 0 if not.
 	*/
 	canMove() {
-		return Date.now() - this.timeOfLastMove >= this.room.getMoveSpeed();
+		return Date.now() - this.timeOfLastMove >= this.room.getMoveSpeed() && this.health > 0;
 	}
 
 	/**
