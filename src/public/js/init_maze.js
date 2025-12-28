@@ -1,4 +1,4 @@
-// import { app } from './maze.js'; // global app
+import { app } from './maze.js';
 
 function resizeMaze() {
     let w = mazeContainer.clientWidth;
