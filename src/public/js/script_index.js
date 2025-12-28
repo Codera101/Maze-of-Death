@@ -70,15 +70,15 @@ document.addEventListener("keydown", (e) => {
 });
 
 //?--------------  socket.io(join_player)  -----------------/
-
+window.isViewer = false;
 //& Send join request
 play_btn_container.addEventListener("click", () => {
   const username_value = usernameInput.value.trim();
   if (!username_value) return;
-  isViewer = false;
+  window.isViewer = false;
   window.location.href = `/game?username=${encodeURIComponent(username_value)}`;
 });
 spectator_btn_container.addEventListener("click", () => {
-  isViewer = true;
+  window.isViewer = true;
   window.location.href = `/view`;
 });

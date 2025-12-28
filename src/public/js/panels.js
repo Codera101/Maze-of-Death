@@ -1,15 +1,16 @@
 // Health init
 function initHealth() {
+  if (!healthValue || !healthProgress) return;
   healthValue.textContent = 25; // Match backend's initPlayerHealth
   const percentage = (25 / 25) * 100;
   healthProgress.style.setProperty("--health-percent", `${percentage}%`);
 }
-if (!isViewer) {
+if (!window.isViewer) {
   initHealth();
 }
 
 exitButton.addEventListener("click", () => {
-  isViewer = false;
+  window.isViewer = false;
   socket.disconnect();
   window.location.href = "/";
   usernameInput.textContent = "";
@@ -57,11 +58,15 @@ socket.on("refresh_ranking", ({ all_players }) => {
   let selfAdded = false;
   for (let i = 0; i < limit; i++) {
     addPlayer(all_players[i], i + 1);
-    if (!isViewer && all_players[i].username == myPlayer.username) {
+    if (!window.isViewer && all_players[i].username == myPlayer.username) {
       selfAdded = true;
     }
   }
-  for (let i = 0; i < all_players.length && !selfAdded && !isViewer; i++) {
+  for (
+    let i = 0;
+    i < all_players.length && !selfAdded && !window.isViewer;
+    i++
+  ) {
     if (all_players[i].username == myPlayer.username) {
       if (i >= limit) {
         addPlayer(all_players[i], i + 1);

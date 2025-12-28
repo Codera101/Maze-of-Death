@@ -47,7 +47,6 @@ for (let i = 0; i < rows; i++) {
   }
 }
 let visiblePlayers = [];
-
 // let shooting = false;
 let myPlayer = {
   id: null,
@@ -62,25 +61,6 @@ let myPlayer = {
   bullets: 5, // Match backend's initBulltesNumber
   color: "#FF5733",
 };
-
-function displayKillMessage(victim_name, killer_name) {
-  if (killMessage.children.length >= 3) {
-    killMessage.removeChild(killMessage.firstChild);
-  }
-  let message = document.createElement("div");
-
-  if (killer_name === myPlayer.username || victim_name === myPlayer.username) {
-    message.style.border = "3px solid red";
-  }
-
-  message.innerHTML = `<span style="color: red;">${killer_name}</span>&nbsp;&nbsp;killed&nbsp;&nbsp;<span style="color: blue;">${victim_name}</span>`;
-  killMessage.appendChild(message);
-}
-
-let isViewer = true;
-
-// let laserSound = n
-
 // BG Music Logic
 document.addEventListener("DOMContentLoaded", () => {
   let musicBtn = document.getElementById("music-btn");

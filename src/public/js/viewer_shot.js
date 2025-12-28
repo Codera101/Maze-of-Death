@@ -109,12 +109,12 @@ if (typeof socket !== "undefined") {
   socket.on("viewer_joined", (data) => {
     if (data.status) {
       window.isViewer = true;
-      console.log("✅ Spectator Mode Active");
+      // console.log("✅ Spectator Mode Active");
     }
   });
 
   socket.on("spectator:shot", (data) => {
-    console.log("🔫 SHOT ATTEMPT:", data);
+    // console.log("🔫 SHOT ATTEMPT:", data);
 
     const currentApp = window.app;
     if (!currentApp || !data.from || !data.to) return;
@@ -127,7 +127,7 @@ if (typeof socket !== "undefined") {
     const xEnd = data.to.y * step + step / 2;
     const yEnd = data.to.x * step + step / 2;
 
-    console.log(`📍 Drawing from [${xStart},${yStart}] to [${xEnd},${yEnd}]`);
+    // console.log(`📍 Drawing from [${xStart},${yStart}] to [${xEnd},${yEnd}]`);
 
     drawSpectatorLaser(currentApp, xStart, yStart, xEnd, yEnd, data.isKill);
     drawImpactEffect(currentApp, xEnd, yEnd, data.isKill);

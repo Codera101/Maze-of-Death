@@ -1,3 +1,8 @@
+/**
+ * game_draw.js
+ * Consolidated rendering engine for Players and Viewers.
+ */
+
 // Graphics cache to reuse objects and prevent memory leaks
 const graphicsCache = {
   maze: null,
@@ -5,26 +10,43 @@ const graphicsCache = {
   lastMazeState: null,
 };
 
+/**
+ * SOCKET SETUP
+ * Distinguishes between Player and Viewer roles based on URL params or context.
+ */
 if (typeof socket !== "undefined") {
   socket.on("connect", () => {
     const params = new URLSearchParams(window.location.search);
     const username_value = params.get("username");
-    socket.emit("join_player", { username: username_value });
+
+    if (username_value) {
+      // Player Mode
+      socket.emit("join_player", { username: username_value });
+    } else {
+      // Viewer Mode
+      socket.emit("join_viewer", {});
+    }
   });
 
+  // Player-specific listener
   socket.on("player_joined", (data) => {
-    const player = data.current_player;
     if (typeof updatePlayerInfo === "function") {
-      updatePlayerInfo(player);
+      updatePlayerInfo(data.current_player);
+    }
+  });
+
+  // Shared hit animation listener (visible to all)
+  socket.on("player_hit_animation", ({ targetId, targetX, targetY }) => {
+    if (typeof app !== "undefined" && typeof showHitMarker === "function") {
+      if (window.isViewer) showHitMarker(app, targetX, targetY, false);
     }
   });
 }
 
 /**
- * Draws a rounded rectangle.
- * Note: Accounts for strokeWidth by shrinking the visual box slightly
- * so borders render inside the bounds.
+ * CORE DRAWING UTILITIES (PIXI v8)
  */
+
 function drawRoundedRect(
   app,
   {
@@ -47,26 +69,19 @@ function drawRoundedRect(
   const visualHeight = height - strokeWidth;
 
   g.roundRect(visualX, visualY, visualWidth, visualHeight, radius);
-
-  // Fill
   g.fill({ color: fillColor });
 
-  // Border (0 = no stroke)
   if (strokeWidth > 0) {
     g.stroke({
       color: strokeColor,
       width: strokeWidth,
-      alignment: 0, // 0 = inside border
+      alignment: 0, // Inside border
     });
   }
   app.stage.addChild(g);
-
   return g;
 }
 
-/**
- * UPDATED: Uses PIXI v8 syntax to match drawRoundedRect.
- */
 function drawCircle(
   app,
   {
@@ -79,9 +94,7 @@ function drawCircle(
   }
 ) {
   const g = new PIXI.Graphics();
-
-  // BORDER INSIDE: reduce radius by half of strokeWidth
-  const r = radius - strokeWidth / 2;
+  const r = radius - strokeWidth / 2; // Reduce radius by half stroke
 
   g.circle(x, y, r);
   g.fill({ color: fillColor });
@@ -98,53 +111,40 @@ function drawCircle(
   return g;
 }
 
+/**
+ * MAZE RENDERING
+ */
 function drawMaze(app) {
-  // Check if variables are available (defensive coding)
   if (typeof rows === "undefined" || typeof cols === "undefined") return;
 
   // Use cached maze if layout hasn't changed
   const mazeStateKey = JSON.stringify(mazeLayout);
   if (graphicsCache.maze && graphicsCache.lastMazeState === mazeStateKey) {
-    return; // Maze already drawn and unchanged
+    return;
   }
 
-  // Clear old maze graphics if exists
   if (graphicsCache.maze) {
     app.stage.removeChild(graphicsCache.maze);
     graphicsCache.maze.destroy({ children: true });
   }
 
-  // Create a container for all maze graphics
   graphicsCache.maze = new PIXI.Container();
   graphicsCache.lastMazeState = mazeStateKey;
 
-  for (
-    let row = 0;
-    row < rows * cellSize + (rows - 1) * strokeWidth;
-    row += cellSize + strokeWidth * 2
-  ) {
-    for (
-      let col = 0;
-      col < cols * cellSize + (cols - 1) * strokeWidth;
-      col += cellSize + strokeWidth * 2
-    ) {
-      // Determine cell type
-      const rowIndex = Math.round(row / (cellSize + strokeWidth * 2));
-      const colIndex = Math.round(col / (cellSize + strokeWidth * 2));
+  const gridStep = cellSize + strokeWidth * 2;
 
-      // Safety check for array bounds
-      if (!mazeLayout[rowIndex] || mazeLayout[rowIndex][colIndex] === undefined)
-        continue;
+  for (let rIdx = 0; rIdx < rows; rIdx++) {
+    for (let cIdx = 0; cIdx < cols; cIdx++) {
+      if (!mazeLayout[rIdx] || mazeLayout[rIdx][cIdx] === undefined) continue;
 
       const g = new PIXI.Graphics();
-      const visualX = col + strokeWidth;
-      const visualY = row + strokeWidth;
-      const visualWidth = cellSize - strokeWidth;
-      const visualHeight = cellSize - strokeWidth;
+      const visualX = cIdx * gridStep + strokeWidth;
+      const visualY = rIdx * gridStep + strokeWidth;
+      const visualSize = cellSize - strokeWidth;
 
-      g.roundRect(visualX, visualY, visualWidth, visualHeight, 1);
+      g.roundRect(visualX, visualY, visualSize, visualSize, 1);
 
-      if (mazeLayout[rowIndex][colIndex] === 1) {
+      if (mazeLayout[rIdx][cIdx] === 1) {
         // Wall
         g.fill({ color: 0x1a1a28 });
         if (strokeWidth > 0) {
@@ -157,7 +157,6 @@ function drawMaze(app) {
           g.stroke({ color: 0x10212a, width: strokeWidth, alignment: 0 });
         }
       }
-
       graphicsCache.maze.addChild(g);
     }
   }
@@ -165,81 +164,12 @@ function drawMaze(app) {
   app.stage.addChild(graphicsCache.maze);
 }
 
-function drawPlayer(
-  app,
-  {
-    x,
-    y,
-    width = cellSize,
-    height = cellSize,
-    radius = 7, // Radius of the direction dot
-    dir,
-    fillColor,
-  }
-) {
-  // 1. Draw the Body
-  drawRoundedRect(app, {
-    x,
-    y,
-    width: width,
-    height: height,
-    radius: 10, // Rounded corners
-    fillColor: fillColor,
-    strokeColor: "#FFFFFF",
-    strokeWidth: 0,
-  });
-
-  // 2. Calculate Visual Center
-  // Since drawRoundedRect shifts x by strokeWidth and width by -strokeWidth,
-  // we need to calculate the actual center of the drawn rectangle.
-
-  const playerStrokeWidth = 0;
-
-  const visualBodyX = x + playerStrokeWidth;
-  const visualBodyY = y + playerStrokeWidth;
-  const visualBodyW = width - playerStrokeWidth;
-  const visualBodyH = height - playerStrokeWidth;
-
-  const centerX = visualBodyX + visualBodyW / 2;
-  const centerY = visualBodyY + visualBodyH / 2;
-
-  // 3. Calculate Dot Position
-  // Logic: Push the dot to the edge, minus its own radius, minus a small padding (3px)
-  const padding = 3;
-  const maxOffset = visualBodyW / 2 - radius - padding;
-
-  // Safety: ensure offset is positive, otherwise fallback to 25% of width
-  const offsetDistance = maxOffset > 0 ? maxOffset : visualBodyW / 4;
-
-  let dotX = centerX;
-  let dotY = centerY;
-  const dirUpper = typeof dir == "string" ? dir.toUpperCase() : dir;
-  if (dirUpper == "U") {
-    dotY = centerY - offsetDistance;
-  } else if (dirUpper == "D") {
-    dotY = centerY + offsetDistance;
-  } else if (dirUpper == "L") {
-    dotX = centerX - offsetDistance;
-  } else if (dirUpper == "R") {
-    dotX = centerX + offsetDistance;
-  }
-
-  // 4. Draw the Direction Dot
-  drawCircle(app, {
-    x: dotX,
-    y: dotY,
-    radius: radius,
-    fillColor: "#fff",
-    strokeColor: "#FFFFFF",
-    strokeWidth: 0,
-  });
-}
-
+/**
+ * PLAYER RENDERING
+ */
 function drawPlayers(app) {
-  // Safety check
   if (!Array.isArray(visiblePlayers) || visiblePlayers.length === 0) {
-    // Clear all player graphics if no players
-    graphicsCache.players.forEach((graphics, id) => {
+    graphicsCache.players.forEach((graphics) => {
       app.stage.removeChild(graphics);
       graphics.destroy({ children: true });
     });
@@ -250,7 +180,7 @@ function drawPlayers(app) {
   const currentPlayerIds = new Set(visiblePlayers.map((p) => p.id));
   const gridStep = cellSize + strokeWidth * 2;
 
-  // Remove graphics for players no longer visible
+  // Remove players no longer visible
   graphicsCache.players.forEach((graphics, id) => {
     if (!currentPlayerIds.has(id)) {
       app.stage.removeChild(graphics);
@@ -260,7 +190,6 @@ function drawPlayers(app) {
   });
 
   visiblePlayers.forEach((player) => {
-    // Reuse or create player graphics
     let playerContainer = graphicsCache.players.get(player.id);
 
     if (!playerContainer) {
@@ -269,29 +198,23 @@ function drawPlayers(app) {
       app.stage.addChild(playerContainer);
     }
 
-    // Clear and redraw player
-    // playerContainer.removeChildren().forEach((child) => child.destroy());
-    playerContainer
-      .removeChildren(0, playerContainer.children.length)
-      .forEach((child) => {
-        child.destroy({ children: true, texture: false, baseTexture: false });
-      });
+    // Clear and redraw container
+    playerContainer.removeChildren().forEach((child) => {
+      child.destroy({ children: true, texture: false, baseTexture: false });
+    });
 
     const gridX = player.y * gridStep;
     const gridY = player.x * gridStep;
-
-    // Draw player body
-    const body = new PIXI.Graphics();
     const visualX = gridX + strokeWidth;
     const visualY = gridY + strokeWidth;
     const visualWidth = cellSize - strokeWidth;
     const visualHeight = cellSize - strokeWidth;
 
-    // Check if this is the current player
+    const body = new PIXI.Graphics();
     const isMyPlayer =
       typeof myPlayer !== "undefined" && player.id === myPlayer.id;
 
-    // Add glowing border for your player
+    // Glowing border for current player
     if (isMyPlayer) {
       body.roundRect(
         visualX - 3,
@@ -300,19 +223,19 @@ function drawPlayers(app) {
         visualHeight + 8,
         12
       );
-      body.fill({ color: 0xffffff, alpha: 0.5 }); // Green glow
+      body.fill({ color: 0xffffff, alpha: 0.5 });
     }
 
     body.roundRect(visualX, visualY, visualWidth, visualHeight, 10);
     body.fill({ color: player.color });
     playerContainer.addChild(body);
 
-    // Draw direction indicator
-    const radius = 7;
+    // Direction Indicator Dot
+    const dotRadius = 7;
     const centerX = visualX + visualWidth / 2;
     const centerY = visualY + visualHeight / 2;
     const padding = 3;
-    const maxOffset = visualWidth / 2 - radius - padding;
+    const maxOffset = visualWidth / 2 - dotRadius - padding;
     const offsetDistance = maxOffset > 0 ? maxOffset : visualWidth / 4;
 
     let dotX = centerX,
@@ -326,18 +249,21 @@ function drawPlayers(app) {
     else if (dirUpper == "R") dotX = centerX + offsetDistance;
 
     const dot = new PIXI.Graphics();
-    dot.circle(dotX, dotY, radius);
+    dot.circle(dotX, dotY, dotRadius);
     dot.fill({ color: 0xffffff });
     playerContainer.addChild(dot);
   });
 }
 
+/**
+ * EFFECTS & ANIMATIONS
+ */
+
 function fireLaser(app, { xStart, yStart, xEnd, yEnd, lineWidth }) {
   if (!lineWidth || lineWidth <= 0) return;
-
   const laser = new PIXI.Graphics();
 
-  // Glow (gold)
+  // Glow
   laser.poly([xStart, yStart, xEnd, yEnd], false).stroke({
     width: lineWidth * 3,
     color: 0xffd966,
@@ -345,7 +271,7 @@ function fireLaser(app, { xStart, yStart, xEnd, yEnd, lineWidth }) {
     cap: "round",
   });
 
-  // Core gold beam
+  // Core
   laser.poly([xStart, yStart, xEnd, yEnd], false).stroke({
     width: lineWidth,
     color: 0xffcc00,
@@ -354,117 +280,62 @@ function fireLaser(app, { xStart, yStart, xEnd, yEnd, lineWidth }) {
   });
 
   app.stage.addChild(laser);
-
   setTimeout(() => {
     if (laser.parent) {
       laser.parent.removeChild(laser);
       laser.destroy();
     }
   }, 200);
-
-  return laser;
 }
 
-/**
- * Show hit marker at target location (visible to all players)
- */
 function showHitMarker(app, targetX, targetY, isKill = false) {
-  if (!app) return;
+  if (!app || !app.stage) return;
 
   const gridStep = cellSize + strokeWidth * 2;
-  const gridX = targetY * gridStep; // Note: x/y swap in grid coordinates
-  const gridY = targetX * gridStep;
-  const visualX = gridX + strokeWidth;
-  const visualY = gridY + strokeWidth;
-  const visualWidth = cellSize - strokeWidth;
-  const centerX = visualX + visualWidth / 2;
-  const centerY = visualY + visualWidth / 2;
+  const centerX = targetY * gridStep + strokeWidth + cellSize / 2;
+  const centerY = targetX * gridStep + strokeWidth + cellSize / 2;
 
-  // Create blood splatter effect
-  const particleCount = isKill ? 15 : 10;
   const particles = [];
+  const particleCount = isKill ? 15 : 10;
 
-  // Main impact flash
+  // Flash Effect
   const flash = new PIXI.Graphics();
   flash.circle(centerX, centerY, isKill ? 20 : 12);
   flash.fill({ color: 0xff0000, alpha: 0.8 });
   app.stage.addChild(flash);
 
-  // Blood particles
   for (let i = 0; i < particleCount; i++) {
-    const angle =
-      (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.3;
-    const speed = (isKill ? 2 : 1.5) + Math.random() * 2;
-    const size = 2 + Math.random() * (isKill ? 4 : 3);
-
-    const particle = new PIXI.Graphics();
-    const red = 0xff0000 + Math.floor(Math.random() * 0x004400); // Slight color variation
-    particle.circle(0, 0, size);
-    particle.fill({ color: red });
-    particle.x = centerX;
-    particle.y = centerY;
-    particle.velocity = {
-      x: Math.cos(angle) * speed,
-      y: Math.sin(angle) * speed,
-    };
-    particle.drag = 0.95; // Slow down over time
-    app.stage.addChild(particle);
-    particles.push(particle);
+    const p = new PIXI.Graphics();
+    p.circle(0, 0, 2 + Math.random() * 3);
+    p.fill({ color: 0xff0000 });
+    p.x = centerX;
+    p.y = centerY;
+    p.velocity = { x: (Math.random() - 0.5) * 5, y: (Math.random() - 0.5) * 5 };
+    app.stage.addChild(p);
+    particles.push(p);
   }
 
-  // Damage number indicator
-  const damageText = new PIXI.Text(isKill ? "KILL!" : "-5", {
-    fontFamily: "Arial",
-    fontSize: isKill ? 24 : 18,
-    fill: isKill ? 0xffff00 : 0xff6666,
-    fontWeight: "bold",
-    stroke: 0x000000,
-    strokeThickness: 3,
-  });
-  damageText.anchor.set(0.5);
-  damageText.x = centerX;
-  damageText.y = centerY - 20;
-  app.stage.addChild(damageText);
-
-  // Animate everything
   let frame = 0;
   const interval = setInterval(() => {
     frame++;
-
-    // Animate particles
-    particles.forEach((particle, index) => {
-      particle.x += particle.velocity.x;
-      particle.y += particle.velocity.y;
-      particle.velocity.x *= particle.drag;
-      particle.velocity.y *= particle.drag;
-      particle.alpha = 1 - frame / 12;
-
-      if (particle.alpha <= 0 && particle.parent) {
-        particle.parent.removeChild(particle);
-        particle.destroy();
-        particles.splice(index, 1);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      if (p && !p.destroyed && p.parent) {
+        p.x += p.velocity.x;
+        p.y += p.velocity.y;
+        p.alpha = 1 - frame / 20;
+        if (p.alpha <= 0) {
+          p.destroy();
+          particles.splice(i, 1);
+        }
       }
-    });
-
-    // Fade flash
-    flash.alpha = Math.max(0, 0.8 - frame * 0.1);
-    if (flash.alpha <= 0 && flash.parent) {
-      flash.parent.removeChild(flash);
-      flash.destroy();
     }
-
-    // Float damage text up and fade
-    // damageText.y -= 2;
-    damageText.alpha = 1 - frame / 12;
-    if (damageText.alpha <= 0 && damageText.parent) {
-      damageText.parent.removeChild(damageText);
-      damageText.destroy();
-    }
-
-    if (frame >= 12 && particles.length === 0) {
+    flash.alpha = Math.max(0, 0.8 - frame * 0.05);
+    if (frame >= 20) {
       clearInterval(interval);
+      if (flash.parent) flash.destroy();
     }
-  }, 50);
+  }, 30);
 }
 
 /**
