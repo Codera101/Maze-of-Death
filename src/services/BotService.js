@@ -5,10 +5,12 @@ const Bot = require("../models/Bot");
 /**
  * @class BotService
  * @brief Service for managing AI bots in the game
+ * @details Now supports per-room bot tracking for multi-room architecture
  */
 class BotService {
   constructor() {
     this._bots = new Map(); // Map of botId -> Bot instance
+    this._botsByRoom = new Map(); // Map of roomId -> Set of botIds
     this._botUpdateIntervals = new Map(); // Map of botId -> interval ID
     this._botNames = [
       "Alpha",
@@ -97,18 +99,21 @@ class BotService {
     // Add bot to room's player list
     room.players.push(bot);
 
-    // Register bot in room service if provided
+    // Register bot in room service if provided (use actual room ID)
     if (roomService) {
-      // Access the userRoomMap directly to register the bot
-      roomService.userRoomMap.set(botId, "global");
+      roomService.userRoomMap.set(botId, room.roomId);
     }
 
-    // Store bot reference
+    // Store bot reference globally
     this._bots.set(botId, bot);
 
-    // console.log(
-    //   `Bot created: ${botName} (${difficulty}) at position (${spawnPos.x}, ${spawnPos.y})`
-    // );
+    // Track bot by room
+    if (!this._botsByRoom.has(room.roomId)) {
+      this._botsByRoom.set(room.roomId, new Set());
+    }
+    this._botsByRoom.get(room.roomId).add(botId);
+
+    // console.log(`🤖 Bot created: ${botName} (${difficulty}) in room ${room.roomId}`);
 
     return bot;
   }
@@ -140,7 +145,6 @@ class BotService {
       switch (decision.action) {
         case "move":
           if (decision.data && decision.data.direction) {
-            // console.log(`🤖 [BOT] ${bot.userName} moving ${decision.data.direction}`);
             roomControler.handlePlayerMove(botId, {
               dir: decision.data.direction,
             });
@@ -148,7 +152,6 @@ class BotService {
           break;
 
         case "shoot":
-          // console.log(`🤖 [BOT] ${bot.userName} shooting`);
           roomControler.handlePlayerShoot(botId);
           break;
 
@@ -159,10 +162,9 @@ class BotService {
         default:
           console.warn(`Unknown bot action: ${decision.action}`);
       }
-    }, 300); // Bot thinks every 100ms
+    }, 300); // Bot thinks every 300ms
 
     this._botUpdateIntervals.set(botId, intervalId);
-    // console.log(`Bot AI started: ${bot.userName}`);
   }
 
   /**
@@ -174,10 +176,6 @@ class BotService {
     if (intervalId) {
       clearInterval(intervalId);
       this._botUpdateIntervals.delete(botId);
-      const bot = this._bots.get(botId);
-      if (bot) {
-        // console.log(`Bot AI stopped: ${bot.userName}`);
-      }
     }
   }
 
@@ -205,7 +203,16 @@ class BotService {
       // Remove from bots map
       this._bots.delete(botId);
 
-      // console.log(`Bot removed: ${bot.userName}`);
+      // Remove from room tracking
+      const roomBots = this._botsByRoom.get(room.roomId);
+      if (roomBots) {
+        roomBots.delete(botId);
+        if (roomBots.size === 0) {
+          this._botsByRoom.delete(room.roomId);
+        }
+      }
+
+      // console.log(`🤖 Bot removed: ${bot.userName} from room ${room.roomId}`);
     }
   }
 
@@ -216,6 +223,7 @@ class BotService {
    * @param {RoomControler} roomControler - Room controller for bot actions
    * @param {string} difficulty - Bot difficulty ('easy', 'medium', 'hard', 'mixed')
    * @param {RoomService} roomService - Room service to register bots
+   * @param {number} maxTotalPlayers - Maximum players per room
    */
   addBots(
     room,
@@ -229,14 +237,12 @@ class BotService {
     const addedBots = [];
 
     for (let i = 0; i < count; i++) {
-      // Check total player limit if specified
+      // Check total player limit for this room
       if (maxTotalPlayers !== null) {
-        const humanPlayerCount = room.players.filter(p => !p.isBot).length;
-        const currentBotCount = this.getBotCount();
-        const totalPlayers = humanPlayerCount + currentBotCount;
+        const currentCount = room.getPlayerCount();
         
-        if (totalPlayers >= maxTotalPlayers) {
-          console.log(`Cannot add more bots: room at capacity (${totalPlayers}/${maxTotalPlayers})`);
+        if (currentCount >= maxTotalPlayers) {
+          console.log(`Cannot add more bots: room ${room.roomId} at capacity (${currentCount}/${maxTotalPlayers})`);
           break;
         }
       }
@@ -244,7 +250,6 @@ class BotService {
       try {
         let botDifficulty;
         if (difficulty === "mixed") {
-          // Random difficulty for mixed mode
           botDifficulty =
             difficulties[Math.floor(Math.random() * difficulties.length)];
         } else {
@@ -260,18 +265,21 @@ class BotService {
       }
     }
 
-    // console.log(`Added ${addedBots.length} bots to the game`);
+    console.log(`🤖 Added ${addedBots.length} bots to room ${room.roomId}`);
     return addedBots;
   }
 
   /**
-   * @brief Remove all bots from the game
-   * @param {Room} room - The room containing the bots
+   * @brief Remove all bots from a specific room
+   * @param {Room} room - The room to remove bots from
    */
-  removeAllBots(room) {
-    const botIds = Array.from(this._bots.keys());
+  removeAllBotsFromRoom(room) {
+    const roomBots = this._botsByRoom.get(room.roomId);
+    if (!roomBots) return;
+
+    const botIds = Array.from(roomBots);
     botIds.forEach((botId) => this.removeBot(botId, room));
-    // console.log("All bots removed");
+    console.log(`🤖 Removed all bots from room ${room.roomId}`);
   }
 
   /**
@@ -283,11 +291,21 @@ class BotService {
   }
 
   /**
-   * @brief Get count of active bots
-   * @returns {number} Number of active bots
+   * @brief Get count of active bots (global)
+   * @returns {number} Number of active bots across all rooms
    */
   getBotCount() {
     return this._bots.size;
+  }
+
+  /**
+   * @brief Get count of bots in a specific room
+   * @param {string} roomId - The room ID
+   * @returns {number} Number of bots in the room
+   */
+  getBotCountForRoom(roomId) {
+    const roomBots = this._botsByRoom.get(roomId);
+    return roomBots ? roomBots.size : 0;
   }
 
   /**
@@ -300,17 +318,18 @@ class BotService {
   }
 
   /**
-   * @brief Remove one bot (random selection) from the room
+   * @brief Remove one bot from a specific room
    * @param {Room} room - The room containing bots
    * @returns {string|null} The name of the removed bot, or null if no bots available
    */
   removeOneBot(room) {
-    if (this._bots.size === 0) {
+    const roomBots = this._botsByRoom.get(room.roomId);
+    if (!roomBots || roomBots.size === 0) {
       return null;
     }
 
-    // Get a random bot to remove
-    const botIds = Array.from(this._bots.keys());
+    // Get a random bot to remove from this room
+    const botIds = Array.from(roomBots);
     const randomBotId = botIds[Math.floor(Math.random() * botIds.length)];
     const bot = this._bots.get(randomBotId);
     const botName = bot ? bot.userName : null;
@@ -322,12 +341,56 @@ class BotService {
   }
 
   /**
-   * @brief Maintain a minimum number of bots in the room
+   * @brief Add one bot to a room (opposite of removeOneBot)
+   * @param {Room} room - The room to add bot to
+   * @param {RoomControler} roomControler - Room controller for bot actions
+   * @param {RoomService} roomService - Room service to register bot
+   * @param {number} maxTotalPlayers - Maximum players per room
+   * @returns {Bot|null} The added bot, or null if room is full
+   */
+  addOneBot(room, roomControler, roomService = null, maxTotalPlayers = null) {
+    if (maxTotalPlayers !== null && room.getPlayerCount() >= maxTotalPlayers) {
+      return null;
+    }
+
+    const difficulties = ["easy", "medium", "hard"];
+    const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+
+    try {
+      const bot = this.createBot(room, difficulty, roomService);
+      this.startBot(bot.id, roomControler);
+      console.log(`🤖 Added bot ${bot.userName} to room ${room.roomId}`);
+      return bot;
+    } catch (error) {
+      console.error(`Failed to add bot:`, error.message);
+      return null;
+    }
+  }
+
+  /**
+   * @brief Fill a room with bots up to the max player count
+   * @param {Room} room - The room to fill
+   * @param {RoomControler} roomControler - Room controller for bot actions
+   * @param {RoomService} roomService - Room service to register bots
+   * @param {number} maxTotalPlayers - Maximum players per room
+   */
+  fillRoomWithBots(room, roomControler, roomService = null, maxTotalPlayers = 10) {
+    const currentCount = room.getPlayerCount();
+    const botsNeeded = maxTotalPlayers - currentCount;
+    
+    if (botsNeeded > 0) {
+      this.addBots(room, botsNeeded, roomControler, "mixed", roomService, maxTotalPlayers);
+    }
+  }
+
+  /**
+   * @brief Maintain a minimum number of bots in a room
    * @param {Room} room - The room to maintain bots in
    * @param {number} minBots - Minimum number of bots to maintain
    * @param {RoomControler} roomControler - Room controller for bot actions
    * @param {string} difficulty - Bot difficulty
    * @param {RoomService} roomService - Room service to register bots
+   * @param {number} maxTotalPlayers - Maximum players per room
    */
   maintainBotCount(
     room,
@@ -337,11 +400,10 @@ class BotService {
     roomService = null,
     maxTotalPlayers = null
   ) {
-    const humanPlayerCount = room.players.filter(p => !p.isBot).length;
-    const currentBotCount = this.getBotCount();
-    const totalPlayers = humanPlayerCount + currentBotCount;
+    const currentBotCount = this.getBotCountForRoom(room.roomId);
+    const totalPlayers = room.getPlayerCount();
     
-    // Calculate how many bots we can add without exceeding the limit
+    // Calculate how many bots we can add
     let botsToAdd = minBots - currentBotCount;
     
     if (maxTotalPlayers !== null) {
@@ -350,7 +412,6 @@ class BotService {
     }
 
     if (botsToAdd > 0) {
-      // console.log(`Maintaining bot count: adding ${botsToAdd} bots`);
       this.addBots(room, botsToAdd, roomControler, difficulty, roomService, maxTotalPlayers);
     }
   }

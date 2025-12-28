@@ -18,6 +18,7 @@ if (typeof socket !== "undefined") {
     // Initialize myPlayer with all properties from server
     myPlayer.id = player.id;
     myPlayer.username = player.userName;
+    myPlayer.roomId = data.roomId;
     myPlayer.x = player.x;
     myPlayer.y = player.y;
     myPlayer.dir = player.dir;
@@ -31,6 +32,8 @@ if (typeof socket !== "undefined") {
     if (typeof updatePlayerInfo === "function") {
       updatePlayerInfo(player);
     }
+    
+    console.log(`Joined room: ${data.roomId}`);
   });
 
   socket.on("room_full", (data) => {

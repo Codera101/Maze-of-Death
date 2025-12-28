@@ -54,6 +54,7 @@ let myPlayer;
 myPlayer = {
   id: null,
   username: null,
+  roomId: null, // Track which room the player is in
   x: 0,
   y: 0,
   dir: "U",
