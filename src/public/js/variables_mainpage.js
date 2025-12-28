@@ -50,7 +50,7 @@ let visiblePlayers = [];
 
 let myPlayer = {
   id: null,
-  username: null,
+  userName: null,
   roomId: null, // Track which room the player is in
   x: 0,
   y: 0,
