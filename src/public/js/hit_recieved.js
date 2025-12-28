@@ -1,4 +1,4 @@
-import { app } from "./maze.js";
+// import { app } from "./maze.js"; // global app
 
 let hitSound = new Audio("../sounds/hitHurt.wav");
 console.log(hitSound);
