@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/bottom_panel.css" />
     <link rel="stylesheet" href="css/maze.css" />
     <link rel="stylesheet" href="css/messages.css" />
+    <link rel="stylesheet" href="css/mobile_style.css" />
     <script
       type="module"
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
@@ -47,7 +48,10 @@
           <div id="maze-content"></div>
         </div>
 
-        <div id="right-panel">
+        <div
+          id="right-panel"
+          style="overflow-y: hidden; max-height: max-content"
+        >
           &nbsp;
           <div id="right-panel-title">
             <ion-icon name="ribbon"></ion-icon>
