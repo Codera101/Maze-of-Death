@@ -30,8 +30,8 @@ const reloadCost = document.querySelector("#reload-cost");
 const killMessage = document.querySelector("#kill-message");
 
 // Socket Connection
-const socket = io();
-// const socket = io("http://localhost:8080");
+// const socket = io();
+const socket = io("http://localhost:3000");
 // const socket = io("https://maze-of-death-production.up.railway.app");
 
 // Maze Variables

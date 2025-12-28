@@ -33,17 +33,18 @@ if (typeof socket !== "undefined") {
     }
   });
 
-  socket.on("room_full", (data) => {
-    alert(data.message || "Room is full. Please try again later.");
-    // Redirect back to home page
-    window.location.href = "/";
-  });
+  // socket.on("room_full", (data) => {
+  //   alert(data.message || "Room is full. Please try again later.");
+  //   // Redirect back to home page
+  //   window.location.href = "/";
+  // });
 
-  socket.on("username_taken", (data) => {
-    alert(data.message || "Username is already taken. Please choose a different name.");
-    // Redirect back to home page
-    window.location.href = "/";
-  });
+  // socket.on("username_taken", (data) => {
+  //   alert(data.message || "Username is already taken. Please choose a different name.");
+  //   // Redirect back to home page
+  //   window.location.href = "/";
+  // });
+
 
   // Show hit animation on any player (visible to all)
   socket.on("player_hit_animation", ({ targetId, targetX, targetY }) => {
