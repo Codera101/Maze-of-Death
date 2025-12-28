@@ -228,7 +228,7 @@ io.on("connection", (socket) => {
       transportManagers.delete(socket.id);
     }
 
-    roomControler.handlePlayerDisconnect(socket.id, roomService, MIN_BOT_COUNT);
+
     if (refreshInterval) {
       clearInterval(refreshInterval);
     }
@@ -280,30 +280,9 @@ server.listen(PORT, HOST, () => {
     console.log(`WebRTC server (geckos.io) listening on port ${WEBRTC_PORT}`);
   }
 
-  // Add initial bots after a short delay to ensure everything is initialized
-  setTimeout(() => {
-    // console.log(`Adding ${INITIAL_BOT_COUNT} initial bots to the game...`);
-    botService.addBots(
-      GameRoom,
-      INITIAL_BOT_COUNT,
-      systemRoomControler,
-      "mixed", // Use mixed difficulty
-      roomService, // Pass room service for registration
-      MAX_TOTAL_PLAYERS
-    );
-  }, 1000);
-
-  // Maintain minimum bot count (check every 30 seconds)
-  setInterval(() => {
-    botService.maintainBotCount(
-      GameRoom,
-      MIN_BOT_COUNT,
-      systemRoomControler,
-      "mixed",
-      roomService, // Pass room service for registration
-      MAX_TOTAL_PLAYERS
-    );
-  }, 30000);
+  // Note: Bot initialization disabled - rooms now create bots dynamically when players join
+  console.log(`🎮 Multi-room mode enabled (max ${MAX_TOTAL_PLAYERS} players per room)`);
+  console.log(`🏠 Rooms are created dynamically when players join`);
 });
 
 module.exports = { app, server, io, roomService, botService };
