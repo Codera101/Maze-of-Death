@@ -33,7 +33,6 @@ if (document.readyState === "loading") {
 
 socket.on("target_hit", (data) => {
   laserSound.play();
-  // laserSound.play();
   const {
     status,
     resultType,

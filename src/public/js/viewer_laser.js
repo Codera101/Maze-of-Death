@@ -54,7 +54,7 @@ function showSpectatorText(text, isKill) {
   }, 2500);
 }
 
-function drawSpectatorLaser(currentApp, xStart, yStart, xEnd, yEnd, isKill) {
+function drawSpectatorLaser(currentApp, xStart, yStart, xEnd, yEnd) {
   if (!currentApp || !currentApp.stage) return;
 
   const laser = new PIXI.Graphics();
@@ -127,9 +127,7 @@ if (typeof socket !== "undefined") {
     const xEnd = data.to.y * step + step / 2;
     const yEnd = data.to.x * step + step / 2;
 
-    // console.log(`📍 Drawing from [${xStart},${yStart}] to [${xEnd},${yEnd}]`);
-
-    drawSpectatorLaser(currentApp, xStart, yStart, xEnd, yEnd, data.isKill);
+    drawSpectatorLaser(currentApp, xStart, yStart, xEnd, yEnd);
     drawImpactEffect(currentApp, xEnd, yEnd, data.isKill);
 
     if (typeof showHitMarker === "function") {
