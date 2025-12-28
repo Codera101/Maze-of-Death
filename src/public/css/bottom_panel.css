@@ -63,9 +63,9 @@
 }
 
 .crosshair-icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    font-size: 18px;
     color: var(--color-ammo);
+    
 }
 
 /* --- Bullet Indicators --- */

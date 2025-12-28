@@ -10,21 +10,15 @@
 
 
 #right-panel {
-    /* background-color: var(--color-dark-elevated); */
     background-color: #1C1C2E;
     width: 25rem;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    /* justify-content: center;
-    align-items: start; */
     padding: 5px;
     gap: 10px;
-    /* gap: 20px; */
-    
-    /* border-left: 2px solid var(--color-neon-blue-glow); */
-    
+
 }
 
 #right-panel-title {
@@ -32,24 +26,16 @@
     font-size: 24px;
     color: var(--color-text-primary);
     font-weight: bold;
-    /* background-color: red; */
     border-bottom: 2px solid #2C9BFF;
-    /* margin-top: 10px; */
-    /* align-items: center; */
     text-align: center;
 }
 
 #right-panel-list {
-    /* display: block; */
-    /* margin-top: 1000px; */
-    /* height: 550px; */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     list-style: none;
-    /* justify-content: center; */
-    /* align-items: center; */
     gap: 20px;
     width: 100%;
 }
@@ -63,11 +49,12 @@
     width: 90%;
     background-color: var(--color-dark-surface);
     height: 50px;
-    border: 1px solid var(--color-text-dim);
+    border: none;
     border-radius: 5px;
-    color: var(--color-text-primary);    
+    color: var(--color-text-primary);
 }
-#player-name{
+
+#player-name {
     font-size: 18px;
 }
 

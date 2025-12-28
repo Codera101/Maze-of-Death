@@ -10,6 +10,7 @@
     --color-neon-blue-glow: rgba(44, 155, 255, 0.5);
     --color-neon-green: #39FF85;
     --color-neon-green-glow: rgba(57, 255, 133, 0.5);
+    --color-warning-glow: rgb(255, 184, 44, 0.5);
 
     --color-text-primary: #FFFFFF;
     --color-text-secondary: #A0A0B8;
@@ -17,7 +18,7 @@
 
     --color-danger: #FF2C47;
     --color-success: #39FF85;
-    --color-warning: #FFB82C;
+    --color-warning: rgb(255, 184, 44);
     --color-pink: #FF6B9D;
 }
 
@@ -29,7 +30,7 @@
 }
 
 body {
-    background-color: #1C1C2E; 
+    background-color: #1C1C2E;
 }
 
 #container {
@@ -40,7 +41,7 @@ body {
 
 #header {
     /* width: 100vh; */
-     background-color: var(--color-dark-elevated);
+    background-color: var(--color-dark-elevated);
     background-color: #1C1C2E;
 
     display: flex;
@@ -52,7 +53,7 @@ body {
 
 #health {
     background-color: var(--color-dark-bg);
-    background-color: rgba(13, 13, 0.08); 
+    background-color: rgba(13, 13, 0.08);
 
     width: 250px;
     display: flex;
@@ -115,7 +116,7 @@ body {
 
 .stats-box {
     background-color: var(--color-dark-bg);
-    background-color: rgba(13, 13, 0.08); 
+    background-color: rgba(13, 13, 0.08);
 
     display: flex;
     align-items: center;
@@ -152,7 +153,8 @@ body {
 #score-value {
     color: var(--color-neon-green);
 }
-#score-label{
+
+#score-label {
     color: var(--color-neon-green);
 }
 
@@ -168,7 +170,7 @@ body {
     color: var(--color-danger);
 }
 
-#kills-label{
+#kills-label {
     color: var(--color-danger);
 }
 
@@ -176,10 +178,7 @@ body {
     border: none;
     border-radius: 8px;
     background-color: var(--color-danger);
-    /* position: relative; */
     width: 120px;
-    /* height: 40px; */
-    /* left: 370px; */
     padding: 5px 10px;
     cursor: pointer;
     display: flex;
@@ -196,4 +195,28 @@ body {
 #exit-label {
     color: var(--color-text-primary);
     font-size: 20px;
+}
+
+#music-btn {
+    background-color: var(--color-dark-bg);
+    background-color: rgba(13, 13, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--color-warning-glow);
+    cursor: pointer;
+}
+
+#music-btn:active {
+    outline: none;
+}
+
+#music-icon {
+    font-size: 28px;
+    color: var(--color-warning);
 }

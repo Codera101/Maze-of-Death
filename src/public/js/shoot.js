@@ -5,16 +5,16 @@ window.addEventListener("keydown", (e) => {
     // laserSound.play();
   }
 });
-window.addEventListener("click", (e) => {
-  if (e.button === 0) {
-    socket.emit("shoot");
-  }
-});
+// window.addEventListener("click", (e) => {
+//   if (e.button === 0) {
+//     socket.emit("shoot");
+//   }
+// });
 
 let laserSound = new Audio("../sounds/laserShoot.wav");
 let laserHitWallSound = new Audio("../sounds/laserHitWall.wav");
 let laserHitPlayerSound = new Audio("../sounds/laserHitPlayer.wav");
-let laserKillPlayerSound = new Audio("../sounds/KillPlayer.wav");
+let laserKillPlayerSound = new Audio("../sounds/killPlayer.wav");
 console.log(laserSound);
 
 // Mobile Shoot Control
