@@ -267,9 +267,11 @@ input:-webkit-autofill {
   flex-shrink: 0;
   padding: 12px 35px;
   margin: 0;
-  background: linear-gradient(90deg,
-      var(--color-header-gradient-start),
-      var(--color-header-gradient-end));
+  background: linear-gradient(
+    90deg,
+    var(--color-header-gradient-start),
+    var(--color-header-gradient-end)
+  );
   border-radius: 12px 12px 0px 0px;
 }
 
@@ -455,11 +457,15 @@ ion-icon {
 .grid_bg {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(var(--color-grid-line-primary), 0.35) 1px,
-      transparent 1px),
-    linear-gradient(90deg,
+  background-image: linear-gradient(
+      rgba(var(--color-grid-line-primary), 0.35) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
       rgba(var(--color-grid-line-secondary), 0.35) 1px,
-      transparent 1px);
+      transparent 1px
+    );
   background-size: 50px 50px;
   animation: move_grid 25s linear infinite;
   opacity: 0.48;
@@ -478,8 +484,114 @@ ion-icon {
 .color_bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom right,
-      rgba(var(--color-gradient-red), 0.22),
-      rgba(var(--color-body-bg-rgb), 0),
-      rgba(var(--color-gradient-blue), 0.2));
+  background: linear-gradient(
+    to bottom right,
+    rgba(var(--color-gradient-red), 0.22),
+    rgba(var(--color-body-bg-rgb), 0),
+    rgba(var(--color-gradient-blue), 0.2)
+  );
+}
+
+/*? style page landscape for mobile */
+@media screen and (max-height: 500px) and (min-width: 500px) {
+  body {
+    padding: 20px 0;
+    align-items: flex-start;
+    overflow-y: hidden;
+  }
+
+  .menu_container {
+    gap: 10px;
+  }
+
+  .title {
+    font-size: 35px;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    margin-bottom: 2px;
+    font-size: 12px;
+  }
+
+  .input_username,
+  .button_play,
+  .button_spectator,
+  .button_how_to_play {
+    margin-bottom: 10px;
+    padding: 6px 10px;
+    max-width: 300px;
+  }
+
+  .button_play button,
+  .button_spectator button,
+  .button_how_to_play button {
+    font-size: 18px;
+  }
+
+  .popup_container {
+    width: 95vw;
+    max-height: 95vh;
+  }
+
+  .header h1 {
+    font-size: 30px;
+  }
+
+  .content {
+    padding: 15px 25px;
+    gap: 10px;
+  }
+
+  .content strong {
+    font-size: 18px;
+  }
+
+  .footer_paragraph {
+    margin-top: 0px;
+    margin-bottom: 12px;
+    font-size: 10px;
+  }
+}
+
+/**--------------  (Portrait)  ---------------- */
+
+@media (max-width: 480px) {
+  .title {
+    font-size: clamp(38px, 10vw, 55px);
+    white-space: nowrap;
+    letter-spacing: -1px;
+    width: 100vw;
+    text-align: center;
+    font-weight: 900;
+    margin-bottom: 5px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    margin-bottom: 30px;
+    padding: 0 10px;
+  }
+
+  .input_username,
+  .button_play,
+  .button_spectator,
+  .button_how_to_play {
+    width: 85%;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px 12px;
+  }
+
+  .button_play button,
+  .button_spectator button,
+  .button_how_to_play button {
+    font-size: 18px;
+  }
+
+  .menu_container ion-icon {
+    font-size: 20px;
+    margin-right: 8px;
+  }
 }
