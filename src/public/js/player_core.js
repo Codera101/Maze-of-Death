@@ -13,8 +13,6 @@ function updatePlayerInfo(playerData) {
   updateHealth(playerData.health);
   scoreValue.textContent = playerData.score;
   killsValue.textContent = playerData.kill_count;
-
-  // Update ammo display if the function exists
   if (typeof updateAmmoDisplay === "function") {
     updateAmmoDisplay(playerData.bullets, 5);
   }
@@ -122,7 +120,6 @@ const setupMobileControls = () => {
     }
   });
 };
-
 // Initialize mobile controls
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", setupMobileControls);

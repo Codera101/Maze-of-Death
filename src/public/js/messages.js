@@ -4,16 +4,13 @@ function displayKillMessage(victim_name, killer_name) {
     return;
   }
 
-  // Keep max 3 messages - properly remove old ones
   while (killMessage.children.length >= 3) {
     const oldMessage = killMessage.firstChild;
     killMessage.removeChild(oldMessage);
-    // Clear any pending timeouts to prevent memory leaks
     if (oldMessage._removeTimeout) {
       clearTimeout(oldMessage._removeTimeout);
     }
   }
-
   let message = document.createElement("div");
   message.className = "kill-notification";
 
@@ -26,11 +23,11 @@ function displayKillMessage(victim_name, killer_name) {
     message.style.boxShadow = "0 0 15px rgba(255, 0, 0, 0.5)";
   }
 
-  message.innerHTML = `<span style="color: #ff4444; font-weight: bold;">${killer_name}</span> <span style="color: #ccc;">killed</span> <span style="color: #4444ff; font-weight: bold;">${victim_name}</span>`;
+  message.innerHTML = `<span style="color: #ff4444; font-weight: bold;">${killer_name}</span>
+  <span style="color: #ccc;">killed</span>
+  <span style="color: #4444ff; font-weight: bold;">${victim_name}</span>`;
   killMessage.appendChild(message);
 
-  // Auto-remove this specific message after 5 seconds
-  // Store timeout ID to allow cleanup if needed
   message._removeTimeout = setTimeout(() => {
     if (message.parentNode === killMessage) {
       killMessage.removeChild(message);

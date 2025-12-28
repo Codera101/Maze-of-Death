@@ -1,6 +1,3 @@
-// import { app } from "./maze.js"
-// import { rows, cols, cellSize, strokeWidth, mazeLayout } from "./config.js"
-
 // Socket setup
 // const socket = io("http://localhost:3000");
 

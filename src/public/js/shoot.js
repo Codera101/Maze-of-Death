@@ -5,6 +5,7 @@ window.addEventListener("keydown", (e) => {
 });
 
 let laserSound = new Audio("../sounds/laserShoot.wav");
+laserSound.volume = 0.1;
 let laserHitWallSound = new Audio("../sounds/laserHitWall.wav");
 let laserHitPlayerSound = new Audio("../sounds/laserHitPlayer.wav");
 let laserKillPlayerSound = new Audio("../sounds/killPlayer.wav");

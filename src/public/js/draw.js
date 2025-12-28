@@ -165,11 +165,6 @@ function drawMaze(app) {
   app.stage.addChild(graphicsCache.maze);
 }
 
-/**
- * FIXED: Player drawing logic.
- * Calculates position dynamically to push the dot to the edge
- * based on the direction.
- */
 function drawPlayer(
   app,
   {
@@ -753,5 +748,5 @@ function animateDeath(app, playerId) {
 
 function updateMaze(app) {
   drawMaze(app); // Will skip if maze unchanged
-  drawPlayers(app); 
+  drawPlayers(app);
 }

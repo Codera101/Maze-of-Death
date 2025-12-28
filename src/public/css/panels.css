@@ -83,7 +83,7 @@ body {
 
 /* --- Health Bar --- */
 #health {
-    background-color: rgba(13, 13, 13, 0.08);
+    background-color: rgba(13, 13, 13, 0.5);
     width: 250px;
     display: flex;
     align-items: center;
@@ -134,7 +134,7 @@ body {
 }
 
 .stats-box {
-    background-color: rgba(13, 13, 13, 0.08);
+    background-color: rgba(13, 13, 13, 0.5);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -182,7 +182,7 @@ body {
 
 /* --- Ammo HUD --- */
 .ammo-card {
-    background-color: rgba(13, 13, 13, 0.08);
+    background-color: rgba(13, 13, 13, 0.5);
     border-radius: 0.75rem;
     padding: 5px 10px;
     border: 1px solid rgba(255, 184, 44, 0.3);
@@ -298,7 +298,7 @@ body {
 
 /* --- Buttons & Footer --- */
 #music-btn {
-    background-color: rgba(13, 13, 13, 0.08);
+    background-color: rgba(13, 13, 13, 0.5);
     display: flex;
     align-items: center;
     justify-content: space-between;

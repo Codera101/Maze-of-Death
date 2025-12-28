@@ -1,6 +1,3 @@
-// import { app as pixiApp } from "./maze.js";
-// window.app = pixiApp;
-
 /** @format */
 
 const CELL_SIZE = typeof cellSize !== "undefined" ? cellSize : 40;
