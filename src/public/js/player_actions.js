@@ -1,5 +1,5 @@
 // !! --------------- IMPORTS --------------- !!
-import { app } from "./maze.js";
+// import { app } from "./maze.js";
 import "./variables_mainpage.js";
 import "./draw.js";
 // !! --------------- AUDIO SETUP --------------- !!

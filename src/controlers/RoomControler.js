@@ -47,22 +47,36 @@ class RoomControler {
     if (room.getPlayerCount() >= this.maxTotalPlayers && botCount > 0) {
       const removedBot = this.botService.removeOneBot(room);
       if (removedBot) {
-        console.log(`🤖 Removed bot ${removedBot} to make space for player ${username}`);
+        console.log(
+          `🤖 Removed bot ${removedBot} to make space for player ${username}`
+        );
       }
-    } else if (room.getPlayerCount() >= this.maxTotalPlayers && botCount === 0) {
+    } else if (
+      room.getPlayerCount() >= this.maxTotalPlayers &&
+      botCount === 0
+    ) {
       // All humans, need new room
       room = this.roomService.createRoom();
     }
 
     // Join the player to the room
-    const result = this.roomService.playerJoinRoom(username, playerId, room.roomId);
+    const result = this.roomService.playerJoinRoom(
+      username,
+      playerId,
+      room.roomId
+    );
 
     if (result) {
       const { player, roomId } = result;
-      
+
       // If this is a new room or room has few players, fill with bots
       if (this.botService && room.getPlayerCount() < this.maxTotalPlayers) {
-        this.botService.fillRoomWithBots(room, this, this.roomService, this.maxTotalPlayers);
+        this.botService.fillRoomWithBots(
+          room,
+          this,
+          this.roomService,
+          this.maxTotalPlayers
+        );
       }
 
       const stats = player.serialize();
@@ -73,8 +87,12 @@ class RoomControler {
 
       // Draw the maze for the new player
       this.drawMazeForPlayer(playerId, roomId);
-      
-      console.log(`👤 Player ${username} joined room ${roomId} (${room.getPlayerCount()}/${this.maxTotalPlayers})`);
+
+      console.log(
+        `👤 Player ${username} joined room ${roomId} (${room.getPlayerCount()}/${
+          this.maxTotalPlayers
+        })`
+      );
     }
   }
 
@@ -85,7 +103,7 @@ class RoomControler {
     const { dir } = data;
     const roomId = this.roomService.getPlayerRoom(playerId);
     if (!roomId) return;
-    
+
     const room = this.roomService.getRoom(roomId);
     const player = room?.players?.find((p) => p.id === playerId);
 
@@ -122,11 +140,11 @@ class RoomControler {
       if (actionMessage) {
         const { ActionMessageTypes } = require("../models/Messages");
         const status = actionMessage.type !== ActionMessageTypes.INVALID;
-        
+
         // Get the room for this player
         const roomId = this.roomService.getPlayerRoom(playerId);
         if (!roomId) return;
-        
+
         const room = this.roomService.getRoom(roomId);
         const shooter = room.getPlayerById(playerId);
 
@@ -161,6 +179,18 @@ class RoomControler {
         ) {
           const victim = room.getPlayerById(actionMessage.actionTarget);
           const shooterPlayer = room.getPlayerById(actionMessage.actionSource);
+
+          // ------------------- SPECTATOR SHOT BROADCAST -------------------
+
+          if (victim && shooterPlayer) {
+            this.broadcastToRoom(room, "spectator:shot", {
+              from: { x: shooterPlayer.x, y: shooterPlayer.y },
+              to: { x: victim.x, y: victim.y },
+              isKill: actionMessage.type === ActionMessageTypes.KILL,
+            });
+          }
+
+          // ----------------------------------------------------------------
 
           if (victim && shooterPlayer) {
             if (!victim.isBot) {
@@ -258,8 +288,17 @@ class RoomControler {
     this.roomService.playerLeaveRoom(playerId);
 
     // If a human player left, add a bot to replace them
-    if (!wasBot && this.botService && room.getPlayerCount() < this.maxTotalPlayers) {
-      this.botService.addOneBot(room, this, this.roomService, this.maxTotalPlayers);
+    if (
+      !wasBot &&
+      this.botService &&
+      room.getPlayerCount() < this.maxTotalPlayers
+    ) {
+      this.botService.addOneBot(
+        room,
+        this,
+        this.roomService,
+        this.maxTotalPlayers
+      );
     }
 
     // Check if room should be deleted (only bots remain)
@@ -270,7 +309,9 @@ class RoomControler {
       // Delete the room
       this.roomService.deleteRoom(roomId);
     } else {
-      console.log(`👋 Player left room ${roomId} (${room.getHumanCount()} humans, ${room.getBotCount()} bots)`);
+      console.log(
+        `👋 Player left room ${roomId} (${room.getHumanCount()} humans, ${room.getBotCount()} bots)`
+      );
     }
   }
 
@@ -295,7 +336,7 @@ class RoomControler {
    */
   refreshRankings() {
     const allRooms = this.roomService.getAllRooms();
-    
+
     allRooms.forEach((room) => {
       let rankings = room.players ?? [];
       rankings = rankings
@@ -440,13 +481,18 @@ class RoomControler {
   handleViewerJoin(viewerID) {
     // Get a random room for the viewer
     let room = this.roomService.getRandomRoom();
-    
+
     // If no rooms exist, create one
     if (!room) {
       room = this.roomService.createRoom();
       // Fill with bots
       if (this.botService) {
-        this.botService.fillRoomWithBots(room, this, this.roomService, this.maxTotalPlayers);
+        this.botService.fillRoomWithBots(
+          room,
+          this,
+          this.roomService,
+          this.maxTotalPlayers
+        );
       }
     }
 
