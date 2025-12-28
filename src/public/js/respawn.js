@@ -1,4 +1,4 @@
-// import { app } from "./maze.js"; // global app
+import { app } from "./maze.js";
 socket.on("respawn", (player) => {
   // Update myPlayer properties from server response
   myPlayer.id = player.id;
