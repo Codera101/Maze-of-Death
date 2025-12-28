@@ -1,4 +1,4 @@
-// import { app } from "./maze.js"; // global app
+import { app } from "./maze.js";
 
 let lastUpdateTime = 0;
 const UPDATE_THROTTLE = 100; // Minimum time between redraws in ms (matches server interval/4)

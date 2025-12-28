@@ -122,12 +122,16 @@ class RoomControler {
       if (actionMessage) {
         const { ActionMessageTypes } = require("../models/Messages");
         const status = actionMessage.type !== ActionMessageTypes.INVALID;
-        const room = this.roomService.getRoom("global");
+        
+        // Get the room for this player
+        const roomId = this.roomService.getPlayerRoom(playerId);
+        if (!roomId) return;
+        
+        const room = this.roomService.getRoom(roomId);
+        const shooter = room.getPlayerById(playerId);
 
-        const shooterPlayer = room.getPlayerById(playerId);
-        if (!shooterPlayer) return;
-
-        if (!shooterPlayer.isBot) {
+        // Send detailed shot result to shooter
+        if (shooter && !shooter.isBot) {
           const shotData = {
             status,
             resultType: actionMessage.type,
@@ -146,87 +150,88 @@ class RoomControler {
               shotData.targetName = victim.userName;
             }
           }
+
           this.messenger.notifyGivenUser(playerId, "target_hit", shotData);
         }
 
-        const victim = actionMessage.actionTarget
-          ? room.getPlayerById(actionMessage.actionTarget)
-          : null;
+        // Handle HIT or KILL events
+        if (
+          actionMessage.type === ActionMessageTypes.HIT ||
+          actionMessage.type === ActionMessageTypes.KILL
+        ) {
+          const victim = room.getPlayerById(actionMessage.actionTarget);
+          const shooterPlayer = room.getPlayerById(actionMessage.actionSource);
 
-        this.messenger.broadcastToAll("spectator:shot", {
-          shooterId: shooterPlayer.id,
-          shooterName: shooterPlayer.userName,
-          targetId: victim ? victim.id : null,
-          targetName: victim ? victim.userName : "Wall",
-          from: { x: shooterPlayer.x, y: shooterPlayer.y },
-          to: victim
-            ? { x: victim.x, y: victim.y }
-            : actionMessage.wallHitCoords || {
-                x: shooterPlayer.x,
-                y: shooterPlayer.y,
-              },
-          isKill: actionMessage.type === ActionMessageTypes.KILL,
-          type: victim ? "player" : "wall",
-        });
-
-        if (victim) {
-          if (!victim.isBot) {
-            this.messenger.notifyGivenUser(victim.id, "got_hit", {
-              dir: actionMessage.actionDirection,
-              shooter_name: shooterPlayer.userName,
-            });
-          }
-
-          this.messenger.broadcastToAll("player_hit_animation", {
-            targetId: victim.id,
-            targetX: victim.x,
-            targetY: victim.y,
-            shooterId: shooterPlayer.id,
-            direction: actionMessage.actionDirection,
-          });
-
-          if (actionMessage.type === ActionMessageTypes.KILL) {
-            const respawnTime = room.respawnTime || 3000;
-
+          if (victim && shooterPlayer) {
             if (!victim.isBot) {
-              this.messenger.notifyGivenUser(victim.id, "died", {
-                killer_name: shooterPlayer.userName,
-                respawn_time: respawnTime,
+              this.messenger.notifyGivenUser(victim.id, "got_hit", {
+                dir: actionMessage.actionDirection,
+                shooter_name: shooterPlayer.userName,
               });
             }
 
-            this.messenger.broadcastToAll("player_death_animation", {
+            // Broadcast to room only (use room's players/viewers)
+            this.broadcastToRoom(room, "player_hit_animation", {
               targetId: victim.id,
               targetX: victim.x,
               targetY: victim.y,
-              targetName: victim.userName,
-              killerId: shooterPlayer.id,
-              killerName: shooterPlayer.userName,
+              shooterId: shooterPlayer.id,
+              direction: actionMessage.actionDirection,
             });
 
-            this.messenger.broadcastToAll("kill_message", {
-              victim_name: victim.userName,
-              killer_name: shooterPlayer.userName,
-            });
+            if (actionMessage.type === ActionMessageTypes.KILL) {
+              const respawnTime = room ? room.respawnTime : 3000;
 
-            setTimeout(() => {
-              let newPosition = room.generateValidPosition();
-              victim.resetPlayerDataForRespawn(newPosition.x, newPosition.y);
               if (!victim.isBot) {
-                const stats = victim.serialize();
-                this.messenger.notifyGivenUser(
-                  victim.id,
-                  "respawn_done",
-                  stats
-                );
+                this.messenger.notifyGivenUser(victim.id, "died", {
+                  killer_name: shooterPlayer.userName,
+                  respawn_time: respawnTime,
+                });
               }
-            }, respawnTime);
+
+              this.broadcastToRoom(room, "player_death_animation", {
+                targetId: victim.id,
+                targetX: victim.x,
+                targetY: victim.y,
+                targetName: victim.userName,
+                killerId: shooterPlayer.id,
+                killerName: shooterPlayer.userName,
+              });
+
+              this.broadcastToRoom(room, "kill_message", {
+                victim_name: victim.userName,
+                killer_name: shooterPlayer.userName,
+              });
+
+              setTimeout(() => {
+                let newPosition = room.generateValidPosition();
+                victim.resetPlayerDataForRespawn(newPosition.x, newPosition.y);
+                if (!victim.isBot) {
+                  const stats = victim.serialize();
+                  this.messenger.notifyGivenUser(
+                    victim.id,
+                    "respawn_done",
+                    stats
+                  );
+                }
+              }, respawnTime);
+            }
           }
+        }
+      } else {
+        const roomId = this.roomService.getPlayerRoom(playerId);
+        const room = roomId ? this.roomService.getRoom(roomId) : null;
+        const shooter = room?.getPlayerById(playerId);
+        if (shooter && !shooter.isBot) {
+          this.messenger.notifyGivenUser(playerId, "target_hit", {
+            status: false,
+          });
         }
       }
     } catch (error) {
       console.error(`❌ [SHOOT ERROR] Player ${playerId}:`, error.message);
-      const room = this.roomService.getRoom("global");
+      const roomId = this.roomService.getPlayerRoom(playerId);
+      const room = roomId ? this.roomService.getRoom(roomId) : null;
       const shooter = room?.getPlayerById(playerId);
       if (shooter && !shooter.isBot) {
         this.messenger.notifyGivenUser(playerId, "target_hit", {
@@ -412,32 +417,25 @@ class RoomControler {
       if (!room.players) return;
 
       room._viewers.forEach((viewer) => {
-        this.messenger.notifyGivenUser(viewer.id, "refresh_players", {
-          visible_player_list: [],
-        });
-      });
-      return;
-    }
+        const visiblePlayers = room.players.filter((p) => p.health > 0);
+        const visibleData = visiblePlayers.map((p) => ({
+          id: p.id,
+          username: p.userName,
+          x: p.x,
+          y: p.y,
+          dir: p.direction,
+          color: p.color,
+        }));
 
-    room._viewers.forEach((viewer) => {
-      const visiblePlayers = room.players.filter((p) => p.health > 0);
-      const visibleData = visiblePlayers.map((p) => ({
-        id: p.id,
-        username: p.userName,
-        x: p.x,
-        y: p.y,
-        dir: p.direction,
-        color: p.color,
-      }));
-      // console.log(`Refreshing visible players for viewer ${viewer.id}:`, visibleData);
-      this.messenger.notifyGivenUser(viewer.id, "refresh_players", {
-        visible_player_list: visibleData,
+        this.messenger.notifyGivenUser(viewer.id, "refresh_players", {
+          visible_player_list: visibleData,
+        });
       });
     });
   }
 
   /**
-   * @param {*} viewerID
+   * @brief Handle viewer join - assign to a random room
    */
   handleViewerJoin(viewerID) {
     // Get a random room for the viewer
@@ -455,8 +453,14 @@ class RoomControler {
     const newViewer = new Viewer(viewerID);
     newViewer.roomId = room.roomId; // Track which room viewer is watching
     room.addViewer(newViewer);
-    this.messenger.notifyGivenUser(viewerID, "viewer_joined", { status: true });
-    this.drawMaze(viewerID);
+
+    this.messenger.notifyGivenUser(viewerID, "viewer_joined", {
+      status: true,
+      roomId: room.roomId,
+    });
+
+    this.drawMazeForPlayer(viewerID, room.roomId);
+    console.log(`👁️ Viewer joined room ${room.roomId}`);
   }
 
   /**
