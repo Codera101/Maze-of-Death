@@ -30,8 +30,8 @@ const reloadCost = document.querySelector("#reload-cost");
 const killMessage = document.querySelector("#kill-message");
 
 // Socket Connection
-const socket = io();
-// const socket = io("http://localhost:8080");
+// const socket = io();
+const socket = io("http://localhost:3000");
 // const socket = io("https://maze-of-death-production.up.railway.app");
 
 // Maze Variables
@@ -48,12 +48,11 @@ for (let i = 0; i < rows; i++) {
 }
 let visiblePlayers = [];
 
-let myPlayer;
 // let shooting = false;
-
-myPlayer = {
+let myPlayer = {
   id: null,
   username: null,
+  roomId: null, // Track which room the player is in
   x: 0,
   y: 0,
   dir: "U",

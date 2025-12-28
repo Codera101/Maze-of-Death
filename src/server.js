@@ -42,12 +42,11 @@ const BotService = require("./services/BotService");
 const Messenger = require("./utils/Messenger");
 const Logger = require("./utils/Logger");
 
-// Initialize RoomService and get the global room
-const roomService = new RoomService();
-const GameRoom = roomService.getRoom("global");
-const MAX_TOTAL_PLAYERS = 11; // Maximum players + bots allowed
-const INITIAL_BOT_COUNT = 8; // Number of bots to start with
-const MIN_BOT_COUNT = 0; // Minimum bots to maintain
+// Configuration
+const MAX_TOTAL_PLAYERS = 10; // Maximum players per room (as requested by user)
+
+// Initialize RoomService (no default room - rooms created dynamically)
+const roomService = new RoomService(MAX_TOTAL_PLAYERS);
 
 // Initialize BotService
 const botService = new BotService();
@@ -76,28 +75,23 @@ io.on("connection", (socket) => {
     MAX_TOTAL_PLAYERS
   );
   socket.isPlayer = false;
-  // console.log("Socket connected:", socket.id);
   socket.emit("message", "Hello from server — welcome!");
 
   socket.on("pong", (data) => {
     // console.log("Received pong from", socket.id, data);
   });
 
-  socket.on("join_player", (username) => {
-    // console.log("join_player listener:", username);
+  socket.on("join_player", (data) => {
     socket.isPlayer = true;
-    roomControler.handlePlayerJoin(socket.id, username);
+    roomControler.handlePlayerJoin(socket.id, data);
   });
 
   socket.on("join_viewer", () => {
-    // console.log("join_viewer listener");
     roomControler.handleViewerJoin(socket.id);
   });
 
   socket.on("player_move", (data) => {
     const dir = data.direction;
-    // Normalize direction input (support both "up"/"U", "down"/"D", etc.)
-    // console.log("player_move listener:", dir); // Disabled for performance
     let normalized = dir;
     if (typeof dir === "string") {
       const dirMap = {
@@ -131,62 +125,46 @@ io.on("connection", (socket) => {
   }, 1000);
 
   socket.on("disconnect", (reason) => {
-    // console.log("Socket disconnected:", socket.id, reason);
     // Clear the interval to prevent memory leak
     if (refreshInterval) {
       clearInterval(refreshInterval);
     }
-    if (socket.isPlayer)
-      roomControler.handlePlayerDisconnect(
-        socket.id,
-        roomService,
-        MIN_BOT_COUNT
-      );
-    else roomControler.handleViewerDisconnect(socket.id);
+    if (socket.isPlayer) {
+      roomControler.handlePlayerDisconnect(socket.id);
+    } else {
+      roomControler.handleViewerDisconnect(socket.id);
+    }
   });
 });
 
-// update rankings every 1 second
-setInterval(() => {
-  systemRoomControler.refreshVisiblePlayersForViewers();
-}, 50);
-
-// update rankings every 1 second
+// Update rankings for all rooms every 1 second
 setInterval(() => {
   systemRoomControler.refreshRankings();
 }, 1000);
 
-// Add initial bots to the game
+// Refresh visible players for all viewers every 50ms
+setInterval(() => {
+  systemRoomControler.refreshVisiblePlayersForViewers();
+}, 50);
+
+// Log room stats every 30 seconds
+setInterval(() => {
+  const roomCount = roomService.getRoomCount();
+  const allRooms = roomService.getAllRooms();
+  const totalPlayers = allRooms.reduce((sum, room) => sum + room.getHumanCount(), 0);
+  const totalBots = allRooms.reduce((sum, room) => sum + room.getBotCount(), 0);
+  
+  if (roomCount > 0) {
+    console.log(`📊 Stats: ${roomCount} rooms, ${totalPlayers} humans, ${totalBots} bots`);
+  }
+}, 30000);
 
 // Start server when run directly
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
-
-  // Add initial bots after a short delay to ensure everything is initialized
-  setTimeout(() => {
-    // console.log(`Adding ${INITIAL_BOT_COUNT} initial bots to the game...`);
-    botService.addBots(
-      GameRoom,
-      INITIAL_BOT_COUNT,
-      systemRoomControler,
-      "mixed", // Use mixed difficulty
-      roomService, // Pass room service for registration
-      MAX_TOTAL_PLAYERS
-    );
-  }, 1000);
-
-  // Maintain minimum bot count (check every 30 seconds)
-  setInterval(() => {
-    botService.maintainBotCount(
-      GameRoom,
-      MIN_BOT_COUNT,
-      systemRoomControler,
-      "mixed",
-      roomService, // Pass room service for registration
-      MAX_TOTAL_PLAYERS
-    );
-  }, 30000);
+  console.log(`🎮 Server listening on http://localhost:${PORT}`);
+  console.log(`📋 Multi-room mode enabled (max ${MAX_TOTAL_PLAYERS} players per room)`);
+  console.log(`🏠 Rooms are created dynamically when players join`);
 });
 
-module.exports = { app, server, io, GameRoom, botService };
+module.exports = { app, server, io, roomService, botService };

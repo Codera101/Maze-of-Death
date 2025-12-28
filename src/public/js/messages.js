@@ -47,10 +47,6 @@ function displayKillMessage(victim_name, killer_name) {
   }, 5000);
 }
 
-// console.log("[KILL_MESSAGE] Script loaded");
-// console.log("[KILL_MESSAGE] Socket exists:", typeof socket !== "undefined");
-// console.log("[KILL_MESSAGE] Socket object:", socket);
-
 if (typeof socket !== "undefined") {
   // console.log("[KILL_MESSAGE] Registering kill_message event listener");
   socket.on("kill_message", ({ victim_name, killer_name }) => {
@@ -68,3 +64,37 @@ if (typeof socket !== "undefined") {
     "[KILL_MESSAGE] ❌ Socket is undefined! Cannot register event listener."
   );
 }
+
+// ------------------------ ERROR MESSAGE POPUP -----------------//
+let handleErrorMessage = (message) => {
+  const error_popup = document.getElementById("error-popup");
+  const error_message_text = document.getElementById("error-txt");
+  const backdrop = document.getElementById("popup-backdrop");
+  error_popup.style.display = "flex";
+  error_popup.classList.add("active");
+  backdrop.classList.add("active");
+  error_message_text.innerHTML = message;
+
+  let disablePopup = () => {
+    error_popup.style.display = "none";
+    error_popup.classList.remove("active");
+    backdrop.classList.remove("active");
+    error_message_text.innerHTML = "";
+    window.location.href = "/";
+  };
+
+  backdrop.addEventListener("click", () => disablePopup());
+  setTimeout(() => disablePopup(), 5000);
+};
+
+socket.on("room_full", (data) => {
+  handleErrorMessage(data.message || "Room is full. Please try again later.");
+});
+
+socket.on("username_taken", (data) => {
+  let userName = data.username || "This username";
+  console.log(data);
+  handleErrorMessage(
+    `"${userName}" is already taken.<br>Please choose a different name.`
+  );
+});

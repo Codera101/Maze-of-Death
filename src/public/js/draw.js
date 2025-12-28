@@ -18,6 +18,7 @@ if (typeof socket !== "undefined") {
     // Initialize myPlayer with all properties from server
     myPlayer.id = player.id;
     myPlayer.username = player.userName;
+    myPlayer.roomId = data.roomId;
     myPlayer.x = player.x;
     myPlayer.y = player.y;
     myPlayer.dir = player.dir;
@@ -31,19 +32,22 @@ if (typeof socket !== "undefined") {
     if (typeof updatePlayerInfo === "function") {
       updatePlayerInfo(player);
     }
+    
+    console.log(`Joined room: ${data.roomId}`);
   });
 
-  socket.on("room_full", (data) => {
-    alert(data.message || "Room is full. Please try again later.");
-    // Redirect back to home page
-    window.location.href = "/";
-  });
+  // socket.on("room_full", (data) => {
+  //   alert(data.message || "Room is full. Please try again later.");
+  //   // Redirect back to home page
+  //   window.location.href = "/";
+  // });
 
-  socket.on("username_taken", (data) => {
-    alert(data.message || "Username is already taken. Please choose a different name.");
-    // Redirect back to home page
-    window.location.href = "/";
-  });
+  // socket.on("username_taken", (data) => {
+  //   alert(data.message || "Username is already taken. Please choose a different name.");
+  //   // Redirect back to home page
+  //   window.location.href = "/";
+  // });
+
 
   // Show hit animation on any player (visible to all)
   socket.on("player_hit_animation", ({ targetId, targetX, targetY }) => {
