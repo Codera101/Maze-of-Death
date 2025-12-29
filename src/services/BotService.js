@@ -12,33 +12,43 @@ class BotService {
     this._bots = new Map(); // Map of botId -> Bot instance
     this._botsByRoom = new Map(); // Map of roomId -> Set of botIds
     this._botUpdateIntervals = new Map(); // Map of botId -> interval ID
-    this._botNames = [
-      "Alpha",
-      "Bravo",
-      "Charlie",
-      "Delta",
-      "Echo",
-      "Foxtrot",
-      "Golf",
-      "Hotel",
-      "India",
-      "Juliet",
-      "Kilo",
-      "Lima",
-      "Mike",
-      "November",
-      "Oscar",
-      "Papa",
-      "Quebec",
-      "Romeo",
-      "Sierra",
-      "Tango",
-      "Uniform",
-      "Victor",
-      "Whiskey",
-      "X-ray",
-      "Yankee",
-      "Zulu",
+this._botNames = [
+      "Noob_Pro",
+      "〆الـجـلاد〆",
+      "X_JoKeR_X",
+      "Hitman_99",
+      "7amoody",
+      "M07amed",
+      "Ra3ad",
+      "EG_Pharaoh",
+      "Killer_511",
+      "Mr_Assassin",
+      "Princess_Sara",
+      "Dark_Knight",
+      "سـفـاح",
+      "KSA | Fahad",        
+      "أبو_أحمد",           
+      "3zzam",              
+      "مـجـرم",             
+      "Toxic_Boy",          
+      "Indomie_Lover",      
+      "الأسـطـورة",          
+      "D7oom_99",           
+      "Wifi_Jirani",        
+      "Dr_Noob",            
+      "عبدو البلف",        
+      "Zero_Lag",           
+      "Iraq_Lion",          
+      "Shawarma_King",      
+      "Al_Zaeem",           
+      "Gamer_Masry",        
+      "Bata_SoSo",          
+      "3bood_KSA",          
+      "Ninja_Arabi",
+      "Fares_Dubai",
+      "King_Of_Desert",
+      "يا_رب_أفوز",          
+      "S N I P E R"         
     ];
     this._usedNames = new Set();
   }
@@ -64,7 +74,7 @@ class BotService {
     const name =
       availableNames[Math.floor(Math.random() * availableNames.length)];
     this._usedNames.add(name);
-    return `Bot ${name}`;
+    return name;
   }
 
   /**
