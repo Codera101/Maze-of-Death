@@ -2,14 +2,13 @@
 window.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     socket.emit("shoot");
-    // laserSound.play();
   }
 });
-// window.addEventListener("click", (e) => {
-//   if (e.button === 0) {
-//     socket.emit("shoot");
-//   }
-// });
+window.addEventListener("click", (e) => {
+  if (e.button === 0) {
+    socket.emit("shoot");
+  }
+});
 
 let laserSound = new Audio("../sounds/laserShoot.wav");
 let laserHitWallSound = new Audio("../sounds/laserHitWall.wav");

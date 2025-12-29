@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/bottom_panel.css" />
     <link rel="stylesheet" href="css/maze.css" />
     <link rel="stylesheet" href="css/messages.css" />
+    <link rel="stylesheet" href="css/mobile_style.css" />
     <script
       type="module"
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
@@ -30,6 +31,28 @@
     <title>Maze Of Death - Viewer</title>
   </head>
   <body>
+    <div id="rotate-message">
+      <div class="rotate-content">
+        <ion-icon
+          name="screen-rotate-outline"
+          style="font-size: 60px; color: var(--color-primary)"
+        ></ion-icon>
+        <h2 style="margin-top: 15px; font-weight: 900; letter-spacing: 1px">
+          ROTATE YOUR DEVICE
+        </h2>
+        <p style="font-size: 16px; opacity: 0.8; margin-top: 10px">
+          Please use Landscape mode to view the maze.
+        </p>
+      </div>
+    </div>
+
+    <div id="error-popup">
+      <ion-icon name="warning-outline" id="alert-icon"></ion-icon>
+      <p id="error-txt">
+        Connection lost or invalid session.<br />Please try again.
+      </p>
+    </div>
+
     <div id="container">
       <div id="header" style="justify-content: flex-end">
         <button id="music-btn">
@@ -47,7 +70,10 @@
           <div id="maze-content"></div>
         </div>
 
-        <div id="right-panel">
+        <div
+          id="right-panel"
+          style="overflow-y: hidden; max-height: max-content"
+        >
           &nbsp;
           <div id="right-panel-title">
             <ion-icon name="ribbon"></ion-icon>
