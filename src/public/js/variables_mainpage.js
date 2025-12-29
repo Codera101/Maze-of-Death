@@ -90,10 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function toggleMusic() {
     musicEnabled = !musicEnabled;
+    const musicIcon = document.getElementById("music-icon");
     if (musicEnabled) {
       bgMusic.play();
+      if (musicIcon) musicIcon.setAttribute("name", "musical-notes-outline");
     } else {
       bgMusic.pause();
+      if (musicIcon) musicIcon.setAttribute("name", "volume-mute-outline");
     }
   }
   musicBtn.addEventListener("click", (e) => {
