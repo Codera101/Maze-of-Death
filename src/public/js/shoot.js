@@ -154,6 +154,7 @@ socket.on("target_hit", (data) => {
         xEnd: endX,
         yEnd: endY,
         lineWidth: 3,
+        color: myPlayer.color, // Use player's character color
       });
     }
 

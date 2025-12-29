@@ -337,23 +337,32 @@ function drawPlayers(app) {
   });
 }
 
-function fireLaser(app, { xStart, yStart, xEnd, yEnd, lineWidth }) {
+function fireLaser(app, { xStart, yStart, xEnd, yEnd, lineWidth, color }) {
   if (!lineWidth || lineWidth <= 0) return;
 
   const laser = new PIXI.Graphics();
+  
+  // Convert color if it's a string (e.g., "#FF5733")
+  let laserColor = color || 0xffcc00; // Default gold
+  if (typeof laserColor === "string") {
+    laserColor = parseInt(laserColor.replace("#", ""), 16);
+  }
+  
+  // Calculate glow color (lighter version)
+  const glowColor = laserColor;
 
-  // Glow (gold)
+  // Glow
   laser.poly([xStart, yStart, xEnd, yEnd], false).stroke({
     width: lineWidth * 3,
-    color: 0xffd966,
-    alpha: 0.25,
+    color: glowColor,
+    alpha: 0.35,
     cap: "round",
   });
 
-  // Core gold beam
+  // Core beam
   laser.poly([xStart, yStart, xEnd, yEnd], false).stroke({
     width: lineWidth,
-    color: 0xffcc00,
+    color: laserColor,
     alpha: 1,
     cap: "round",
   });
